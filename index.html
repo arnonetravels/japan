@@ -1,1401 +1,919 @@
-import React, { useState } from 'react';
-import { Calendar, MapPin, DollarSign, ChevronLeft, ChevronRight, Clock, Utensils, Camera, Train, Zap, Music, Star, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japan Travel Companion</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .japan-header { 
+            background: linear-gradient(90deg, #fef7f0 0%, #ffffff 50%, #fef7f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .mount-fuji {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+        }
+        .cherry-blossom {
+            position: absolute;
+            top: 8px;
+            left: 16px;
+            opacity: 0.2;
+            color: #f87171;
+        }
+        .wave-pattern {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #60a5fa, #6366f1, #60a5fa);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-// Japan-inspired color palette
-const activityColors = {
-  dining: 'bg-gradient-to-br from-red-50 to-orange-50 border-l-4 border-red-400 text-red-900',
-  cultural: 'bg-gradient-to-br from-indigo-50 to-blue-50 border-l-4 border-indigo-500 text-indigo-900',
-  transport: 'bg-gradient-to-br from-emerald-50 to-green-50 border-l-4 border-emerald-500 text-emerald-900',
-  festival: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-l-4 border-amber-500 text-amber-900',
-  nightlife: 'bg-gradient-to-br from-purple-50 to-violet-50 border-l-4 border-purple-500 text-purple-900',
-  activity: 'bg-gradient-to-br from-teal-50 to-cyan-50 border-l-4 border-teal-500 text-teal-900'
-};
+    <script type="text/babel">
+        const { useState } = React;
 
-const activityIcons = {
-  dining: Utensils,
-  cultural: Star,
-  transport: Train,
-  festival: Zap,
-  nightlife: Music,
-  activity: Camera
-};
+        // Activity color schemes
+        const activityColors = {
+            dining: 'bg-gradient-to-br from-red-50 to-orange-50 border-l-4 border-red-400 text-red-900',
+            cultural: 'bg-gradient-to-br from-indigo-50 to-blue-50 border-l-4 border-indigo-500 text-indigo-900',
+            transport: 'bg-gradient-to-br from-emerald-50 to-green-50 border-l-4 border-emerald-500 text-emerald-900',
+            festival: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-l-4 border-amber-500 text-amber-900',
+            nightlife: 'bg-gradient-to-br from-purple-50 to-violet-50 border-l-4 border-purple-500 text-purple-900',
+            activity: 'bg-gradient-to-br from-teal-50 to-cyan-50 border-l-4 border-teal-500 text-teal-900'
+        };
 
-// Complete itinerary data from the markdown document
-const itineraryData = {
-  "2025-07-14": {
-    date: "Monday, July 14, 2025",
-    title: "Arrival & Gentle Recovery",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 1,
-        time: "4:30 AM - 7:30 AM",
-        title: "Airport to Hotel",
-        type: "transport",
-        cost: { yen: 800, usd: 5.50 },
-        description: "Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya",
-        location: "Haneda Airport → Shibuya",
-        whatToDo: [
-          "Navigate immigration and customs at Haneda Airport",
-          "Take Airport Express to Shibuya Station",
-          "Check into Hyatt House Shibuya (early if possible)",
-          "Store luggage and freshen up",
-          "Get oriented with hotel amenities"
-        ],
-        whatToExpect: "Modern, efficient trains with English signage. Early check-in likely available."
-      },
-      {
-        id: 2,
-        time: "8:00 AM",
-        title: "Hotel Breakfast",
-        type: "dining",
-        cost: { yen: 0, usd: 0 },
-        description: "Breakfast included daily due to Hyatt Globalist status",
-        location: "Hyatt House Shibuya",
-        whatToExpect: "Quality hotel breakfast with Japanese and Western options"
-      },
-      {
-        id: 3,
-        time: "9:30 AM - 12:00 PM",
-        title: "Shibuya Crossing Experience",
-        type: "cultural",
-        cost: { yen: 0, usd: 0 },
-        description: "Iconic Tokyo orientation without overwhelming jetlag",
-        location: "Shibuya",
-        significance: "World's busiest pedestrian crossing - iconic Tokyo moment",
-        whatToDo: [
-          "Cross the famous Shibuya Crossing during rush periods",
-          "Take photos with Hachiko statue (loyal dog memorial)",
-          "View crossing from Starbucks 2F for aerial perspective",
-          "Walk through Center Gai for people-watching",
-          "Visit 109 building for youth fashion culture"
-        ],
-        whatToExpect: "World's busiest pedestrian crossing. Overwhelming but exhilarating first Tokyo moment."
-      },
-      {
-        id: 4,
-        time: "12:00 PM - 1:00 PM",
-        title: "First Tokyo Lunch",
-        type: "dining",
-        cost: { yen: 400, usd: 2.80 },
-        description: "Budget-friendly conveyor belt sushi experience",
-        location: "Shibuya area",
-        restaurants: [
-          {
-            name: "Uobei Shibuya Dogenzaka",
-            cost: "¥130-280 per plate",
-            description: "Touch panel conveyor sushi, popular with locals and tourists alike",
-            whyRecommended: "Quality budget option recognized by locals",
-            whatToExpect: "Casual atmosphere with automated ordering system"
-          },
-          {
-            name: "Numazuko Sushi (Tokyo Station)",
-            cost: "¥150 per plate",
-            description: "Fresh sushi delivered by automated belt system with multilingual ordering",
-            whyRecommended: "Excellent for first-time visitors",
-            whatToExpect: "Modern conveyor belt system with English support"
-          },
-          {
-            name: "Ganko Sushi",
-            cost: "¥138+ per plate",
-            description: "Traditional chain with authentic atmosphere",
-            whyRecommended: "Recognized by locals as quality budget option",
-            whatToExpect: "Traditional sushi bar atmosphere"
-          }
-        ]
-      },
-      {
-        id: 5,
-        time: "1:30 PM",
-        title: "Shibuya → Harajuku",
-        type: "transport",
-        cost: { yen: 160, usd: 1.10 },
-        description: "JR Yamanote Line from Shibuya to Harajuku Station",
-        location: "Shibuya → Harajuku",
-        whatToDo: [
-          "Take JR Yamanote Line from Shibuya Station",
-          "Travel 2 stops to Harajuku Station (3 minutes)",
-          "Exit at Takeshita-guchi (Takeshita Street exit)"
-        ],
-        whatToExpect: "Quick 3-minute train ride on Tokyo's main loop line"
-      },
-      {
-        id: 6,
-        time: "1:30 PM - 5:00 PM",
-        title: "Meiji Shrine & Harajuku",
-        type: "cultural",
-        cost: { yen: 600, usd: 4.20 },
-        description: "Essential Tokyo contrast - sacred shrine + pop culture street",
-        location: "Meiji Shrine → Harajuku",
-        significance: "1920 shrine in forest setting, then colorful kawaii culture",
-        whatToDo: [
-          "Write wishes on ema (wooden plaques) and hang them",
-          "Witness traditional Shinto wedding ceremonies (if occurring)",
-          "Walk peaceful forest paths among 100,000+ trees",
-          "Visit main shrine and bow properly (bow twice, clap twice, bow once)",
-          "Walk down Takeshita Street for kawaii culture",
-          "Try rainbow cotton candy and character crepes",
-          "Browse vintage shops and fashion stores"
-        ],
-        culturalEtiquette: "Bow twice, clap twice, bow once at main shrine",
-        whatToExpect: "Sacred tranquility followed by vibrant youth culture explosion"
-      },
-      {
-        id: 7,
-        time: "5:30 PM",
-        title: "Harajuku → Ginza",
-        type: "transport",
-        cost: { yen: 200, usd: 1.40 },
-        description: "JR Yamanote Line to Shimbashi, then Ginza Line to Ginza",
-        location: "Harajuku → Ginza",
-        whatToDo: [
-          "Take JR Yamanote Line from Harajuku to Shimbashi (13 minutes)",
-          "Transfer to Tokyo Metro Ginza Line",
-          "Take Ginza Line to Ginza Station (2 minutes)",
-          "Exit at A5 exit for restaurant area"
-        ],
-        whatToExpect: "15-20 minute journey with one transfer through central Tokyo"
-      },
-      {
-        id: 8,
-        time: "5:30 PM - 7:00 PM",
-        title: "Early Dinner",
-        type: "dining",
-        cost: { yen: 1500, usd: 10.50 },
-        description: "Premium sushi experience with traditional presentation",
-        location: "Ginza area",
-        restaurants: [
-          {
-            name: "Seamon Ginza",
-            cost: "¥1,800",
-            description: "Elegant 20-seat restaurant with freshly grated wasabi, 9 pieces + soup + appetizers",
-            whyRecommended: "Exceptional value for premium sushi experience",
-            whatToExpect: "Intimate counter seating with skilled sushi chefs"
-          },
-          {
-            name: "Uobei Shibuya Dogenzaka",
-            cost: "¥130-280 per plate",
-            description: "Touch panel conveyor sushi with fresh fish delivery",
-            whyRecommended: "Convenient and reliable quality",
-            whatToExpect: "Modern conveyor belt system"
-          },
-          {
-            name: "Kura Sushi (Shibuya)",
-            cost: "¥150 per plate average",
-            description: "Family-friendly conveyor belt with colorful atmosphere",
-            whyRecommended: "Fun experience with digital ordering",
-            whatToExpect: "Playful atmosphere with game elements"
-          }
-        ]
-      }
-    ],
-    dayTotal: { yen: 3260, usd: 22.70 },
-    costBreakdown: {
-      food: { yen: 1900, usd: 13.30 },
-      transport: { yen: 1160, usd: 8.10 },
-      snacks: { yen: 600, usd: 4.20 }
-    }
-  },
-  "2025-07-15": {
-    date: "Tuesday, July 15, 2025",
-    title: "Traditional Tokyo & Summer Festival",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 9,
-        time: "9:00 AM",
-        title: "Hotel Breakfast",
-        type: "dining",
-        cost: { yen: 0, usd: 0 },
-        description: "Breakfast included daily due to Hyatt Globalist status",
-        location: "Hyatt House Shibuya",
-        whatToExpect: "Quality hotel breakfast with Japanese and Western options"
-      },
-      {
-        id: 10,
-        time: "10:00 AM - 12:00 PM",
-        title: "Shibuya Sky",
-        type: "activity",
-        cost: { yen: 2000, usd: 14.00 },
-        description: "Modern Tokyo's newest iconic viewpoint",
-        location: "Shibuya Sky",
-        significance: "Modern Tokyo's newest iconic viewpoint with stunning 360° city views, less crowded than Skytree",
-        whatToDo: [
-          "Take panoramic photos from 360° observation deck",
-          "Visit rooftop terrace for open-air city views",
-          "Experience Sky Gallery with digital art installations",
-          "Shop for exclusive Shibuya Sky merchandise"
-        ],
-        whatToExpect: "Stunning 360° city views, less crowded than Skytree"
-      },
-      {
-        id: 11,
-        time: "12:30 PM",
-        title: "Shibuya → Asakusa",
-        type: "transport",
-        cost: { yen: 200, usd: 1.40 },
-        description: "JR Yamanote Line to Kanda, then Tokyo Metro Ginza Line to Asakusa",
-        location: "Shibuya → Asakusa",
-        whatToDo: [
-          "Take JR Yamanote Line from Shibuya to Kanda (17 minutes)",
-          "Transfer to Tokyo Metro Ginza Line",
-          "Take Ginza Line to Asakusa (5 minutes)",
-          "Exit at Exit 1 for Sensoji Temple"
-        ],
-        whatToExpect: "25-30 minute journey with one transfer to historic district"
-      },
-      {
-        id: 12,
-        time: "1:00 PM - 4:00 PM",
-        title: "Traditional Asakusa",
-        type: "cultural",
-        cost: { yen: 450, usd: 3.15 },
-        description: "Tokyo's oldest temple (7th century) & traditional shopping street",
-        location: "Sensoji Temple → Nakamise Street",
-        significance: "1,400-year-old temple, traditional architecture, street food culture. Tokyo's oldest temple dating to the 7th century.",
-        whatToDo: [
-          "Purify yourself at water basin before entering",
-          "Wave incense smoke over yourself for good health",
-          "Draw omikuji (fortune slips) and tie bad ones to racks",
-          "Ring bell and pray at main hall",
-          "Try ningyo-yaki (doll-shaped cakes with sweet filling)",
-          "Sample fresh taiyaki (fish-shaped pastry)",
-          "Buy traditional folding fans and chopsticks",
-          "Watch artisans make traditional crafts"
-        ],
-        culturalEtiquette: "Purify hands and mouth at water basin before entering temple",
-        whatToExpect: "Ancient temple atmosphere with traditional street food vendors"
-      },
-      {
-        id: 13,
-        time: "4:30 PM",
-        title: "Asakusa → Yasukuni Shrine",
-        type: "transport",
-        cost: { yen: 170, usd: 1.20 },
-        description: "Tokyo Metro Ginza Line to Omotesando, then Chiyoda Line to Kudanshita",
-        location: "Asakusa → Yasukuni Shrine",
-        whatToDo: [
-          "Take Tokyo Metro Ginza Line from Asakusa to Omotesando (14 minutes)",
-          "Transfer to Tokyo Metro Chiyoda Line",
-          "Take Chiyoda Line to Kudanshita (6 minutes)",
-          "Walk to Yasukuni Shrine (5 minutes)"
-        ],
-        whatToExpect: "20-25 minute journey with transfer to reach festival location"
-      },
-      {
-        id: 14,
-        time: "5:30 PM - 8:00 PM",
-        title: "Mitama Matsuri Festival",
-        type: "festival",
-        cost: { yen: 1500, usd: 10.50 },
-        description: "One of Tokyo's most spectacular summer festivals featuring 30,000+ lanterns",
-        location: "Yasukuni Shrine",
-        significance: "One of Tokyo's most spectacular summer festivals (July 13-16, 2025) featuring 30,000+ lanterns at Yasukuni Shrine. Memorial festival honoring spirits of war dead.",
-        whatToDo: [
-          "Walk through lantern-lit pathways for magical photos - lanterns illuminated daily from dusk until 9:30pm",
-          "Watch traditional Bon Odori dancing performances taking place every evening",
-          "Observe Nebuta float parades from Aomori (July 15 at 6:30 PM)",
-          "Experience Awa Odori dance demonstrations (July 15 at 7:30 PM)",
-          "Experience food trucks selling street food throughout festival period",
-          "Listen to taiko drumming performances and traditional music",
-          "Access inner shrine courtyard (normally restricted area) during evening hours"
-        ],
-        whatToExpect: "Memorial lanterns creating ethereal atmosphere honoring spirits of war dead, unique spiritual experience"
-      },
-      {
-        id: 15,
-        time: "8:30 PM - 10:00 PM",
-        title: "CÉ LA VI Tokyo",
-        type: "nightlife",
-        cost: { yen: 4350, usd: 30.45 },
-        description: "Premium rooftop experience with city views",
-        location: "CÉ LA VI Tokyo",
-        significance: "Premium rooftop experience with panoramic Tokyo views",
-        whatToDo: [
-          "Enjoy panoramic night views of Tokyo",
-          "Try signature cocktails with Asian influences",
-          "Take photos on outdoor terrace",
-          "Experience sophisticated international atmosphere"
-        ],
-        whatToExpect: "Sophisticated atmosphere, panoramic night views, quality cocktails"
-      }
-    ],
-    dayTotal: { yen: 8670, usd: 60.55 },
-    costBreakdown: {
-      food: { yen: 1500, usd: 10.50 },
-      transport: { yen: 370, usd: 2.60 },
-      attractions: { yen: 2000, usd: 14.00 },
-      nightlife: { yen: 4350, usd: 30.45 },
-      festival: { yen: 450, usd: 3.15 }
-    }
-  },
-  "2025-07-16": {
-    date: "Wednesday, July 16, 2025",
-    title: "Modern Tokyo & Immersive Experiences",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 16,
-        time: "9:00 AM",
-        title: "Hotel Breakfast",
-        type: "dining",
-        cost: { yen: 0, usd: 0 },
-        description: "Breakfast included daily due to Hyatt Globalist status",
-        location: "Hyatt House Shibuya",
-        whatToExpect: "Quality hotel breakfast with Japanese and Western options"
-      },
-      {
-        id: 17,
-        time: "10:00 AM - 11:30 AM",
-        title: "Imperial Palace East Gardens",
-        type: "cultural",
-        cost: { yen: 0, usd: 0 },
-        description: "Historic heart of Tokyo, former Edo Castle grounds",
-        location: "Imperial Palace East Gardens",
-        significance: "Historic heart of Tokyo, former Edo Castle grounds. Peaceful contrast to city chaos with beautiful gardens and historical significance.",
-        whatToDo: [
-          "Walk through beautifully maintained Japanese gardens",
-          "Visit ruins of Edo Castle foundations",
-          "Climb to observation deck for city views",
-          "See seasonal flowers and traditional landscaping",
-          "Learn about samurai history at information displays"
-        ],
-        whatToExpect: "Peaceful contrast to city chaos, beautiful gardens, historical significance"
-      },
-      {
-        id: 18,
-        time: "12:00 PM - 3:30 PM",
-        title: "Mario Kart Street Racing",
-        type: "activity",
-        cost: { yen: 14000, usd: 97.00 },
-        description: "Uniquely Tokyo experience - drive through famous intersections",
-        location: "Shibuya area",
-        significance: "Uniquely Tokyo experience - drive go-karts through Shibuya Crossing at street level in costume",
-        whatToDo: [
-          "Dress up in superhero costumes (no longer Mario-themed due to Nintendo lawsuit)",
-          "Drive go-karts through Shibuya Crossing at street level",
-          "Tour famous Tokyo landmarks in costume",
-          "Take photos with international group participants",
-          "Experience Tokyo traffic from unique perspective"
-        ],
-        whatToExpect: "Professional guides, Shibuya Crossing at street level, international group fun",
-        note: "Requires International Driving Permit from AAA (1949 Geneva Convention)",
-        alternative: "Tokyo Skytree visit - ¥3,000 ($21) if no IDP available"
-      },
-      {
-        id: 19,
-        time: "4:00 PM - 7:00 PM",
-        title: "teamLab Planets",
-        type: "activity",
-        cost: { yen: 4500, usd: 31.50 },
-        description: "World's most visited digital art museum with 2025 expansion",
-        location: "teamLab Planets",
-        significance: "World's most visited digital art museum with 2025 expansion featuring mind-bending immersive art experiences",
-        whatToDo: [
-          "Wade through knee-deep water with digital koi swimming around you",
-          "Walk barefoot through Crystal Universe with infinite mirrors",
-          "Lie down in Floating Flower Garden as flowers move above you",
-          "Jump on rapidly rotating bouncing spheres that light up (NEW 2025 Athletics Forest)",
-          "Create caterpillars by bouncing on same-colored spheres",
-          "Use smartphone to catch and study extinct animals",
-          "Build your own digital collection guidebook"
-        ],
-        whatToExpect: "Mind-bending immersive art, walk through water, new athletics area"
-      },
-      {
-        id: 20,
-        time: "7:30 PM - 8:30 PM",
-        title: "Ramen Dinner",
-        type: "dining",
-        cost: { yen: 1200, usd: 8.40 },
-        description: "Michelin-quality ramen experience",
-        location: "Various locations",
-        restaurants: [
-          {
-            name: "Nakiryu (Otsuka)",
-            cost: "¥1,000-1,500",
-            description: "Michelin Bib Gourmand (formerly 1-star) - Famous for tantanmen (spicy sesame noodles)",
-            whyRecommended: "Internationally acclaimed ramen specialist with tantanmen that earned worldwide recognition",
-            whatToExpect: "Expect 1-2 hour wait, sophisticated ramen preparation"
-          },
-          {
-            name: "Ganko Ramen (Tokyo Station)",
-            cost: "¥800-1,200",
-            description: "Multiple regional ramen styles under one roof",
-            whyRecommended: "Great variety of authentic regional styles in convenient location",
-            whatToExpect: "Food court setting with multiple ramen options"
-          },
-          {
-            name: "Ichiran Ramen",
-            cost: "¥900-1,200",
-            description: "Individual booth experience with customizable tonkotsu ramen",
-            whyRecommended: "Unique solo dining experience with full customization",
-            whatToExpect: "Private booth with customizable ramen options"
-          }
-        ]
-      },
-      {
-        id: 21,
-        time: "9:00 PM - 10:30 PM",
-        title: "Andaz Tokyo Rooftop",
-        type: "nightlife",
-        cost: { yen: 5500, usd: 38.50 },
-        description: "Premium ending to immersive day",
-        location: "Andaz Tokyo Rooftop",
-        significance: "Premium rooftop bar experience from one of Tokyo's highest bars",
-        whatToDo: [
-          "Enjoy views from one of Tokyo's highest bars",
-          "Try craft cocktails with Japanese ingredients",
-          "Take photos of Toranomon Hills night views",
-          "Experience sophisticated business district atmosphere"
-        ],
-        whatToExpect: "Toranomon Hills views, sophisticated atmosphere"
-      }
-    ],
-    dayTotal: { yen: 25200, usd: 175.40 },
-    costBreakdown: {
-      food: { yen: 1200, usd: 8.40 },
-      transport: { yen: 0, usd: 0 },
-      attractions: { yen: 18500, usd: 128.50 },
-      nightlife: { yen: 5500, usd: 38.50 }
-    }
-  },
-  "2025-07-17": {
-    date: "Thursday, July 17, 2025",
-    title: "Markets & Cultural Deep Dive",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 22,
-        time: "6:00 AM - 8:30 AM",
-        title: "Tsukiji Market Food Tour",
-        type: "dining",
-        cost: { yen: 3500, usd: 24.50 },
-        description: "Historic fish market, legendary food stalls since 1947",
-        location: "Tsukiji Market",
-        significance: "Historic fish market with legendary food stalls operating since 1947, offering ultra-fresh seafood and authentic market atmosphere",
-        whatToDo: [
-          "Try famous tuna sashimi at Yamacho stall",
-          "Sample fresh tamagoyaki (sweet egg omelet) at Joyato",
-          "Taste various sushi and sashimi from different vendors",
-          "Watch skilled vendors prepare fresh seafood",
-          "Try uni (sea urchin) and seasonal specialties",
-          "Take photos of authentic market atmosphere"
-        ],
-        whatToExpect: "Ultra-fresh seafood, authentic vendors, traditional preparation methods"
-      },
-      {
-        id: 23,
-        time: "9:30 AM - 12:30 PM",
-        title: "Tokyo National Museum",
-        type: "cultural",
-        cost: { yen: 1000, usd: 7.00 },
-        description: "Japan's premier cultural institution - world's largest Japanese art collection",
-        location: "Tokyo National Museum",
-        significance: "Japan's premier cultural institution with world's largest Japanese art collection, featuring 89 National Treasures",
-        whatToDo: [
-          "See ancient Buddhist sculptures and religious art",
-          "Explore samurai swords and armor collections (89 National Treasures)",
-          "View traditional Japanese paintings and calligraphy",
-          "Learn about Japanese pottery and ceramics from different periods",
-          "Visit Gallery of Hōryū-ji Treasures (7th-8th century artifacts)",
-          "Use English audio guides for comprehensive understanding"
-        ],
-        whatToExpect: "World's largest Japanese art collection, samurai weapons, Buddhist art, National Treasures"
-      },
-      {
-        id: 24,
-        time: "12:30 PM - 1:30 PM",
-        title: "Lunch in Ueno Area",
-        type: "dining",
-        cost: { yen: 1700, usd: 11.90 },
-        description: "Traditional Japanese lunch near museum",
-        location: "Ueno area",
-        restaurants: [
-          {
-            name: "Traditional tofu restaurant",
-            cost: "¥1,500-2,000",
-            description: "Experience Kyoto-style yudofu cuisine",
-            whyRecommended: "Authentic Buddhist temple-style preparation",
-            whatToExpect: "Traditional setting with refined tofu dishes"
-          },
-          {
-            name: "Local Ueno establishments",
-            cost: "¥1,200-1,800",
-            description: "Sample neighborhood specialties",
-            whyRecommended: "Local flavor near cultural district",
-            whatToExpect: "Casual atmosphere with regional dishes"
-          }
-        ]
-      },
-      {
-        id: 25,
-        time: "1:30 PM - 4:00 PM",
-        title: "Ueno Park Exploration & Rest",
-        type: "cultural",
-        cost: { yen: 0, usd: 0 },
-        description: "Japan's first public park with beautiful gardens and temples",
-        location: "Ueno Park",
-        significance: "Japan's first public park with beautiful gardens, temples, and relief from July heat",
-        whatToDo: [
-          "Stroll through traditional Japanese gardens",
-          "Visit Toshogu Shrine dedicated to Tokugawa Ieyasu",
-          "Rest in shaded areas during peak heat",
-          "Take photos of Shinobazu Pond and Bentendo Temple",
-          "Browse park's cultural atmosphere"
-        ],
-        whatToExpect: "Peaceful gardens, traditional temples, relief from July heat"
-      },
-      {
-        id: 26,
-        time: "6:00 PM - 7:30 PM",
-        title: "Michelin Dinner",
-        type: "dining",
-        cost: { yen: 1250, usd: 8.75 },
-        description: "Michelin-quality ramen at affordable prices",
-        location: "Various locations",
-        restaurants: [
-          {
-            name: "Nakiryu (Otsuka)",
-            cost: "¥1,000-1,500",
-            description: "Michelin Bib Gourmand tantanmen specialist - spicy sesame noodles that earned worldwide recognition",
-            whyRecommended: "Former Michelin-starred, now Bib Gourmand maintaining exceptional quality",
-            whatToExpect: "Sophisticated ramen preparation, expect wait times"
-          },
-          {
-            name: "Ramen Break Beats (Meguro)",
-            cost: "¥1,200-1,500",
-            description: "New 2025 Michelin Bib Gourmand entry - sophisticated ramen with porcini mushrooms",
-            whyRecommended: "Latest Michelin recognition for innovative approach",
-            whatToExpect: "Modern ramen techniques with premium ingredients"
-          },
-          {
-            name: "Konjiki Hototogisu (Shinjuku)",
-            cost: "¥1,000-1,300",
-            description: "Former Michelin-starred, now Bib Gourmand - famous for 'triple soup' shoyu soba",
-            whyRecommended: "Legendary status in ramen world with unique triple soup technique",
-            whatToExpect: "Complex flavors from innovative preparation methods"
-          }
-        ]
-      },
-      {
-        id: 27,
-        time: "8:30 PM - 10:30 PM",
-        title: "Golden Gai Exploration",
-        type: "nightlife",
-        cost: { yen: 2400, usd: 16.80 },
-        description: "Historic post-war drinking district",
-        location: "Golden Gai",
-        significance: "Historic post-war drinking district with tiny bars (5-6 seats each) representing authentic Tokyo atmosphere",
-        whatToDo: [
-          "Visit 2-3 different tiny bars (5-6 seats each)",
-          "Chat with local salarymen and mama-sans",
-          "Try different types of Japanese whiskey and sake",
-          "Experience authentic post-war Tokyo atmosphere",
-          "Order yakitori and other bar snacks"
-        ],
-        whatToExpect: "Tiny bars, local salarymen, authentic atmosphere, multiple venue hopping"
-      }
-    ],
-    dayTotal: { yen: 9850, usd: 68.95 },
-    costBreakdown: {
-      food: { yen: 6450, usd: 45.15 },
-      transport: { yen: 200, usd: 1.40 },
-      attractions: { yen: 1000, usd: 7.00 },
-      nightlife: { yen: 2400, usd: 16.80 }
-    }
-  },
-  "2025-07-18": {
-    date: "Friday, July 18, 2025",
-    title: "Final Tokyo & Prime Nightlife",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 28,
-        time: "9:00 AM",
-        title: "Hotel Breakfast",
-        type: "dining",
-        cost: { yen: 0, usd: 0 },
-        description: "Breakfast included daily due to Hyatt Globalist status",
-        location: "Hyatt House Shibuya",
-        whatToExpect: "Quality hotel breakfast with Japanese and Western options"
-      },
-      {
-        id: 29,
-        time: "10:00 AM - 12:00 PM",
-        title: "Harajuku Shopping",
-        type: "activity",
-        cost: { yen: 1000, usd: 7.00 },
-        description: "Youth fashion capital and luxury district",
-        location: "Harajuku",
-        significance: "Youth fashion capital of Tokyo with kawaii culture and luxury brands",
-        whatToDo: [
-          "Try rainbow cotton candy and character crepes on Takeshita Street",
-          "Browse kawaii fashion and cosplay stores",
-          "Window shop luxury brands at Omotesando Hills",
-          "Take photos with street fashion enthusiasts"
-        ],
-        whatToExpect: "Kawaii culture, outrageous fashion, luxury brands"
-      },
-      {
-        id: 30,
-        time: "1:00 PM - 4:00 PM",
-        title: "Tokyo Tower",
-        type: "activity",
-        cost: { yen: 1200, usd: 8.50 },
-        description: "Classic Tokyo landmark for final views",
-        location: "Tokyo Tower",
-        significance: "Classic Tokyo landmark providing nostalgic Tokyo symbol with iconic red and white tower views",
-        whatToDo: [
-          "Visit Main Observatory (150m) and Special Observatory (250m)",
-          "Take photos of iconic red and white tower",
-          "Shop for Tokyo Tower exclusive merchandise",
-          "See panoramic views of Tokyo Bay and city",
-          "Compare views with modern experiences from previous days"
-        ],
-        whatToExpect: "Iconic tower views, nostalgic Tokyo symbol"
-      },
-      {
-        id: 31,
-        time: "5:00 PM - 6:30 PM",
-        title: "Light Dinner",
-        type: "dining",
-        cost: { yen: 2000, usd: 14.00 },
-        description: "Final Tokyo meal before nightlife adventure",
-        location: "Near hotel",
-        restaurants: [
-          {
-            name: "Local restaurant near hotel",
-            cost: "¥1,500-2,500",
-            description: "Convenient final Tokyo meal",
-            whyRecommended: "Easy access before extensive nightlife",
-            whatToExpect: "Light meal to prepare for late night activities"
-          }
-        ]
-      },
-      {
-        id: 32,
-        time: "11:00 PM - 2:00 AM",
-        title: "WOMB Shibuya (EDM Club)",
-        type: "nightlife",
-        cost: { yen: 6000, usd: 42.00 },
-        description: "Tokyo's premier electronic music venue",
-        location: "WOMB Shibuya",
-        significance: "Tokyo's premier electronic music venue, ranked among world's top clubs by Mixmag magazine",
-        whatToDo: [
-          "Experience famous mirror ball room on main floor with Asia's largest mirror ball",
-          "Dance to house and techno from international DJs and top local artists",
-          "Explore all 4 floors with different music styles and atmospheres",
-          "Enjoy world-class sound system with high-quality lighting and laser productions",
-          "Meet international clubbers and locals in friendly, welcoming crowd"
-        ],
-        whatToExpect: "4 floors of house/techno, serious sound system, diverse international crowd, professional production quality"
-      },
-      {
-        id: 33,
-        time: "2:00 AM - 4:00 AM",
-        title: "Ni-chome Gay District",
-        type: "nightlife",
-        cost: { yen: 4500, usd: 31.50 },
-        description: "Asia's largest gay district with over 300 LGBTQ+ venues",
-        location: "Ni-chome",
-        significance: "Asia's largest gay district with over 300 LGBTQ+ venues in compact area",
-        whatToDo: [
-          "Visit Arty Farty: Popular dance club with pop and electronic music",
-          "Experience AiSOTOPE Lounge: Intimate bar atmosphere with friendly mama-san culture",
-          "Try Dragon Men: Casual bar with English-speaking staff and welcoming atmosphere"
-        ],
-        whatToExpect: "Welcoming inclusive atmosphere, diverse venues from intimate bars to dance clubs, late-night energy until dawn"
-      }
-    ],
-    dayTotal: { yen: 14700, usd: 102.90 },
-    costBreakdown: {
-      food: { yen: 2000, usd: 14.00 },
-      transport: { yen: 500, usd: 3.50 },
-      attractions: { yen: 2200, usd: 15.40 },
-      nightlife: { yen: 10500, usd: 73.50 }
-    }
-  },
-  "2025-07-19": {
-    date: "Saturday, July 19, 2025",
-    title: "Tokyo to Kyoto via Bullet Train",
-    weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
-    activities: [
-      {
-        id: 34,
-        time: "9:00 AM",
-        title: "Hotel Breakfast",
-        type: "dining",
-        cost: { yen: 0, usd: 0 },
-        description: "Breakfast included daily due to Hyatt Globalist status",
-        location: "Hyatt House Shibuya",
-        whatToExpect: "Final Tokyo hotel breakfast with Japanese and Western options"
-      },
-      {
-        id: 35,
-        time: "10:00 AM - 12:00 PM",
-        title: "Final Tokyo Moments",
-        type: "activity",
-        cost: { yen: 750, usd: 5.25 },
-        description: "Pack souvenirs and organize luggage for bullet train journey",
-        location: "Shibuya area",
-        whatToDo: [
-          "Pack souvenirs and organize luggage for bullet train journey",
-          "Check out of Hyatt House Shibuya (store luggage until departure)",
-          "Visit convenience store for gourmet train snacks and drinks",
-          "Take final photos around iconic Shibuya Crossing",
-          "Purchase last-minute Tokyo character goods and regional snacks"
-        ],
-        whatToExpect: "Incredible convenience store quality with gourmet options, perfect travel snacks"
-      },
-      {
-        id: 36,
-        time: "12:00 PM - 3:00 PM",
-        title: "Shinkansen Bullet Train Experience",
-        type: "transport",
-        cost: { yen: 15050, usd: 105.35 },
-        description: "Japan's engineering marvel - 320 km/h journey with legendary punctuality",
-        location: "Tokyo → Kyoto",
-        significance: "Japan's engineering marvel - 320 km/h journey with legendary punctuality (average delay: 18 seconds annually)",
-        whatToDo: [
-          "Purchase ekiben (luxury train bento) from Tokyo Station vendors - featuring regional specialties",
-          "Reserve seats D or E on right side for potential Mount Fuji views (weather permitting)",
-          "Take photos of sleek bullet train nose and marvel at engineering precision",
-          "Experience legendary punctuality and smooth 320 km/h travel with no turbulence",
-          "Enjoy gourmet ekiben featuring seasonal ingredients and artistic presentation",
-          "Use onboard WiFi to research Kyoto activities and traditional customs",
-          "Watch Japanese countryside transform from urban Tokyo to historic Kansai region"
-        ],
-        whatToExpect: "Ultra-smooth high-speed experience with potential Mount Fuji views on clear days, exceptional on-board dining"
-      },
-      {
-        id: 37,
-        time: "3:00 PM - 5:00 PM",
-        title: "Kyoto Arrival & Check-in",
-        type: "activity",
-        cost: { yen: 600, usd: 4.20 },
-        description: "Check into Hyatt Place Kyoto and settle in",
-        location: "Kyoto",
-        whatToDo: [
-          "Check into Hyatt Place Kyoto and settle into traditional-modern atmosphere",
-          "Purchase Kyoto City Bus Day Pass (¥600) for unlimited bus travel",
-          "Rest and prepare for tomorrow's Gion Matsuri festival experience"
-        ],
-        whatToExpect: "Immediate atmospheric change to traditional Japan, preserved Edo-period architecture"
-      },
-      {
-        id: 38,
-        time: "5:00 PM - 8:00 PM",
-        title: "Gion Preview (If Energy Allows)",
-        type: "cultural",
-        cost: { yen: 2500, usd: 17.50 },
-        description: "First taste of Kyoto's traditional atmosphere",
-        location: "Gion district",
-        significance: "Preview of Japan's most famous geisha district preserving 400+ years of traditional culture",
-        whatToDo: [
-          "Walk through Gion district's historic preserved streets (Hanami-koji)",
-          "Visit Yasaka Shrine for sunset photos",
-          "Experience dramatically different pace from Tokyo's kinetic energy",
-          "Light traditional kaiseki-style dinner to prepare palate for Kyoto cuisine",
-          "Spot geiko and maiko if fortunate (early evening is optimal time)"
-        ],
-        whatToExpect: "Immediate atmospheric change to traditional Japan, preserved Edo-period architecture"
-      }
-    ],
-    dayTotal: { yen: 18900, usd: 132.30 },
-    costBreakdown: {
-      food: { yen: 1500, usd: 10.50 },
-      transport: { yen: 15650, usd: 109.55 },
-      attractions: { yen: 750, usd: 5.25 },
-      activities: { yen: 1000, usd: 7.00 }
-    }
-  }
-};
+        // Icons (using text/emoji since we don't have lucide-react)
+        const activityIcons = {
+            dining: '🍜',
+            cultural: '⛩️',
+            transport: '🚆',
+            festival: '🎌',
+            nightlife: '🍸',
+            activity: '📸'
+        };
 
-// Get all dates in chronological order
-const dates = Object.keys(itineraryData).sort();
+        // Sample itinerary data
+        const itineraryData = {
+            "2025-07-14": {
+                date: "Monday, July 14, 2025",
+                title: "Arrival & Gentle Recovery",
+                weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+                activities: [
+                    {
+                        id: 1,
+                        time: "4:30 AM - 7:30 AM",
+                        title: "Airport to Hotel",
+                        type: "transport",
+                        cost: { yen: 800, usd: 5.50 },
+                        description: "Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station",
+                        location: "Haneda Airport → Shibuya",
+                        whatToDo: [
+                            "Navigate immigration and customs at Haneda Airport",
+                            "Take Airport Express to Shibuya Station",
+                            "Check into Hyatt House Shibuya (early if possible)",
+                            "Store luggage and freshen up"
+                        ],
+                        whatToExpect: "Modern, efficient trains with English signage. Early check-in likely available."
+                    },
+                    {
+                        id: 2,
+                        time: "8:00 AM",
+                        title: "Hotel Breakfast",
+                        type: "dining",
+                        cost: { yen: 0, usd: 0 },
+                        description: "Breakfast included daily due to Hyatt Globalist status",
+                        location: "Hyatt House Shibuya"
+                    },
+                    {
+                        id: 3,
+                        time: "9:30 AM - 12:00 PM",
+                        title: "Shibuya Crossing Experience",
+                        type: "cultural",
+                        cost: { yen: 0, usd: 0 },
+                        description: "Iconic Tokyo orientation without overwhelming jetlag",
+                        location: "Shibuya",
+                        significance: "World's busiest pedestrian crossing - iconic Tokyo moment",
+                        whatToDo: [
+                            "Cross the famous Shibuya Crossing during rush periods",
+                            "Take photos with Hachiko statue (loyal dog memorial)",
+                            "View crossing from Starbucks 2F for aerial perspective",
+                            "Walk through Center Gai for people-watching"
+                        ],
+                        whatToExpect: "Overwhelming but exhilarating first Tokyo moment."
+                    },
+                    {
+                        id: 4,
+                        time: "12:00 PM - 1:00 PM",
+                        title: "First Tokyo Lunch",
+                        type: "dining",
+                        cost: { yen: 400, usd: 2.80 },
+                        description: "Budget-friendly conveyor belt sushi experience",
+                        location: "Shibuya area",
+                        restaurants: [
+                            {
+                                name: "Uobei Shibuya Dogenzaka",
+                                cost: "¥130-280 per plate",
+                                description: "Touch panel conveyor sushi, popular with locals and tourists",
+                                whyRecommended: "Quality budget option recognized by locals",
+                                whatToExpect: "Casual atmosphere with automated ordering"
+                            },
+                            {
+                                name: "Ganko Sushi",
+                                cost: "¥138+ per plate",
+                                description: "Traditional chain with authentic atmosphere",
+                                whyRecommended: "Recognized by locals as quality budget option",
+                                whatToExpect: "Traditional sushi bar atmosphere"
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        time: "1:30 PM - 5:00 PM",
+                        title: "Meiji Shrine & Harajuku",
+                        type: "cultural",
+                        cost: { yen: 600, usd: 4.20 },
+                        description: "Essential Tokyo contrast - sacred shrine + pop culture street",
+                        location: "Meiji Shrine → Harajuku",
+                        significance: "1920 shrine in forest setting, then colorful kawaii culture",
+                        whatToDo: [
+                            "Write wishes on ema (wooden plaques) and hang them",
+                            "Witness traditional Shinto wedding ceremonies (if occurring)",
+                            "Walk peaceful forest paths among 100,000+ trees",
+                            "Walk down Takeshita Street for kawaii culture",
+                            "Try rainbow cotton candy and character crepes"
+                        ],
+                        culturalEtiquette: "Bow twice, clap twice, bow once at main shrine",
+                        whatToExpect: "Sacred tranquility followed by vibrant youth culture explosion"
+                    },
+                    {
+                        id: 6,
+                        time: "5:30 PM - 7:00 PM",
+                        title: "Early Dinner",
+                        type: "dining",
+                        cost: { yen: 1500, usd: 10.50 },
+                        description: "Premium sushi experience with traditional presentation",
+                        location: "Ginza area",
+                        restaurants: [
+                            {
+                                name: "Seamon Ginza",
+                                cost: "¥1,800",
+                                description: "Elegant 20-seat restaurant with freshly grated wasabi",
+                                whyRecommended: "Exceptional value for premium sushi experience",
+                                whatToExpect: "Intimate counter seating with skilled sushi chefs"
+                            }
+                        ]
+                    }
+                ],
+                dayTotal: { yen: 3300, usd: 23.00 },
+                costBreakdown: {
+                    food: { yen: 1900, usd: 13.30 },
+                    transport: { yen: 800, usd: 5.50 },
+                    snacks: { yen: 600, usd: 4.20 }
+                }
+            },
+            "2025-07-15": {
+                date: "Tuesday, July 15, 2025",
+                title: "Traditional Tokyo & Summer Festival",
+                weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+                activities: [
+                    {
+                        id: 7,
+                        time: "9:00 AM",
+                        title: "Hotel Breakfast",
+                        type: "dining",
+                        cost: { yen: 0, usd: 0 },
+                        description: "Breakfast included daily due to Hyatt Globalist status",
+                        location: "Hyatt House Shibuya"
+                    },
+                    {
+                        id: 8,
+                        time: "10:00 AM - 12:00 PM",
+                        title: "Shibuya Sky",
+                        type: "activity",
+                        cost: { yen: 2000, usd: 14.00 },
+                        description: "Modern Tokyo's newest iconic viewpoint",
+                        location: "Shibuya Sky",
+                        significance: "Stunning 360° city views, less crowded than Skytree",
+                        whatToDo: [
+                            "Take panoramic photos from 360° observation deck",
+                            "Visit rooftop terrace for open-air city views",
+                            "Experience Sky Gallery with digital art installations"
+                        ],
+                        whatToExpect: "Stunning 360° city views, less crowded than Skytree"
+                    },
+                    {
+                        id: 9,
+                        time: "1:00 PM - 4:00 PM",
+                        title: "Traditional Asakusa",
+                        type: "cultural",
+                        cost: { yen: 450, usd: 3.15 },
+                        description: "Tokyo's oldest temple (7th century) & traditional shopping street",
+                        location: "Sensoji Temple → Nakamise Street",
+                        significance: "1,400-year-old temple, traditional architecture, street food culture",
+                        whatToDo: [
+                            "Purify yourself at water basin before entering",
+                            "Wave incense smoke over yourself for good health",
+                            "Draw omikuji (fortune slips) and tie bad ones to racks",
+                            "Try ningyo-yaki (doll-shaped cakes with sweet filling)",
+                            "Sample fresh taiyaki (fish-shaped pastry)"
+                        ],
+                        culturalEtiquette: "Purify hands and mouth at water basin before entering temple",
+                        whatToExpect: "Ancient temple atmosphere with traditional street food vendors"
+                    },
+                    {
+                        id: 10,
+                        time: "5:30 PM - 8:00 PM",
+                        title: "Mitama Matsuri Festival",
+                        type: "festival",
+                        cost: { yen: 1500, usd: 10.50 },
+                        description: "One of Tokyo's most spectacular summer festivals featuring 30,000+ lanterns",
+                        location: "Yasukuni Shrine",
+                        significance: "Memorial festival honoring spirits of war dead with 30,000+ lanterns creating ethereal atmosphere",
+                        whatToDo: [
+                            "Walk through lantern-lit pathways for magical photos",
+                            "Watch traditional Bon Odori dancing performances",
+                            "Observe Nebuta float parades from Aomori (July 15 at 6:30 PM)",
+                            "Experience Awa Odori dance demonstrations (July 15 at 7:30 PM)",
+                            "Listen to taiko drumming performances"
+                        ],
+                        whatToExpect: "Memorial lanterns creating ethereal atmosphere, unique spiritual experience"
+                    },
+                    {
+                        id: 11,
+                        time: "8:30 PM - 10:00 PM",
+                        title: "CÉ LA VI Tokyo",
+                        type: "nightlife",
+                        cost: { yen: 4350, usd: 30.45 },
+                        description: "Premium rooftop experience with city views",
+                        location: "CÉ LA VI Tokyo",
+                        significance: "Premium rooftop experience with panoramic Tokyo views",
+                        whatToDo: [
+                            "Enjoy panoramic night views of Tokyo",
+                            "Try signature cocktails with Asian influences",
+                            "Take photos on outdoor terrace"
+                        ],
+                        whatToExpect: "Sophisticated atmosphere, panoramic night views, quality cocktails"
+                    }
+                ],
+                dayTotal: { yen: 8300, usd: 58.10 },
+                costBreakdown: {
+                    food: { yen: 1500, usd: 10.50 },
+                    transport: { yen: 370, usd: 2.60 },
+                    attractions: { yen: 2000, usd: 14.00 },
+                    nightlife: { yen: 4350, usd: 30.45 },
+                    festival: { yen: 450, usd: 3.15 }
+                }
+            },
+            "2025-07-16": {
+                date: "Wednesday, July 16, 2025",
+                title: "Modern Tokyo & Immersive Experiences",
+                weather: "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+                activities: [
+                    {
+                        id: 12,
+                        time: "9:00 AM",
+                        title: "Hotel Breakfast",
+                        type: "dining",
+                        cost: { yen: 0, usd: 0 },
+                        description: "Breakfast included daily due to Hyatt Globalist status",
+                        location: "Hyatt House Shibuya"
+                    },
+                    {
+                        id: 13,
+                        time: "10:00 AM - 11:30 AM",
+                        title: "Imperial Palace East Gardens",
+                        type: "cultural",
+                        cost: { yen: 0, usd: 0 },
+                        description: "Historic heart of Tokyo, former Edo Castle grounds",
+                        location: "Imperial Palace East Gardens",
+                        significance: "Peaceful contrast to city chaos with beautiful gardens and historical significance",
+                        whatToDo: [
+                            "Walk through beautifully maintained Japanese gardens",
+                            "Visit ruins of Edo Castle foundations",
+                            "See seasonal flowers and traditional landscaping"
+                        ],
+                        whatToExpect: "Peaceful contrast to city chaos, beautiful gardens"
+                    },
+                    {
+                        id: 14,
+                        time: "12:00 PM - 3:30 PM",
+                        title: "Mario Kart Street Racing",
+                        type: "activity",
+                        cost: { yen: 14000, usd: 97.00 },
+                        description: "Uniquely Tokyo experience - drive through famous intersections",
+                        location: "Shibuya area",
+                        significance: "Drive go-karts through Shibuya Crossing at street level in costume",
+                        whatToDo: [
+                            "Dress up in superhero costumes",
+                            "Drive go-karts through Shibuya Crossing at street level",
+                            "Tour famous Tokyo landmarks in costume",
+                            "Take photos with international group participants"
+                        ],
+                        note: "Requires International Driving Permit from AAA (1949 Geneva Convention)",
+                        alternative: "Tokyo Skytree visit - ¥3,000 ($21) if no IDP available",
+                        whatToExpect: "Professional guides, Shibuya Crossing at street level"
+                    },
+                    {
+                        id: 15,
+                        time: "4:00 PM - 7:00 PM",
+                        title: "teamLab Planets",
+                        type: "activity",
+                        cost: { yen: 4500, usd: 31.50 },
+                        description: "World's most visited digital art museum with 2025 expansion",
+                        location: "teamLab Planets",
+                        significance: "Mind-bending immersive art experiences with new 2025 Athletics Forest",
+                        whatToDo: [
+                            "Wade through knee-deep water with digital koi",
+                            "Walk barefoot through Crystal Universe with infinite mirrors",
+                            "Jump on rapidly rotating bouncing spheres (NEW 2025)",
+                            "Use smartphone to catch extinct animals"
+                        ],
+                        whatToExpect: "Mind-bending immersive art, walk through water"
+                    },
+                    {
+                        id: 16,
+                        time: "7:30 PM - 8:30 PM",
+                        title: "Ramen Dinner",
+                        type: "dining",
+                        cost: { yen: 1200, usd: 8.40 },
+                        description: "Michelin-quality ramen experience",
+                        location: "Various locations",
+                        restaurants: [
+                            {
+                                name: "Nakiryu (Otsuka)",
+                                cost: "¥1,000-1,500",
+                                description: "Michelin Bib Gourmand - Famous for tantanmen (spicy sesame noodles)",
+                                whyRecommended: "Internationally acclaimed ramen specialist",
+                                whatToExpect: "Expect 1-2 hour wait, sophisticated preparation"
+                            },
+                            {
+                                name: "Ichiran Ramen",
+                                cost: "¥900-1,200",
+                                description: "Individual booth experience with customizable tonkotsu ramen",
+                                whyRecommended: "Unique solo dining experience",
+                                whatToExpect: "Private booth with customizable options"
+                            }
+                        ]
+                    }
+                ],
+                dayTotal: { yen: 19700, usd: 136.90 },
+                costBreakdown: {
+                    food: { yen: 1200, usd: 8.40 },
+                    attractions: { yen: 18500, usd: 128.50 }
+                }
+            }
+        };
 
-// Calculate total budget for the implemented days
-const totalBudget = Object.values(itineraryData).reduce((sum, day) => ({
-  yen: sum.yen + day.dayTotal.yen,
-  usd: sum.usd + day.dayTotal.usd
-}), { yen: 0, usd: 0 });
+        const dates = Object.keys(itineraryData).sort();
+        const totalBudget = Object.values(itineraryData).reduce((sum, day) => ({
+            yen: sum.yen + day.dayTotal.yen,
+            usd: sum.usd + day.dayTotal.usd
+        }), { yen: 0, usd: 0 });
 
-// Header Component with Japan-inspired design
-function Header() {
-  return (
-    <header className="bg-gradient-to-r from-red-50 via-white to-red-50 shadow-sm border-b border-gray-200 relative overflow-hidden">
-      {/* Mount Fuji silhouette background */}
-      <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-        <h3 className="font-bold text-lg mb-3 text-green-800">Trip Totals</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">¥{totalBudget.yen.toLocaleString()}</div>
-            <div className="text-sm text-green-500">Total Yen</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">${totalBudget.usd.toFixed(2)}</div>
-            <div className="text-sm text-green-500">Total USD</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Budget View Component
-function BudgetView() {
-  // Calculate category totals
-  const categoryTotals = {};
-  
-  Object.values(itineraryData).forEach(day => {
-    Object.entries(day.costBreakdown).forEach(([category, cost]) => {
-      if (!categoryTotals[category]) {
-        categoryTotals[category] = { yen: 0, usd: 0 };
-      }
-      categoryTotals[category].yen += cost.yen;
-      categoryTotals[category].usd += cost.usd;
-    });
-  });
-  
-  const categoryColors = {
-    food: 'bg-red-100 text-red-800 border-red-200',
-    transport: 'bg-green-100 text-green-800 border-green-200',
-    attractions: 'bg-blue-100 text-blue-800 border-blue-200',
-    nightlife: 'bg-purple-100 text-purple-800 border-purple-200',
-    festival: 'bg-amber-100 text-amber-800 border-amber-200',
-    snacks: 'bg-orange-100 text-orange-800 border-orange-200',
-    activities: 'bg-teal-100 text-teal-800 border-teal-200',
-    shopping: 'bg-pink-100 text-pink-800 border-pink-200'
-  };
-  
-  const categoryIcons = {
-    food: Utensils,
-    transport: Train,
-    attractions: Camera,
-    nightlife: Music,
-    festival: Zap,
-    snacks: Star,
-    activities: Camera,
-    shopping: Star
-  };
-  
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Budget Breakdown</h2>
-      
-      <div className="mb-6 p-6 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200">
-        <h3 className="font-bold text-lg mb-3 text-indigo-800">Total Budget</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-indigo-600">¥{totalBudget.yen.toLocaleString()}</div>
-            <div className="text-sm text-indigo-500">Japanese Yen</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-indigo-600">${totalBudget.usd.toFixed(2)}</div>
-            <div className="text-sm text-indigo-500">US Dollars</div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <h3 className="font-bold text-lg mb-4 text-gray-800">By Category</h3>
-        <div className="space-y-3">
-          {Object.entries(categoryTotals).map(([category, cost]) => {
-            const Icon = categoryIcons[category] || DollarSign;
-            const colorClass = categoryColors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
-            const percentage = ((cost.usd / totalBudget.usd) * 100).toFixed(1);
-            
+        // Header Component
+        function Header() {
             return (
-              <div key={category} className={`p-4 rounded-lg border ${colorClass}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <Icon size={20} />
-                    <span className="font-medium capitalize">{category}</span>
-                  </div>
-                  <span className="text-sm font-medium">{percentage}%</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>¥{cost.yen.toLocaleString()}</span>
-                  <span>${cost.usd.toFixed(2)}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="font-bold text-lg mb-4 text-gray-800">Daily Breakdown</h3>
-        <div className="space-y-2">
-          {dates.map((date, index) => {
-            const dayData = itineraryData[date];
-            return (
-              <div key={date} className="p-3 bg-white rounded-lg border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="font-medium text-gray-800">Day {index + 1}</span>
-                    <span className="text-sm text-gray-600 ml-2">
-                      {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-gray-800">¥{dayData.dayTotal.yen.toLocaleString()}</div>
-                    <div className="text-sm text-gray-600">${dayData.dayTotal.usd.toFixed(2)}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Bottom Navigation Component
-function BottomTabs({ activeTab, setActiveTab }) {
-  const tabs = [
-    { id: 'today', label: 'Today', icon: Calendar },
-    { id: 'overview', label: 'Overview', icon: MapPin },
-    { id: 'budget', label: 'Budget', icon: DollarSign }
-  ];
-  
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-      <div className="flex">
-        {tabs.map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 py-3 px-4 flex flex-col items-center gap-1 transition-colors ${
-                isActive 
-                  ? 'text-indigo-600 bg-indigo-50' 
-                  : 'text-gray-600 hover:text-indigo-500'
-              }`}
-            >
-              <Icon size={20} />
-              <span className="text-xs font-medium">{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </nav>
-  );
-}
-
-// Main App Component
-export default function JapanTravelApp() {
-  const [activeTab, setActiveTab] = useState('today');
-  const [currentDate, setCurrentDate] = useState('2025-07-14');
-  
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'today':
-        return <TodayView currentDate={currentDate} />;
-      case 'overview':
-        return <OverviewView currentDate={currentDate} setCurrentDate={setCurrentDate} />;
-      case 'budget':
-        return <BudgetView />;
-      default:
-        return <TodayView currentDate={currentDate} />;
-    }
-  };
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-slate-100">
-      <Header />
-      
-      <main className="pb-32">
-        {renderContent()}
-      </main>
-      
-      {activeTab === 'today' && (
-        <DayNavigation currentDate={currentDate} setCurrentDate={setCurrentDate} />
-      )}
-      
-      <BottomTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-    </div>
-  );
-}absolute inset-0 opacity-10">
-        <svg viewBox="0 0 400 100" className="w-full h-full">
-          <path d="M0,80 Q100,20 200,50 Q300,20 400,80 L400,100 L0,100 Z" fill="currentColor" className="text-indigo-600"/>
-        </svg>
-      </div>
-      
-      {/* Cherry blossom decorative elements */}
-      <div className="absolute top-2 left-4 opacity-20">
-        <svg width="24" height="24" viewBox="0 0 24 24">
-          <path d="M12,2C12.5,2 13,2.5 13,3V4.5C13,5 12.5,5.5 12,5.5C11.5,5.5 11,5 11,4.5V3C11,2.5 11.5,2 12,2M12,18.5C12.5,18.5 13,19 13,19.5V21C13,21.5 12.5,22 12,22C11.5,22 11,21.5 11,21V19.5C11,19 11.5,18.5 12,18.5M20,13C20.5,13 21,12.5 21,12C21,11.5 20.5,11 20,11H18.5C18,11 17.5,11.5 17.5,12C17.5,12.5 18,13 18.5,13H20M5.5,13C6,13 6.5,12.5 6.5,12C6.5,11.5 6,11 5.5,11H4C3.5,11 3,11.5 3,12C3,12.5 3.5,13 4,13H5.5M18.5,5.5C18.8,5.8 18.8,6.2 18.5,6.5L17.4,7.6C17.1,7.9 16.7,7.9 16.4,7.6C16.1,7.3 16.1,6.9 16.4,6.6L17.5,5.5C17.8,5.2 18.2,5.2 18.5,5.5M7.6,16.4C7.9,16.7 7.9,17.1 7.6,17.4L6.5,18.5C6.2,18.8 5.8,18.8 5.5,18.5C5.2,18.2 5.2,17.8 5.5,17.5L6.6,16.4C6.9,16.1 7.3,16.1 7.6,16.4Z" fill="currentColor" className="text-red-400"/>
-        </svg>
-      </div>
-      
-      {/* Traditional wave pattern at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-400 opacity-30"></div>
-      
-      <div className="relative p-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">🇯🇵 Japan Adventure</h1>
-        <p className="text-sm text-gray-600">July 14-24, 2025</p>
-      </div>
-    </header>
-  );
-}
-
-// Activity Card Component
-function ActivityCard({ activity }) {
-  const [showRestaurants, setShowRestaurants] = useState(false);
-  const [showTransportDetails, setShowTransportDetails] = useState(false);
-  const colorClass = activityColors[activity.type] || activityColors.activity;
-  const Icon = activityIcons[activity.type] || Camera;
-  
-  // For transport cards, show collapsed by default
-  const isTransport = activity.type === 'transport';
-  
-  return (
-    <div className={`rounded-xl p-5 mb-4 shadow-sm transition-all duration-200 hover:shadow-md ${colorClass}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-white bg-opacity-70 rounded-lg">
-            <Icon size={20} />
-          </div>
-          <div>
-            <span className="font-medium text-sm uppercase tracking-wide opacity-75 block">
-              {activity.type.replace('_', ' ')}
-            </span>
-            <div className="flex items-center gap-2 mt-1">
-              <Clock size={14} className="opacity-60" />
-              <span className="text-sm opacity-75">{activity.time}</span>
-            </div>
-          </div>
-        </div>
-        {(activity.cost.yen > 0 || activity.cost.usd > 0) && (
-          <div className="text-right bg-white bg-opacity-70 rounded-lg px-3 py-1">
-            <div className="text-sm font-bold">¥{activity.cost.yen.toLocaleString()}</div>
-            <div className="text-xs opacity-75">${activity.cost.usd.toFixed(2)}</div>
-          </div>
-        )}
-      </div>
-      
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="font-bold text-lg">{activity.title}</h3>
-        {isTransport && (
-          <button
-            onClick={() => setShowTransportDetails(!showTransportDetails)}
-            className="flex items-center gap-1 text-sm font-medium bg-white bg-opacity-70 px-2 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
-          >
-            {showTransportDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-        )}
-      </div>
-      
-      {activity.location && (
-        <div className="flex items-center gap-2 mb-2">
-          <MapPin size={14} className="opacity-60" />
-          <span className="text-sm opacity-75">{activity.location}</span>
-        </div>
-      )}
-      
-      {/* For transport cards, show minimal info when collapsed */}
-      {isTransport && !showTransportDetails ? (
-        <p className="text-sm mb-3 leading-relaxed">{activity.description}</p>
-      ) : (
-        <>
-          <p className="text-sm mb-3 leading-relaxed">{activity.description}</p>
-          
-          {activity.significance && (
-            <div className="mb-3 p-3 bg-white bg-opacity-50 rounded-lg">
-              <h4 className="font-medium text-sm mb-1">Why This Matters:</h4>
-              <p className="text-sm">{activity.significance}</p>
-            </div>
-          )}
-          
-          {activity.whatToDo && (
-            <div className="mb-3">
-              <h4 className="font-medium text-sm mb-2">What to Do:</h4>
-              <ul className="text-sm space-y-1">
-                {activity.whatToDo.map((item, idx) => {
-                  // Strategic emoji mapping for key actions
-                  let emoji = "•";
-                  const itemLower = item.toLowerCase();
-                  
-                  if (itemLower.includes("walk") || itemLower.includes("stroll")) emoji = "🚶";
-                  else if (itemLower.includes("take photo") || itemLower.includes("photos")) emoji = "📸";
-                  else if (itemLower.includes("train") || itemLower.includes("subway") || itemLower.includes("metro")) emoji = "🚆";
-                  else if (itemLower.includes("taxi") || itemLower.includes("bus")) emoji = "🚌";
-                  else if (itemLower.includes("food") || itemLower.includes("eat") || itemLower.includes("try") || itemLower.includes("sample")) emoji = "🍜";
-                  else if (itemLower.includes("temple") || itemLower.includes("shrine") || itemLower.includes("pray")) emoji = "⛩️";
-                  else if (itemLower.includes("bow") || itemLower.includes("purify")) emoji = "🙏";
-                  else if (itemLower.includes("view") || itemLower.includes("see") || itemLower.includes("watch")) emoji = "👀";
-                  else if (itemLower.includes("shop") || itemLower.includes("buy") || itemLower.includes("browse")) emoji = "🛍️";
-                  else if (itemLower.includes("experience") || itemLower.includes("enjoy")) emoji = "✨";
-                  else if (itemLower.includes("exit") || itemLower.includes("entrance")) emoji = "🚪";
-                  else if (itemLower.includes("transfer") || itemLower.includes("change")) emoji = "🔄";
-                  
-                  return (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-sm mt-0.5">{emoji}</span>
-                      <span>{item}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-          
-          {activity.whatToExpect && (
-            <div className="mb-3 p-3 bg-white bg-opacity-50 rounded-lg">
-              <h4 className="font-medium text-sm mb-1">What to Expect:</h4>
-              <p className="text-sm">{activity.whatToExpect}</p>
-            </div>
-          )}
-        </>
-      )}
-      
-      {activity.culturalEtiquette && (
-        <div className="mb-3 p-3 bg-amber-50 bg-opacity-70 rounded-lg border border-amber-200">
-          <div className="flex items-start gap-2">
-            <span className="text-amber-600 mt-0.5">🙏</span>
-            <div>
-              <h4 className="font-medium text-sm mb-1 text-amber-800">Cultural Etiquette:</h4>
-              <p className="text-sm text-amber-700">{activity.culturalEtiquette}</p>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {activity.note && (
-        <div className="mb-3 p-3 bg-orange-50 bg-opacity-70 rounded-lg border border-orange-200">
-          <div className="flex items-start gap-2">
-            <span className="text-orange-600 mt-0.5">⚠️</span>
-            <div>
-              <h4 className="font-medium text-sm mb-1 text-orange-800">Important Note:</h4>
-              <p className="text-sm text-orange-700">{activity.note}</p>
-              {activity.alternative && (
-                <p className="text-sm text-orange-700 mt-1">
-                  <strong>Alternative:</strong> {activity.alternative}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {activity.restaurants && (
-        <div className="mt-4">
-          <button
-            onClick={() => setShowRestaurants(!showRestaurants)}
-            className="flex items-center gap-2 font-medium text-sm mb-2 bg-white bg-opacity-70 px-3 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
-          >
-            <Utensils size={16} />
-            Restaurant Options ({activity.restaurants.length})
-            {showRestaurants ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-          
-          {showRestaurants && (
-            <div className="space-y-3">
-              {activity.restaurants.map((restaurant, idx) => (
-                <div key={idx} className="p-3 bg-white bg-opacity-50 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h5 className="font-medium text-sm">{restaurant.name}</h5>
-                    <span className="text-xs font-medium px-2 py-1 bg-white bg-opacity-70 rounded">
-                      {restaurant.cost}
-                    </span>
-                  </div>
-                  <p className="text-sm mb-2">{restaurant.description}</p>
-                  {restaurant.whyRecommended && (
-                    <p className="text-xs text-green-700 bg-green-50 bg-opacity-70 p-2 rounded">
-                      <strong>Why recommended:</strong> {restaurant.whyRecommended}
-                    </p>
-                  )}
-                  {restaurant.whatToExpect && (
-                    <p className="text-xs text-blue-700 bg-blue-50 bg-opacity-70 p-2 rounded mt-1">
-                      <strong>What to expect:</strong> {restaurant.whatToExpect}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Day Navigation Component
-function DayNavigation({ currentDate, setCurrentDate }) {
-  const currentIndex = dates.indexOf(currentDate);
-  const dayNumber = currentIndex + 1;
-  
-  const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentDate(dates[currentIndex - 1]);
-    }
-  };
-  
-  const goToNext = () => {
-    if (currentIndex < dates.length - 1) {
-      setCurrentDate(dates[currentIndex + 1]);
-    }
-  };
-  
-  return (
-    <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-b shadow-sm">
-      <div className="flex items-center justify-between px-4 py-3">
-        <button
-          onClick={goToPrevious}
-          disabled={currentIndex === 0}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-            currentIndex === 0 
-              ? 'text-gray-400 cursor-not-allowed' 
-              : 'text-indigo-600 hover:bg-indigo-50'
-          }`}
-        >
-          <ChevronLeft size={20} />
-          Previous
-        </button>
-        
-        <div className="text-center">
-          <div className="text-lg font-bold text-gray-800">
-            {new Date(currentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-          </div>
-          <div className="text-sm text-gray-600">Day {dayNumber} of {dates.length}</div>
-        </div>
-        
-        <button
-          onClick={goToNext}
-          disabled={currentIndex === dates.length - 1}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-            currentIndex === dates.length - 1 
-              ? 'text-gray-400 cursor-not-allowed' 
-              : 'text-indigo-600 hover:bg-indigo-50'
-          }`}
-        >
-          Next
-          <ChevronRight size={20} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Today View Component
-function TodayView({ currentDate }) {
-  const dayData = itineraryData[currentDate];
-  
-  if (!dayData) {
-    return (
-      <div className="p-6 text-center">
-        <p className="text-gray-500">No data available for this date</p>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="p-4">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{dayData.title}</h2>
-        <p className="text-sm text-gray-600 mb-1">{dayData.date}</p>
-        <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
-          <AlertCircle size={16} />
-          <span>{dayData.weather}</span>
-        </div>
-      </div>
-      
-      <div className="space-y-4">
-        {dayData.activities.map(activity => (
-          <ActivityCard key={activity.id} activity={activity} />
-        ))}
-      </div>
-      
-      <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200">
-        <h3 className="font-bold text-lg mb-3 text-indigo-800">Daily Cost Summary</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-indigo-600">¥{dayData.dayTotal.yen.toLocaleString()}</div>
-            <div className="text-sm text-indigo-500">Japanese Yen</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-indigo-600">${dayData.dayTotal.usd.toFixed(2)}</div>
-            <div className="text-sm text-indigo-500">US Dollars</div>
-          </div>
-        </div>
-        
-        <div className="mt-4 pt-4 border-t border-indigo-200">
-          <h4 className="font-medium text-sm mb-2 text-indigo-700">Breakdown:</h4>
-          <div className="space-y-1 text-sm">
-            {Object.entries(dayData.costBreakdown).map(([category, cost]) => (
-              <div key={category} className="flex justify-between text-indigo-600">
-                <span className="capitalize">{category}:</span>
-                <span>¥{cost.yen.toLocaleString()} (${cost.usd.toFixed(2)})</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Overview View Component
-function OverviewView({ currentDate, setCurrentDate }) {
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Trip Overview</h2>
-      
-      <div className="space-y-4">
-        {dates.map((date, index) => {
-          const dayData = itineraryData[date];
-          const isActive = date === currentDate;
-          
-          return (
-            <div
-              key={date}
-              onClick={() => setCurrentDate(date)}
-              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
-                isActive 
-                  ? 'border-indigo-500 bg-indigo-50' 
-                  : 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-25'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      isActive ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-600'
-                    }`}>
-                      {index + 1}
+                <header className="japan-header shadow-sm border-b border-gray-200">
+                    <div className="mount-fuji">
+                        <svg viewBox="0 0 400 100" className="w-full h-full">
+                            <path d="M0,80 Q100,20 200,50 Q300,20 400,80 L400,100 L0,100 Z" fill="currentColor" className="text-indigo-600"/>
+                        </svg>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-gray-800">{dayData.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        {new Date(date).toLocaleDateString('en-US', { 
-                          weekday: 'long', 
-                          month: 'short', 
-                          day: 'numeric' 
+                    <div className="cherry-blossom">🌸</div>
+                    <div className="wave-pattern"></div>
+                    <div className="relative p-6 text-center">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">🇯🇵 Japan Adventure</h1>
+                        <p className="text-sm text-gray-600">July 14-24, 2025</p>
+                    </div>
+                </header>
+            );
+        }
+
+        // Activity Card Component
+        function ActivityCard({ activity }) {
+            const [showRestaurants, setShowRestaurants] = useState(false);
+            const [showDetails, setShowDetails] = useState(true);
+            const colorClass = activityColors[activity.type] || activityColors.activity;
+            const icon = activityIcons[activity.type] || '📍';
+
+            return (
+                <div className={`rounded-xl p-5 mb-4 shadow-sm transition-all duration-200 hover:shadow-md ${colorClass}`}>
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white bg-opacity-70 rounded-lg text-xl">
+                                {icon}
+                            </div>
+                            <div>
+                                <span className="font-medium text-sm uppercase tracking-wide opacity-75 block">
+                                    {activity.type.replace('_', ' ')}
+                                </span>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-sm opacity-75">🕐 {activity.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {(activity.cost.yen > 0 || activity.cost.usd > 0) && (
+                            <div className="text-right bg-white bg-opacity-70 rounded-lg px-3 py-1">
+                                <div className="text-sm font-bold">¥{activity.cost.yen.toLocaleString()}</div>
+                                <div className="text-xs opacity-75">${activity.cost.usd.toFixed(2)}</div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-lg">{activity.title}</h3>
+                        {activity.type === 'transport' && (
+                            <button
+                                onClick={() => setShowDetails(!showDetails)}
+                                className="text-sm font-medium bg-white bg-opacity-70 px-2 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
+                            >
+                                {showDetails ? '−' : '+'}
+                            </button>
+                        )}
+                    </div>
+
+                    {activity.location && (
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm opacity-60">📍</span>
+                            <span className="text-sm opacity-75">{activity.location}</span>
+                        </div>
+                    )}
+
+                    {(activity.type !== 'transport' || showDetails) && (
+                        <>
+                            <p className="text-sm mb-3 leading-relaxed">{activity.description}</p>
+
+                            {activity.significance && (
+                                <div className="mb-3 p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <h4 className="font-medium text-sm mb-1">Why This Matters:</h4>
+                                    <p className="text-sm">{activity.significance}</p>
+                                </div>
+                            )}
+
+                            {activity.whatToDo && (
+                                <div className="mb-3">
+                                    <h4 className="font-medium text-sm mb-2">What to Do:</h4>
+                                    <ul className="text-sm space-y-1">
+                                        {activity.whatToDo.map((item, idx) => (
+                                            <li key={idx} className="flex items-start gap-2">
+                                                <span className="text-sm mt-0.5">•</span>
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {activity.whatToExpect && (
+                                <div className="mb-3 p-3 bg-white bg-opacity-50 rounded-lg">
+                                    <h4 className="font-medium text-sm mb-1">What to Expect:</h4>
+                                    <p className="text-sm">{activity.whatToExpect}</p>
+                                </div>
+                            )}
+
+                            {activity.culturalEtiquette && (
+                                <div className="mb-3 p-3 bg-amber-50 bg-opacity-70 rounded-lg border border-amber-200">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-amber-600 mt-0.5">🙏</span>
+                                        <div>
+                                            <h4 className="font-medium text-sm mb-1 text-amber-800">Cultural Etiquette:</h4>
+                                            <p className="text-sm text-amber-700">{activity.culturalEtiquette}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activity.note && (
+                                <div className="mb-3 p-3 bg-orange-50 bg-opacity-70 rounded-lg border border-orange-200">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-orange-600 mt-0.5">⚠️</span>
+                                        <div>
+                                            <h4 className="font-medium text-sm mb-1 text-orange-800">Important Note:</h4>
+                                            <p className="text-sm text-orange-700">{activity.note}</p>
+                                            {activity.alternative && (
+                                                <p className="text-sm text-orange-700 mt-1">
+                                                    <strong>Alternative:</strong> {activity.alternative}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activity.restaurants && (
+                                <div className="mt-4">
+                                    <button
+                                        onClick={() => setShowRestaurants(!showRestaurants)}
+                                        className="flex items-center gap-2 font-medium text-sm mb-2 bg-white bg-opacity-70 px-3 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+                                    >
+                                        🍜 Restaurant Options ({activity.restaurants.length})
+                                        <span>{showRestaurants ? '−' : '+'}</span>
+                                    </button>
+
+                                    {showRestaurants && (
+                                        <div className="space-y-3">
+                                            {activity.restaurants.map((restaurant, idx) => (
+                                                <div key={idx} className="p-3 bg-white bg-opacity-50 rounded-lg">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <h5 className="font-medium text-sm">{restaurant.name}</h5>
+                                                        <span className="text-xs font-medium px-2 py-1 bg-white bg-opacity-70 rounded">
+                                                            {restaurant.cost}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm mb-2">{restaurant.description}</p>
+                                                    {restaurant.whyRecommended && (
+                                                        <p className="text-xs text-green-700 bg-green-50 bg-opacity-70 p-2 rounded">
+                                                            <strong>Why recommended:</strong> {restaurant.whyRecommended}
+                                                        </p>
+                                                    )}
+                                                    {restaurant.whatToExpect && (
+                                                        <p className="text-xs text-blue-700 bg-blue-50 bg-opacity-70 p-2 rounded mt-1">
+                                                            <strong>What to expect:</strong> {restaurant.whatToExpect}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+        // Day Navigation Component
+        function DayNavigation({ currentDate, setCurrentDate }) {
+            const currentIndex = dates.indexOf(currentDate);
+            const dayNumber = currentIndex + 1;
+
+            const goToPrevious = () => {
+                if (currentIndex > 0) {
+                    setCurrentDate(dates[currentIndex - 1]);
+                }
+            };
+
+            const goToNext = () => {
+                if (currentIndex < dates.length - 1) {
+                    setCurrentDate(dates[currentIndex + 1]);
+                }
+            };
+
+            return (
+                <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-b shadow-sm">
+                    <div className="flex items-center justify-between px-4 py-3">
+                        <button
+                            onClick={goToPrevious}
+                            disabled={currentIndex === 0}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                currentIndex === 0 
+                                    ? 'text-gray-400 cursor-not-allowed' 
+                                    : 'text-indigo-600 hover:bg-indigo-50'
+                            }`}
+                        >
+                            ← Previous
+                        </button>
+
+                        <div className="text-center">
+                            <div className="text-lg font-bold text-gray-800">
+                                {new Date(currentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </div>
+                            <div className="text-sm text-gray-600">Day {dayNumber} of {dates.length}</div>
+                        </div>
+
+                        <button
+                            onClick={goToNext}
+                            disabled={currentIndex === dates.length - 1}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                currentIndex === dates.length - 1 
+                                    ? 'text-gray-400 cursor-not-allowed' 
+                                    : 'text-indigo-600 hover:bg-indigo-50'
+                            }`}
+                        >
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Today View Component
+        function TodayView({ currentDate }) {
+            const dayData = itineraryData[currentDate];
+
+            if (!dayData) {
+            }
+
+            return (
+                <div className="p-4">
+                    <div className="mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">{dayData.title}</h2>
+                        <p className="text-sm text-gray-600 mb-1">{dayData.date}</p>
+                        <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
+                            <span>⚠️</span>
+                            <span>{dayData.weather}</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {dayData.activities.map(activity => (
+                            <ActivityCard key={activity.id} activity={activity} />
+                        ))}
+                    </div>
+
+                    <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200">
+                        <h3 className="font-bold text-lg mb-3 text-indigo-800">Daily Cost Summary</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                                <div className="text-2xl font-bold text-indigo-600">¥{dayData.dayTotal.yen.toLocaleString()}</div>
+                                <div className="text-sm text-indigo-500">Japanese Yen</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-2xl font-bold text-indigo-600">${dayData.dayTotal.usd.toFixed(2)}</div>
+                                <div className="text-sm text-indigo-500">US Dollars</div>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-indigo-200">
+                            <h4 className="font-medium text-sm mb-2 text-indigo-700">Breakdown:</h4>
+                            <div className="space-y-1 text-sm">
+                                {Object.entries(dayData.costBreakdown).map(([category, cost]) => (
+                                    <div key={category} className="flex justify-between text-indigo-600">
+                                        <span className="capitalize">{category}:</span>
+                                        <span>¥{cost.yen.toLocaleString()} (${cost.usd.toFixed(2)})</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Overview View Component
+        function OverviewView({ currentDate, setCurrentDate }) {
+            return (
+                <div className="p-4">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Trip Overview</h2>
+
+                    <div className="space-y-4">
+                        {dates.map((date, index) => {
+                            const dayData = itineraryData[date];
+                            const isActive = date === currentDate;
+
+                            return (
+                                <div
+                                    key={date}
+                                    onClick={() => setCurrentDate(date)}
+                                    className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                                        isActive 
+                                            ? 'border-indigo-500 bg-indigo-50' 
+                                            : 'border-gray-200 bg-white hover:border-indigo-300'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                                                    isActive ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-600'
+                                                }`}>
+                                                    {index + 1}
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-bold text-lg text-gray-800">{dayData.title}</h3>
+                                                    <p className="text-sm text-gray-600">
+                                                        {new Date(date).toLocaleDateString('en-US', { 
+                                                            weekday: 'long', 
+                                                            month: 'short', 
+                                                            day: 'numeric' 
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                                                <span>{dayData.activities.length} activities</span>
+                                                <span>•</span>
+                                                <span>¥{dayData.dayTotal.yen.toLocaleString()}</span>
+                                                <span>•</span>
+                                                <span>${dayData.dayTotal.usd.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+
+                                        <span className="text-gray-400">→</span>
+                                    </div>
+                                </div>
+                            );
                         })}
-                      </p>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>{dayData.activities.length} activities</span>
-                    <span>•</span>
-                    <span>¥{dayData.dayTotal.yen.toLocaleString()}</span>
-                    <span>•</span>
-                    <span>${dayData.dayTotal.usd.toFixed(2)}</span>
-                  </div>
+
+                    <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                        <h3 className="font-bold text-lg mb-3 text-green-800">Trip Totals</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                                <div className="text-2xl font-bold text-green-600">¥{totalBudget.yen.toLocaleString()}</div>
+                                <div className="text-sm text-green-500">Total Yen</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-2xl font-bold text-green-600">${totalBudget.usd.toFixed(2)}</div>
+                                <div className="text-sm text-green-500">Total USD</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <ChevronRight size={20} className="text-gray-400" />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className="
+            );
+        }
+
+        // Budget View Component
+        function BudgetView() {
+            const categoryTotals = {};
+
+            Object.values(itineraryData).forEach(day => {
+                Object.entries(day.costBreakdown).forEach(([category, cost]) => {
+                    if (!categoryTotals[category]) {
+                        categoryTotals[category] = { yen: 0, usd: 0 };
+                    }
+                    categoryTotals[category].yen += cost.yen;
+                    categoryTotals[category].usd += cost.usd;
+                });
+            });
+
+            const categoryColors = {
+                food: 'bg-red-100 text-red-800 border-red-200',
+                transport: 'bg-green-100 text-green-800 border-green-200',
+                attractions: 'bg-blue-100 text-blue-800 border-blue-200',
+                nightlife: 'bg-purple-100 text-purple-800 border-purple-200',
+                festival: 'bg-amber-100 text-amber-800 border-amber-200',
+                snacks: 'bg-orange-100 text-orange-800 border-orange-200'
+            };
+
+            const categoryIcons = {
+                food: '🍜',
+                transport: '🚆',
+                attractions: '📸',
+                nightlife: '🍸',
+                festival: '🎌',
+                snacks: '🍡'
+            };
+
+            return (
+                <div className="p-4">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Budget Breakdown</h2>
+
+                    <div className="mb-6 p-6 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-200">
+                        <h3 className="font-bold text-lg mb-3 text-indigo-800">Total Budget</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center">
+                                <div className="text-3xl font-bold text-indigo-600">¥{totalBudget.yen.toLocaleString()}</div>
+                                <div className="text-sm text-indigo-500">Japanese Yen</div>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-3xl font-bold text-indigo-600">${totalBudget.usd.toFixed(2)}</div>
+                                <div className="text-sm text-indigo-500">US Dollars</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-6">
+                        <h3 className="font-bold text-lg mb-4 text-gray-800">By Category</h3>
+                        <div className="space-y-3">
+                            {Object.entries(categoryTotals).map(([category, cost]) => {
+                                const icon = categoryIcons[category] || '💰';
+                                const colorClass = categoryColors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
+                                const percentage = ((cost.usd / totalBudget.usd) * 100).toFixed(1);
+
+                                return (
+                                    <div key={category} className={`p-4 rounded-lg border ${colorClass}`}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-xl">{icon}</span>
+                                                <span className="font-medium capitalize">{category}</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{percentage}%</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span>¥{cost.yen.toLocaleString()}</span>
+                                            <span>${cost.usd.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 className="font-bold text-lg mb-4 text-gray-800">Daily Breakdown</h3>
+                        <div className="space-y-2">
+                            {dates.map((date, index) => {
+                                const dayData = itineraryData[date];
+                                return (
+                                    <div key={date} className="p-3 bg-white rounded-lg border border-gray-200">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="font-medium text-gray-800">Day {index + 1}</span>
+                                                <span className="text-sm text-gray-600 ml-2">
+                                                    {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                </span>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-medium text-gray-800">¥{dayData.dayTotal.yen.toLocaleString()}</div>
+                                                <div className="text-sm text-gray-600">${dayData.dayTotal.usd.toFixed(2)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Bottom Navigation Component
+        function BottomTabs({ activeTab, setActiveTab }) {
+            const tabs = [
+                { id: 'today', label: 'Today', icon: '📅' },
+                { id: 'overview', label: 'Overview', icon: '📍' },
+                { id: 'budget', label: 'Budget', icon: '💰' }
+            ];
+
+            return (
+                <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+                    <div className="flex">
+                        {tabs.map(tab => {
+                            const isActive = activeTab === tab.id;
+
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex-1 py-3 px-4 flex flex-col items-center gap-1 transition-colors ${
+                                        isActive 
+                                            ? 'text-indigo-600 bg-indigo-50' 
+                                            : 'text-gray-600 hover:text-indigo-500'
+                                    }`}
+                                >
+                                    <span className="text-xl">{tab.icon}</span>
+                                    <span className="text-xs font-medium">{tab.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </nav>
+            );
+        }
+
+        // Main App Component
+        function JapanTravelApp() {
+            const [activeTab, setActiveTab] = useState('today');
+            const [currentDate, setCurrentDate] = useState('2025-07-14');
+
+            const renderContent = () => {
+                switch (activeTab) {
+                    case 'today':
+                        return <TodayView currentDate={currentDate} />;
+                    case 'overview':
+                        return <OverviewView currentDate={currentDate} setCurrentDate={setCurrentDate} />;
+                    case 'budget':
+                        return <BudgetView />;
+                    default:
+                        return <TodayView currentDate={currentDate} />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen gradient-bg">
+                    <Header />
+
+                    <main className="pb-32">
+                        {renderContent()}
+                    </main>
+
+                    {activeTab === 'today' && (
+                        <DayNavigation currentDate={currentDate} setCurrentDate={setCurrentDate} />
+                    )}
+
+                    <BottomTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.render(<JapanTravelApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
