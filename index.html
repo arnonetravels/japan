@@ -881,7 +881,7 @@
 
   <script>
     // App version
-    const APP_VERSION = 'v1.2.0.20250110';
+    const APP_VERSION = 'v1.3.0.20250110';
     
     // Weather API Configuration
     // SETUP: Replace 'YOUR_API_KEY_HERE' with your OpenWeatherMap API key
@@ -892,6 +892,17 @@
       cache: {
         duration: 15 * 60 * 1000, // 15 minutes
         key: 'japan_weather_cache'
+      }
+    };
+    
+    // Transit API Configuration
+    // SETUP: Add your Google Maps API key here
+    const TRANSIT_CONFIG = {
+      apiKey: 'AIzaSyAhuKHxeg8f-OVpS1o50pwBGHCDcBa0pxk',
+      baseUrl: 'https://maps.googleapis.com/maps/api/directions/json',
+      cache: {
+        duration: 5 * 60 * 1000, // 5 minutes for transit data
+        key: 'japan_transit_cache'
       }
     };
     
@@ -1529,6 +1540,191 @@
       };
     }
     
+    // Transit API Functions
+    class TransitCache {
+      static isValid(timestamp) {
+        return Date.now() - timestamp < TRANSIT_CONFIG.cache.duration;
+      }
+      
+      static save(routeKey, data) {
+        try {
+          localStorage.setItem(`transit_${routeKey}`, JSON.stringify({
+            data,
+            timestamp: Date.now()
+          }));
+        } catch (error) {
+          console.warn('Transit cache save failed:', error);
+        }
+      }
+      
+      static load(routeKey) {
+        try {
+          const cached = localStorage.getItem(`transit_${routeKey}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (this.isValid(parsed.timestamp)) {
+              return parsed.data;
+            }
+          }
+        } catch (error) {
+          console.warn('Transit cache load failed:', error);
+        }
+        return null;
+      }
+    }
+    
+    async function getTransitDirections(origin, destination) {
+      if (!TRANSIT_CONFIG.apiKey || TRANSIT_CONFIG.apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
+        throw new Error('Google Maps API key not configured');
+      }
+      
+      // Create route key for caching
+      const routeKey = `${origin}_to_${destination}`.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      // Check cache first
+      const cached = TransitCache.load(routeKey);
+      if (cached) {
+        addDebugLog(`🚆 Using cached transit data for ${origin} → ${destination}`, 'info');
+        return cached;
+      }
+      
+      // Build API URL
+      const params = new URLSearchParams({
+        origin: origin,
+        destination: destination,
+        mode: 'transit',
+        departure_time: 'now',
+        key: TRANSIT_CONFIG.apiKey,
+        language: 'en',
+        region: 'jp'
+      });
+      
+      const url = `${TRANSIT_CONFIG.baseUrl}?${params}`;
+      
+      // Use CORS proxy for browser-based requests
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error(`Transit API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Cache the result
+      TransitCache.save(routeKey, data);
+      
+      return data;
+    }
+    
+    async function getTransitWithFallback(origin, destination) {
+      try {
+        addDebugLog(`🚆 Fetching live transit: ${origin} → ${destination}`, 'info');
+        const transitData = await getTransitDirections(origin, destination);
+        addDebugLog(`✅ Live transit data loaded`, 'success');
+        return parseTransitData(transitData);
+      } catch (error) {
+        addDebugLog(`❌ Transit API error: ${error.message}`, 'error');
+        console.error('Transit API error:', error);
+        // Fall back to static transit data
+        return getStaticTransitData(origin, destination);
+      }
+    }
+    
+    function parseTransitData(transitData) {
+      if (!transitData.routes || transitData.routes.length === 0) {
+        throw new Error('No transit routes found');
+      }
+      
+      const route = transitData.routes[0];
+      const leg = route.legs[0];
+      
+      return {
+        duration: leg.duration.text,
+        distance: leg.distance.text,
+        departure_time: leg.departure_time?.text || 'Now',
+        arrival_time: leg.arrival_time?.text || 'Unknown',
+        steps: leg.steps.filter(step => step.travel_mode === 'TRANSIT').map(step => ({
+          line: step.transit_details?.line?.short_name || step.transit_details?.line?.name || 'Train',
+          departure_stop: step.transit_details?.departure_stop?.name || 'Unknown',
+          arrival_stop: step.transit_details?.arrival_stop?.name || 'Unknown',
+          departure_time: step.transit_details?.departure_time?.text || 'Unknown',
+          num_stops: step.transit_details?.num_stops || 0
+        })),
+        fare: route.fare?.text || null,
+        isLive: true
+      };
+    }
+    
+    function getStaticTransitData(origin, destination) {
+      // Fallback static data for common Japan routes
+      const staticRoutes = {
+        'Haneda_Airport_to_Shibuya_Station': {
+          duration: '45 minutes',
+          distance: '25 km',
+          departure_time: 'Every 10 minutes',
+          arrival_time: '~45 min',
+          steps: [{
+            line: 'Airport Express',
+            departure_stop: 'Haneda Airport Terminal 2',
+            arrival_stop: 'Shibuya Station',
+            departure_time: 'Every 10 min',
+            num_stops: 8
+          }],
+          fare: '¥800',
+          isLive: false
+        }
+      };
+      
+      const routeKey = `${origin}_to_${destination}`.replace(/[^a-zA-Z0-9]/g, '_');
+      return staticRoutes[routeKey] || {
+        duration: '30-60 minutes',
+        distance: 'Unknown',
+        departure_time: 'Regular service',
+        arrival_time: 'Check local schedules',
+        steps: [{
+          line: 'Local Train',
+          departure_stop: origin,
+          arrival_stop: destination,
+          departure_time: 'Regular service',
+          num_stops: 'Multiple'
+        }],
+        fare: 'Varies',
+        isLive: false
+      };
+    }
+    
+    function createTransitDisplay(transitData, isDetailed = false) {
+      const liveIndicator = transitData.isLive ? '🔴 Live' : '📅 Scheduled';
+      const fareDisplay = transitData.fare || 'Check fare';
+      
+      if (!isDetailed) {
+        return `${liveIndicator} • ${transitData.duration} • ${fareDisplay}`;
+      }
+      
+      const stepsHtml = transitData.steps.map(step => `
+        <div style="margin: 4px 0; font-size: var(--small-text);">
+          <strong>${step.line}</strong>: ${step.departure_stop} → ${step.arrival_stop}
+          <div style="opacity: 0.7;">Departure: ${step.departure_time} • ${step.num_stops} stops</div>
+        </div>
+      `).join('');
+      
+      return `
+        <div style="margin-top: 8px;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: var(--small-text); color: #059669; font-weight: 600;">${liveIndicator}</span>
+            <span style="font-size: var(--small-text); font-weight: 600;">${fareDisplay}</span>
+          </div>
+          <div style="font-size: var(--small-text); margin-bottom: 8px;">
+            <strong>Duration:</strong> ${transitData.duration} • <strong>Distance:</strong> ${transitData.distance}
+          </div>
+          <div style="background: rgba(255,255,255,0.5); padding: 8px; border-radius: 6px;">
+            ${stepsHtml}
+          </div>
+        </div>
+      `;
+    }
+    
     // Function to create map links (Apple Maps for iOS)
     function createMapLink(locationName, displayName = null) {
       const location = locationDatabase[locationName];
@@ -1635,6 +1831,10 @@
             time: '4:30 AM - 7:30 AM',
             title: 'Airport to Hotel',
             location: 'Haneda Airport → Shibuya',
+            route: {
+              origin: 'Haneda Airport, Tokyo, Japan',
+              destination: 'Shibuya Station, Tokyo, Japan'
+            },
             description: 'Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya',
             whatToDo: [
               'Navigate immigration and customs at Haneda Airport',
@@ -3057,7 +3257,7 @@
       await updateLiveWeather(dayData.city);
       
       // Update activities
-      updateActivities(dayData.activities);
+      await updateActivities(dayData.activities);
       
       // Update header date in navigation
       const headerDate = document.getElementById('current-date');
@@ -3131,7 +3331,7 @@
       }
     }
 
-    function updateActivities(activities) {
+    async function updateActivities(activities) {
       // Find the activities container 
       const content = document.getElementById('day-content');
       
@@ -3143,15 +3343,15 @@
       let insertionPoint = content.querySelector('.weather-warning');
       
       // Create new activity cards in chronological order
-      activities.forEach(activity => {
-        const activityCard = createActivityCard(activity);
+      for (const activity of activities) {
+        const activityCard = await createActivityCard(activity);
         insertionPoint.insertAdjacentHTML('afterend', activityCard);
         // Update insertion point to the newly inserted card for next iteration
         insertionPoint = insertionPoint.nextElementSibling;
-      });
+      }
     }
 
-    function createActivityCard(activity) {
+    async function createActivityCard(activity) {
       const style = activityTypeStyles[activity.type] || activityTypeStyles.cultural;
       const costDisplay = activity.cost.yen > 0 ? 
         `<div class="activity-cost">
@@ -3261,6 +3461,32 @@
           </div>
         </div>` : '';
 
+      // Transit integration for transport activities
+      let transitSection = '';
+      if (activity.type === 'transport' && activity.route) {
+        try {
+          const transitData = await getTransitWithFallback(activity.route.origin, activity.route.destination);
+          transitSection = `
+            <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 12px; margin-top: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span style="font-size: var(--medium-text);">🚆</span>
+                <h4 style="font-weight: 600; font-size: var(--base-text); margin: 0;">Live Transit Info</h4>
+              </div>
+              ${createTransitDisplay(transitData, true)}
+            </div>
+          `;
+        } catch (error) {
+          transitSection = `
+            <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 12px; margin-top: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: var(--medium-text);">🚆</span>
+                <span style="font-size: var(--base-text);">📅 Scheduled • Check local timetables</span>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       return `
         <div class="activity-card" style="background: ${style.bg}; border-color: ${style.border};">
           <div class="activity-header">
@@ -3286,6 +3512,7 @@
           ${culturalEtiquetteSection}
           ${festivalSection}
           ${restaurantsSection}
+          ${transitSection}
         </div>
       `;
     }
