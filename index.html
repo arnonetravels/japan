@@ -343,28 +343,32 @@
     /* CSS Variables for text scaling */
     :root {
       --text-scale: 1;
+    }
+    
+    :root[data-text-size="small"] {
+      --text-scale: 0.85;
+    }
+    
+    :root[data-text-size="medium"] {
+      --text-scale: 1;
+    }
+    
+    :root[data-text-size="large"] {
+      --text-scale: 1.15;
+    }
+    
+    :root[data-text-size="xlarge"] {
+      --text-scale: 1.3;
+    }
+    
+    /* Text size calculations */
+    :root {
       --small-text: calc(12px * var(--text-scale));
       --base-text: calc(14px * var(--text-scale));
       --medium-text: calc(16px * var(--text-scale));
       --large-text: calc(18px * var(--text-scale));
       --xl-text: calc(20px * var(--text-scale));
       --title-text: calc(24px * var(--text-scale));
-    }
-    
-    .text-size-small {
-      --text-scale: 0.85;
-    }
-    
-    .text-size-medium {
-      --text-scale: 1;
-    }
-    
-    .text-size-large {
-      --text-scale: 1.15;
-    }
-    
-    .text-size-xlarge {
-      --text-scale: 1.3;
     }
 
     /* Text Size Controls - Collapsible */
@@ -495,7 +499,7 @@
   </div>
 
   <!-- Main App (initially hidden) -->
-  <div id="app" class="app-container hidden text-size-medium">
+  <div id="app" class="app-container hidden">
     <!-- Text Size Controls -->
     <div class="text-toggle">
       <button class="text-toggle-btn" onclick="toggleTextControls()" id="text-toggle" title="Text size">A</button>
@@ -607,6 +611,11 @@
                 // Hide loading screen and show app
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
+                
+                // Initialize text size (ensure default is set)
+                if (!document.documentElement.getAttribute('data-text-size')) {
+                  document.documentElement.setAttribute('data-text-size', 'medium');
+                }
                 
                 // Initialize the first day's content
                 updateDayDisplay();
@@ -2263,16 +2272,8 @@
     
     // Text size adjustment functionality
     function setTextSize(size) {
-      const app = document.getElementById('app');
-      const sizes = ['small', 'medium', 'large', 'xlarge'];
-      
-      // Remove all existing text size classes
-      sizes.forEach(s => {
-        app.classList.remove(`text-size-${s}`);
-      });
-      
-      // Add the new text size class
-      app.classList.add(`text-size-${size}`);
+      // Set data attribute on document root for CSS variables
+      document.documentElement.setAttribute('data-text-size', size);
       
       // Update button states
       document.querySelectorAll('.text-size-option').forEach(btn => {
@@ -2286,7 +2287,12 @@
       // Close the controls menu
       document.getElementById('text-controls').classList.remove('show');
       
-      addDebugLog(`📝 Text size changed to ${size}`, 'info');
+      // Debug: Check if CSS variables are updating
+      setTimeout(() => {
+        const scale = getComputedStyle(document.documentElement).getPropertyValue('--text-scale').trim();
+        const baseText = getComputedStyle(document.documentElement).getPropertyValue('--base-text').trim();
+        addDebugLog(`📝 Text size: ${size}, scale: ${scale}, base-text: ${baseText}`, 'info');
+      }, 100);
     }
     
     // Load saved text size preference
@@ -2294,6 +2300,9 @@
       const savedSize = localStorage.getItem('japan-app-text-size');
       if (savedSize && ['small', 'medium', 'large', 'xlarge'].includes(savedSize)) {
         setTextSize(savedSize);
+      } else {
+        // Set default if no preference saved
+        setTextSize('medium');
       }
     }
     
