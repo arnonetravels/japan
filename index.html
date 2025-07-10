@@ -3392,17 +3392,21 @@
           </div>
           
           <!-- App Info -->
-          <div onclick="showVersionHistory()" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);" 
-               ontouchstart="this.style.background='linear-gradient(135deg, #eff6ff, #dbeafe)'; this.style.borderColor='#93c5fd'; this.style.transform='scale(0.98)'" 
-               ontouchend="this.style.background='linear-gradient(135deg, #f8fafc, #e2e8f0)'; this.style.borderColor='#cbd5e1'; this.style.transform='scale(1)'"
-               onmouseover="this.style.background='linear-gradient(135deg, #eff6ff, #dbeafe)'; this.style.borderColor='#93c5fd'" 
-               onmouseout="this.style.background='linear-gradient(135deg, #f8fafc, #e2e8f0)'; this.style.borderColor='#cbd5e1'">
+          <div id="version-tile" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);">
             <div style="font-size: var(--base-text); color: #64748b; margin-bottom: 4px;">Japan Travel App</div>
             <div style="font-size: var(--small-text); color: #3b82f6; font-family: monospace; font-weight: 600;">${APP_VERSION}</div>
             <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">📋 Tap to view version history</div>
           </div>
         </div>
       `;
+      
+      // Add click handler to version tile after content is loaded
+      const versionTile = document.getElementById('version-tile');
+      if (versionTile) {
+        versionTile.addEventListener('click', function() {
+          showVersionHistory();
+        });
+      }
     }
     
     // Load Budget content  
