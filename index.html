@@ -590,6 +590,8 @@
     // Day navigation functions
     function updateDayDisplay() {
       const currentDay = tripDays[currentDayIndex];
+      
+      // Update navigation bar
       document.getElementById('current-date').textContent = currentDay.date;
       document.getElementById('current-day').textContent = `Day ${currentDayIndex + 1} of ${tripDays.length}`;
       
@@ -597,8 +599,27 @@
       document.getElementById('prev-day').disabled = currentDayIndex === 0;
       document.getElementById('next-day').disabled = currentDayIndex === tripDays.length - 1;
       
-      // Update main content (for now just log it)
+      // Update main content
+      updateMainContent(currentDay);
+      
       addDebugLog(`📅 Switched to ${currentDay.title} in ${currentDay.city}`, 'info');
+    }
+
+    // Update the main content area
+    function updateMainContent(dayData) {
+      // Update page title and city
+      const titleElement = document.querySelector('.day-title');
+      const cityElement = document.querySelector('.city-badge');
+      const dateElement = document.querySelector('.date-text');
+      
+      titleElement.textContent = dayData.title;
+      cityElement.textContent = dayData.city;
+      dateElement.textContent = dayData.date + ', 2025';
+      
+      // Update header date in navigation
+      const headerDate = document.getElementById('current-date');
+      const dateParts = dayData.date.split(', ');
+      headerDate.textContent = dateParts[0] + ', ' + dateParts[1];
     }
 
     function previousDay() {
