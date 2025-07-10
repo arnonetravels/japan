@@ -139,7 +139,7 @@
     }
     
     .day-title {
-      font-size: 24px;
+      font-size: var(--title-text);
       font-weight: bold;
       color: #1f2937;
       margin-bottom: 8px;
@@ -151,14 +151,14 @@
       color: #3730a3;
       padding: 4px 8px;
       border-radius: 12px;
-      font-size: 12px;
+      font-size: var(--small-text);
       font-weight: 500;
       margin-left: 8px;
     }
     
     .date-text {
       color: #6b7280;
-      font-size: 14px;
+      font-size: var(--base-text);
       margin-bottom: 16px;
     }
     
@@ -167,7 +167,7 @@
       color: #92400e;
       padding: 12px;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: var(--base-text);
       margin-bottom: 16px;
       display: flex;
       align-items: center;
@@ -191,7 +191,7 @@
     }
     
     .activity-type {
-      font-size: 10px;
+      font-size: var(--small-text);
       text-transform: uppercase;
       font-weight: 500;
       opacity: 0.7;
@@ -199,7 +199,7 @@
     }
     
     .activity-time {
-      font-size: 12px;
+      font-size: var(--small-text);
       opacity: 0.7;
       margin-top: 4px;
     }
@@ -213,28 +213,28 @@
     
     .cost-yen {
       font-weight: bold;
-      font-size: 14px;
+      font-size: var(--base-text);
     }
     
     .cost-usd {
-      font-size: 12px;
+      font-size: var(--small-text);
       opacity: 0.7;
     }
     
     .activity-title {
-      font-size: 18px;
+      font-size: var(--large-text);
       font-weight: bold;
       margin-bottom: 8px;
     }
     
     .activity-location {
       color: #6b7280;
-      font-size: 14px;
+      font-size: var(--base-text);
       margin-bottom: 8px;
     }
     
     .activity-description {
-      font-size: 14px;
+      font-size: var(--base-text);
       line-height: 1.5;
       margin-bottom: 12px;
     }
@@ -247,7 +247,7 @@
     
     .significance-title {
       font-weight: 500;
-      font-size: 14px;
+      font-size: var(--base-text);
       margin-bottom: 4px;
     }
     
@@ -298,13 +298,13 @@
     
     .day-nav-date {
       font-weight: 600;
-      font-size: 14px;
+      font-size: var(--base-text);
       color: #1f2937;
       margin-bottom: 2px;
     }
     
     .day-nav-day {
-      font-size: 12px;
+      font-size: var(--small-text);
       color: #6b7280;
     }
 
@@ -326,7 +326,7 @@
       background: none;
       cursor: pointer;
       color: #6b7280;
-      font-size: 12px;
+      font-size: var(--small-text);
       font-weight: 500;
     }
     
@@ -340,93 +340,117 @@
       display: block;
     }
     
-    /* Text Size Controls */
-    .text-controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      padding: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
+    /* CSS Variables for text scaling */
+    :root {
+      --text-scale: 1;
+      --small-text: calc(12px * var(--text-scale));
+      --base-text: calc(14px * var(--text-scale));
+      --medium-text: calc(16px * var(--text-scale));
+      --large-text: calc(18px * var(--text-scale));
+      --xl-text: calc(20px * var(--text-scale));
+      --title-text: calc(24px * var(--text-scale));
     }
     
-    .text-size-btn {
-      background: none;
+    .text-size-small {
+      --text-scale: 0.85;
+    }
+    
+    .text-size-medium {
+      --text-scale: 1;
+    }
+    
+    .text-size-large {
+      --text-scale: 1.15;
+    }
+    
+    .text-size-xlarge {
+      --text-scale: 1.3;
+    }
+
+    /* Text Size Controls - Collapsible */
+    .text-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    
+    .text-toggle-btn {
+      background: rgba(255, 255, 255, 0.95);
       border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       color: #4f46e5;
       font-weight: bold;
-      transition: all 0.2s;
+      font-size: 16px;
       font-family: serif;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
     }
     
-    .text-size-btn:nth-child(1) { font-size: 12px; }
-    .text-size-btn:nth-child(2) { font-size: 14px; }
-    .text-size-btn:nth-child(3) { font-size: 16px; }
-    .text-size-btn:nth-child(4) { font-size: 18px; }
-    
-    .text-size-btn:hover {
-      background: #f0f0f0;
+    .text-toggle-btn:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.05);
     }
     
-    .text-size-btn.active {
+    .text-controls {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 120px;
+    }
+    
+    .text-controls.show {
+      display: flex;
+    }
+    
+    .text-size-option {
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #374151;
+      font-size: 14px;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .text-size-option:hover {
+      background: #f3f4f6;
+    }
+    
+    .text-size-option.active {
       background: #4f46e5;
       color: white;
     }
     
-    /* Text Size Classes */
-    .text-size-small {
-      font-size: 0.85em;
+    .size-preview {
+      font-family: serif;
+      font-weight: bold;
     }
     
-    .text-size-medium {
-      font-size: 1em;
-    }
-    
-    .text-size-large {
-      font-size: 1.15em;
-    }
-    
-    .text-size-xlarge {
-      font-size: 1.3em;
-    }
-    
-    /* Apply text size to main content areas */
-    .text-size-small .content,
-    .text-size-small .activity-card,
-    .text-size-small .day-nav {
-      font-size: 0.85em;
-    }
-    
-    .text-size-medium .content,
-    .text-size-medium .activity-card,
-    .text-size-medium .day-nav {
-      font-size: 1em;
-    }
-    
-    .text-size-large .content,
-    .text-size-large .activity-card,
-    .text-size-large .day-nav {
-      font-size: 1.15em;
-    }
-    
-    .text-size-xlarge .content,
-    .text-size-xlarge .activity-card,
-    .text-size-xlarge .day-nav {
-      font-size: 1.3em;
-    }
+    .size-preview.small { font-size: 11px; }
+    .size-preview.medium { font-size: 13px; }
+    .size-preview.large { font-size: 15px; }
+    .size-preview.xlarge { font-size: 17px; }
 
     /* Animations */
     @keyframes bounce {
@@ -473,11 +497,26 @@
   <!-- Main App (initially hidden) -->
   <div id="app" class="app-container hidden text-size-medium">
     <!-- Text Size Controls -->
-    <div class="text-controls">
-      <button class="text-size-btn" onclick="setTextSize('small')" id="text-small" title="Small text">A</button>
-      <button class="text-size-btn active" onclick="setTextSize('medium')" id="text-medium" title="Medium text">A</button>
-      <button class="text-size-btn" onclick="setTextSize('large')" id="text-large" title="Large text">A</button>
-      <button class="text-size-btn" onclick="setTextSize('xlarge')" id="text-xlarge" title="Extra large text">A</button>
+    <div class="text-toggle">
+      <button class="text-toggle-btn" onclick="toggleTextControls()" id="text-toggle" title="Text size">A</button>
+      <div class="text-controls" id="text-controls">
+        <button class="text-size-option" onclick="setTextSize('small')" id="text-small">
+          <span class="size-preview small">A</span>
+          <span>Small</span>
+        </button>
+        <button class="text-size-option active" onclick="setTextSize('medium')" id="text-medium">
+          <span class="size-preview medium">A</span>
+          <span>Medium</span>
+        </button>
+        <button class="text-size-option" onclick="setTextSize('large')" id="text-large">
+          <span class="size-preview large">A</span>
+          <span>Large</span>
+        </button>
+        <button class="text-size-option" onclick="setTextSize('xlarge')" id="text-xlarge">
+          <span class="size-preview xlarge">A</span>
+          <span>Extra Large</span>
+        </button>
+      </div>
     </div>
     
     <!-- Header -->
@@ -1964,7 +2003,7 @@
         
         <div class="weather-warning">
           <span>⚠️</span>
-          <span>${dayData.weather}</span>
+          <span style="font-size: var(--base-text);">${dayData.weather}</span>
         </div>
         
         <!-- Weather advisory placeholder -->
@@ -1973,15 +2012,15 @@
         
         <!-- Daily Cost Summary -->
         <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-top: 24px;">
-          <div style="font-weight: bold; font-size: 18px; color: #1e40af; margin-bottom: 12px;">Daily Cost Summary</div>
+          <div style="font-weight: bold; font-size: var(--large-text); color: #1e40af; margin-bottom: 12px;">Daily Cost Summary</div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">¥${dayData.totalCost.yen.toLocaleString()}</div>
-              <div style="font-size: 14px; color: #3b82f6;">Japanese Yen</div>
+              <div style="font-size: var(--title-text); font-weight: bold; color: #2563eb;">¥${dayData.totalCost.yen.toLocaleString()}</div>
+              <div style="font-size: var(--base-text); color: #3b82f6;">Japanese Yen</div>
             </div>
             <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">$${dayData.totalCost.usd.toFixed(2)}</div>
-              <div style="font-size: 14px; color: #3b82f6;">US Dollars</div>
+              <div style="font-size: var(--title-text); font-weight: bold; color: #2563eb;">$${dayData.totalCost.usd.toFixed(2)}</div>
+              <div style="font-size: var(--base-text); color: #3b82f6;">US Dollars</div>
             </div>
           </div>
         </div>
@@ -2008,9 +2047,9 @@
           // Create weather advisory element if it doesn't exist
           const weatherWarning = content.querySelector('.weather-warning');
           const advisoryHTML = `
-            <div class="weather-advisory" style="display: flex; align-items: start; gap: 8px; font-size: 14px; color: #ea580c; background: #fed7aa; padding: 12px; border-radius: 8px; border: 1px solid #fb923c; margin-bottom: 16px;">
+            <div class="weather-advisory" style="display: flex; align-items: start; gap: 8px; font-size: var(--base-text); color: #ea580c; background: #fed7aa; padding: 12px; border-radius: 8px; border: 1px solid #fb923c; margin-bottom: 16px;">
               <span style="color: #ea580c; margin-top: 2px; flex-shrink: 0;">⚠️</span>
-              <span>${weatherAdvisory}</span>
+              <span style="font-size: var(--base-text);">${weatherAdvisory}</span>
             </div>
           `;
           weatherWarning.insertAdjacentHTML('afterend', advisoryHTML);
@@ -2059,13 +2098,13 @@
       const significanceSection = activity.significance ? 
         `<div class="significance-box">
           <div class="significance-title">Why This Matters:</div>
-          <div style="font-size: 14px;">${activity.significance}</div>
+          <div style="font-size: var(--base-text);">${activity.significance}</div>
         </div>` : '';
 
       const whatToDoSection = activity.whatToDo ? 
         `<div style="margin: 12px 0;">
-          <h4 style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">What to Do:</h4>
-          <ul style="margin: 0; padding-left: 16px; font-size: 14px;">
+          <h4 style="font-weight: 500; font-size: var(--base-text); margin-bottom: 8px;">What to Do:</h4>
+          <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text);">
             ${activity.whatToDo.map(item => {
               // Strategic emoji mapping for key actions
               let emoji = "•";
@@ -2085,8 +2124,8 @@
               else if (itemLower.includes("transfer") || itemLower.includes("change")) emoji = "🔄";
               
               return `<li style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
-                <span style="font-size: 14px; margin-top: 2px;">${emoji}</span>
-                <span>${item}</span>
+                <span style="font-size: var(--base-text); margin-top: 2px;">${emoji}</span>
+                <span style="font-size: var(--base-text);">${item}</span>
               </li>`;
             }).join('')}
           </ul>
@@ -2095,7 +2134,7 @@
       const whatToExpectSection = activity.whatToExpect ? 
         `<div class="significance-box">
           <div class="significance-title">What to Expect:</div>
-          <div style="font-size: 14px;">${activity.whatToExpect}</div>
+          <div style="font-size: var(--base-text);">${activity.whatToExpect}</div>
         </div>` : '';
 
       const culturalEtiquetteSection = activity.culturalEtiquette ? 
@@ -2103,8 +2142,8 @@
           <div style="display: flex; align-items: start; gap: 8px;">
             <span style="color: #92400e; margin-top: 2px;">🙏</span>
             <div>
-              <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #92400e;">Cultural Etiquette:</div>
-              <div style="font-size: 14px; color: #92400e;">${activity.culturalEtiquette}</div>
+              <div style="font-weight: 500; font-size: var(--base-text); margin-bottom: 4px; color: #92400e;">Cultural Etiquette:</div>
+              <div style="font-size: var(--base-text); color: #92400e;">${activity.culturalEtiquette}</div>
             </div>
           </div>
         </div>` : '';
@@ -2114,9 +2153,9 @@
           <div style="display: flex; align-items: start; gap: 8px;">
             <span style="color: #a16207; margin-top: 2px;">🎌</span>
             <div>
-              <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #a16207;">Festival Highlights:</div>
-              <ul style="margin: 0; padding-left: 16px; font-size: 14px; color: #92400e;">
-                ${activity.festivalHighlights.map(highlight => `<li style="margin-bottom: 2px;">${highlight}</li>`).join('')}
+              <div style="font-weight: 500; font-size: var(--base-text); margin-bottom: 4px; color: #a16207;">Festival Highlights:</div>
+              <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #92400e;">
+                ${activity.festivalHighlights.map(highlight => `<li style="margin-bottom: 2px; font-size: var(--base-text);">${highlight}</li>`).join('')}
               </ul>
             </div>
           </div>
@@ -2125,26 +2164,26 @@
       const restaurantsSection = activity.restaurants ? 
         `<div style="margin-top: 12px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="font-size: 16px;">🍜</span>
-            <h4 style="font-weight: 500; font-size: 14px; margin: 0;">Restaurant Options (${activity.restaurants.length}):</h4>
+            <span style="font-size: var(--medium-text);">🍜</span>
+            <h4 style="font-weight: 500; font-size: var(--base-text); margin: 0;">Restaurant Options (${activity.restaurants.length}):</h4>
           </div>
           <div style="space-y: 8px;">
             ${activity.restaurants.map((restaurant, idx) => `
               <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
-                  <h5 style="font-weight: 500; font-size: 14px; margin: 0;">${restaurant.name}</h5>
-                  <span style="font-size: 12px; font-weight: 500; background: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 4px;">
+                  <h5 style="font-weight: 500; font-size: var(--base-text); margin: 0;">${restaurant.name}</h5>
+                  <span style="font-size: var(--small-text); font-weight: 500; background: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 4px;">
                     ${restaurant.cost}
                   </span>
                 </div>
-                <p style="font-size: 14px; margin: 0 0 8px 0;">${restaurant.description}</p>
+                <p style="font-size: var(--base-text); margin: 0 0 8px 0;">${restaurant.description}</p>
                 ${restaurant.whyRecommended ? `
-                  <p style="font-size: 12px; color: #059669; background: rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
+                  <p style="font-size: var(--small-text); color: #059669; background: rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
                     <strong>Why recommended:</strong> ${restaurant.whyRecommended}
                   </p>
                 ` : ''}
                 ${restaurant.whatToExpect ? `
-                  <p style="font-size: 12px; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
+                  <p style="font-size: var(--small-text); color: #1d4ed8; background: rgba(59, 130, 246, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
                     <strong>What to expect:</strong> ${restaurant.whatToExpect}
                   </p>
                 ` : ''}
@@ -2205,6 +2244,23 @@
       }
     }
 
+    // Text size controls functionality
+    function toggleTextControls() {
+      const controls = document.getElementById('text-controls');
+      controls.classList.toggle('show');
+      addDebugLog(`📝 Text controls ${controls.classList.contains('show') ? 'opened' : 'closed'}`, 'info');
+    }
+    
+    // Close text controls when clicking outside
+    document.addEventListener('click', function(e) {
+      const controls = document.getElementById('text-controls');
+      const toggle = document.getElementById('text-toggle');
+      
+      if (!controls.contains(e.target) && e.target !== toggle) {
+        controls.classList.remove('show');
+      }
+    });
+    
     // Text size adjustment functionality
     function setTextSize(size) {
       const app = document.getElementById('app');
@@ -2219,13 +2275,16 @@
       app.classList.add(`text-size-${size}`);
       
       // Update button states
-      document.querySelectorAll('.text-size-btn').forEach(btn => {
+      document.querySelectorAll('.text-size-option').forEach(btn => {
         btn.classList.remove('active');
       });
       document.getElementById(`text-${size}`).classList.add('active');
       
       // Save preference to localStorage
       localStorage.setItem('japan-app-text-size', size);
+      
+      // Close the controls menu
+      document.getElementById('text-controls').classList.remove('show');
       
       addDebugLog(`📝 Text size changed to ${size}`, 'info');
     }
