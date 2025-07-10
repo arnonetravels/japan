@@ -393,6 +393,143 @@
       margin-top: 2px;
     }
     
+    /* Version History Modal */
+    .version-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .version-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .version-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .version-modal.show .version-content {
+      transform: translateY(0);
+    }
+    
+    .version-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      border-radius: 12px 12px 0 0;
+    }
+    
+    .version-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1f2937;
+      margin: 0 0 8px 0;
+    }
+    
+    .version-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0;
+    }
+    
+    .version-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #6b7280;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+    
+    .version-close:hover {
+      background: #f3f4f6;
+    }
+    
+    .version-list {
+      padding: 20px;
+    }
+    
+    .version-item {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .version-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .version-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #3b82f6;
+      margin-bottom: 8px;
+    }
+    
+    .version-date {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+    
+    .version-changes {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .version-changes li {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 6px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .version-changes li:last-child {
+      margin-bottom: 0;
+    }
+    
+    .change-type {
+      margin-right: 8px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .version-changes .added { color: #059669; }
+    .version-changes .improved { color: #3b82f6; }
+    .version-changes .fixed { color: #f59e0b; }
+    
     .day-nav-button {
       background: #f3f4f6;
       border: none;
@@ -711,6 +848,20 @@
       </div>
     </div>
 
+    <!-- Version History Modal -->
+    <div class="version-modal" id="version-modal">
+      <div class="version-content">
+        <div class="version-header">
+          <button class="version-close" onclick="closeVersionHistory()">×</button>
+          <h2 class="version-title">🇯🇵 Japan Travel App</h2>
+          <p class="version-subtitle">Version History & Release Notes</p>
+        </div>
+        <div class="version-list" id="version-history-list">
+          <!-- Version history will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
       <button class="nav-button active" onclick="showView('today')" id="nav-today">
@@ -731,6 +882,146 @@
   <script>
     // App version
     const APP_VERSION = 'v1.1.20250110';
+    
+    // Comprehensive version history
+    const VERSION_HISTORY = [
+      {
+        version: 'v1.1.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Interactive date picker tray with slide-up animation' },
+          { type: 'added', text: 'Quick day selection by tapping date in navigation bar' },
+          { type: 'improved', text: 'Visual indicators for current day and actual "today"' },
+          { type: 'improved', text: 'Enhanced mobile UX with smooth transitions' }
+        ]
+      },
+      {
+        version: 'v1.0.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Smart "Today" button navigation based on actual trip dates' },
+          { type: 'added', text: 'Automatic current day detection (July 14-24, 2025)' },
+          { type: 'added', text: 'Real-time "TODAY" indicator in day navigation' },
+          { type: 'improved', text: 'App initialization starts on current trip day' },
+          { type: 'improved', text: 'Enhanced debug logging for date calculations' }
+        ]
+      },
+      {
+        version: 'v0.95.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Apple Maps integration for all location links' },
+          { type: 'fixed', text: 'Address validation: Hyatt House Shibuya, Caption by Hyatt Namba' },
+          { type: 'fixed', text: 'Restaurant address corrections: Uobei Shibuya Dogenzaka' },
+          { type: 'added', text: 'Comprehensive location database with 35+ verified addresses' },
+          { type: 'improved', text: 'Native iOS map experience with precise navigation' }
+        ]
+      },
+      {
+        version: 'v0.9.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Clickable map links for hotels, restaurants, and attractions' },
+          { type: 'added', text: 'Address display with pin emoji for all locations' },
+          { type: 'added', text: 'Restaurant validation: Numazuko closure handling' },
+          { type: 'improved', text: 'Location database with verified addresses' },
+          { type: 'improved', text: 'Enhanced navigation to all trip destinations' }
+        ]
+      },
+      {
+        version: 'v0.8.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Sticky header and dual footer layout design' },
+          { type: 'added', text: 'Text size adjustment with collapsible "A" button' },
+          { type: 'added', text: 'Working Overview and Budget navigation' },
+          { type: 'added', text: 'Comprehensive Budget breakdown ($916-1,252 total)' },
+          { type: 'added', text: 'Cultural highlights and trip overview content' },
+          { type: 'fixed', text: 'Text size CSS variables implementation' },
+          { type: 'fixed', text: 'Bottom navigation functionality restored' }
+        ]
+      },
+      {
+        version: 'v0.7.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Complete Days 6-11 with enhanced CLAUDE.md structure' },
+          { type: 'added', text: 'Kyoto temple experiences and bamboo grove visits' },
+          { type: 'added', text: 'Osaka culinary adventures with street food marathon' },
+          { type: 'added', text: 'LGBTQ+ nightlife venues in all cities' },
+          { type: 'added', text: 'Premium rooftop bars and city views' },
+          { type: 'improved', text: 'Cultural etiquette sections for all activities' },
+          { type: 'improved', text: 'Multiple restaurant options with detailed descriptions' }
+        ]
+      },
+      {
+        version: 'v0.6.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Enhanced Days 1-5 with complete activity details' },
+          { type: 'added', text: 'Festival integration: Mitama Matsuri and Gion Matsuri' },
+          { type: 'added', text: 'teamLab Planets and Mario Kart Tokyo experiences' },
+          { type: 'added', text: 'EDM club recommendations: WOMB Shibuya' },
+          { type: 'added', text: 'Traditional cultural experiences and etiquette guides' },
+          { type: 'fixed', text: 'Chronological activity ordering (morning to evening)' },
+          { type: 'improved', text: 'Comprehensive "What to Do" and "What to Expect" sections' }
+        ]
+      },
+      {
+        version: 'v0.5.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Dynamic day navigation with previous/next arrows' },
+          { type: 'added', text: 'Complete trip data structure for all 11 days' },
+          { type: 'added', text: 'Activity type categorization with color coding' },
+          { type: 'added', text: 'Cost summaries and budget tracking' },
+          { type: 'fixed', text: 'Mobile browser compatibility (no external dependencies)' },
+          { type: 'fixed', text: 'Day 1 static content loading issue' },
+          { type: 'improved', text: 'Activity card design with enhanced visual hierarchy' }
+        ]
+      },
+      {
+        version: 'v0.4.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Weather advisory system with dynamic display' },
+          { type: 'added', text: 'Loading screen with progress indicators' },
+          { type: 'added', text: 'Debug logging system for troubleshooting' },
+          { type: 'improved', text: 'Mobile responsiveness and touch optimization' },
+          { type: 'improved', text: 'iOS web app meta tags and optimizations' }
+        ]
+      },
+      {
+        version: 'v0.3.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Basic 11-day Japan itinerary structure' },
+          { type: 'added', text: 'Hotel information: Hyatt House, Hyatt Place, Caption by Hyatt' },
+          { type: 'added', text: 'Restaurant recommendations with pricing' },
+          { type: 'added', text: 'Transportation details and costs' },
+          { type: 'improved', text: 'Daily activity organization and timing' }
+        ]
+      },
+      {
+        version: 'v0.2.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Mobile-first responsive design' },
+          { type: 'added', text: 'CSS gradient backgrounds and modern styling' },
+          { type: 'added', text: 'Bottom navigation bar' },
+          { type: 'improved', text: 'Touch-friendly interface elements' }
+        ]
+      },
+      {
+        version: 'v0.1.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'added', text: 'Initial app framework and structure' },
+          { type: 'added', text: 'Basic HTML/CSS/JavaScript foundation' },
+          { type: 'added', text: 'App versioning system implementation' }
+        ]
+      }
+    ];
     
     // Location database with addresses for map links
     const locationDatabase = {
@@ -2852,6 +3143,48 @@
       closeDatePicker();
       addDebugLog(`📅 Selected day ${dayIndex + 1}`, 'info');
     }
+    
+    // Version History Functions
+    function showVersionHistory() {
+      const modal = document.getElementById('version-modal');
+      populateVersionHistory();
+      modal.classList.add('show');
+      addDebugLog('📋 Version history opened', 'info');
+    }
+    
+    function closeVersionHistory() {
+      const modal = document.getElementById('version-modal');
+      modal.classList.remove('show');
+      addDebugLog('📋 Version history closed', 'info');
+    }
+    
+    function populateVersionHistory() {
+      const versionList = document.getElementById('version-history-list');
+      
+      versionList.innerHTML = VERSION_HISTORY.map(version => `
+        <div class="version-item">
+          <div class="version-number">${version.version}</div>
+          <div class="version-date">Released: ${version.date}</div>
+          <ul class="version-changes">
+            ${version.changes.map(change => `
+              <li class="${change.type}">
+                <span class="change-type">${getChangeIcon(change.type)}</span>
+                <span>${change.text}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `).join('');
+    }
+    
+    function getChangeIcon(type) {
+      switch(type) {
+        case 'added': return '✅';
+        case 'improved': return '🔧';
+        case 'fixed': return '🐛';
+        default: return '•';
+      }
+    }
 
     // Text size controls functionality
     function toggleTextControls() {
@@ -2875,6 +3208,15 @@
       
       if (datePicker && dayNavCenter && !datePicker.contains(e.target) && !dayNavCenter.contains(e.target)) {
         closeDatePicker();
+      }
+      
+      // Close version history modal when clicking outside
+      const versionModal = document.getElementById('version-modal');
+      const versionContent = document.querySelector('.version-content');
+      
+      if (versionModal && versionContent && versionModal.classList.contains('show') && 
+          !versionContent.contains(e.target)) {
+        closeVersionHistory();
       }
     });
     
@@ -3042,7 +3384,7 @@
           <!-- App Info -->
           <div style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center;">
             <div style="font-size: var(--base-text); color: #64748b; margin-bottom: 4px;">Japan Travel App</div>
-            <div style="font-size: var(--small-text); color: #94a3b8; font-family: monospace;">${APP_VERSION}</div>
+            <div onclick="showVersionHistory()" style="font-size: var(--small-text); color: #3b82f6; font-family: monospace; cursor: pointer; text-decoration: underline;">${APP_VERSION}</div>
           </div>
         </div>
       `;
