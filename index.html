@@ -570,19 +570,307 @@
       simulateLoading();
     }, 2000);
 
-    // Trip data
+    // Complete trip data with all activities
     const tripDays = [
-      { date: 'Monday, July 14', title: 'Arrival & Gentle Recovery', city: 'Tokyo' },
-      { date: 'Tuesday, July 15', title: 'Traditional Tokyo & Summer Festival', city: 'Tokyo' },
-      { date: 'Wednesday, July 16', title: 'Modern Tokyo Culture', city: 'Tokyo' },
-      { date: 'Thursday, July 17', title: 'Tokyo Deep Dive', city: 'Tokyo' },
-      { date: 'Friday, July 18', title: 'Final Tokyo Exploration', city: 'Tokyo' },
-      { date: 'Saturday, July 19', title: 'Travel to Kyoto', city: 'Kyoto' },
-      { date: 'Sunday, July 20', title: 'Kyoto Temples & Gardens', city: 'Kyoto' },
-      { date: 'Monday, July 21', title: 'Kyoto Culture & Festivals', city: 'Kyoto' },
-      { date: 'Tuesday, July 22', title: 'Kyoto Hidden Gems', city: 'Kyoto' },
-      { date: 'Wednesday, July 23', title: 'Travel to Osaka', city: 'Osaka' },
-      { date: 'Thursday, July 24', title: 'Osaka & Departure', city: 'Osaka' }
+      {
+        date: 'Monday, July 14', 
+        title: 'Arrival & Gentle Recovery', 
+        city: 'Tokyo',
+        weather: 'Hot & humid (29-32°C/84-90°F). Plan indoor activities 11am-4pm',
+        activities: [
+          {
+            type: 'transport',
+            time: '4:30 AM - 7:30 AM',
+            title: 'Airport to Hotel',
+            location: 'Haneda Airport → Shibuya',
+            description: 'Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya',
+            cost: { yen: 800, usd: 5.50 }
+          },
+          {
+            type: 'cultural',
+            time: '9:30 AM - 12:00 PM',
+            title: 'Shibuya Crossing Experience',
+            location: 'Shibuya',
+            description: 'Iconic Tokyo orientation without overwhelming jetlag',
+            significance: 'World\'s busiest pedestrian crossing - iconic Tokyo moment',
+            cost: { yen: 0, usd: 0 }
+          }
+        ],
+        totalCost: { yen: 3200, usd: 22.40 }
+      },
+      {
+        date: 'Tuesday, July 15', 
+        title: 'Traditional Tokyo & Summer Festival', 
+        city: 'Tokyo',
+        weather: 'Very hot & humid (30-33°C/86-91°F). Early morning activities recommended',
+        activities: [
+          {
+            type: 'cultural',
+            time: '10:00 AM - 12:00 PM',
+            title: 'Shibuya Sky Observation Deck',
+            location: 'Shibuya Sky',
+            description: 'Modern Tokyo\'s newest iconic viewpoint with 360° city views',
+            cost: { yen: 2000, usd: 14.00 }
+          },
+          {
+            type: 'cultural',
+            time: '2:00 PM - 6:00 PM',
+            title: 'Senso-ji Temple & Asakusa',
+            location: 'Asakusa',
+            description: 'Tokyo\'s oldest temple with traditional shopping street',
+            significance: 'Founded in 628 AD, Tokyo\'s spiritual heart',
+            cost: { yen: 500, usd: 3.50 }
+          },
+          {
+            type: 'cultural',
+            time: '7:00 PM - 10:00 PM',
+            title: 'Mitama Festival (Yasukuni Shrine)',
+            location: 'Yasukuni Shrine',
+            description: 'Summer lantern festival with 30,000+ illuminated lanterns',
+            festivalHighlights: ['30,000 paper lanterns create magical atmosphere', 'Traditional food stalls (yatai)', 'Live performances and traditional music'],
+            cost: { yen: 1200, usd: 8.40 }
+          }
+        ],
+        totalCost: { yen: 4800, usd: 33.60 }
+      },
+      {
+        date: 'Wednesday, July 16', 
+        title: 'Modern Tokyo Culture', 
+        city: 'Tokyo',
+        weather: 'Extremely hot (31-34°C/88-93°F). Indoor activities during midday essential',
+        activities: [
+          {
+            type: 'cultural',
+            time: '9:00 AM - 12:00 PM',
+            title: 'teamLab Borderless Digital Art',
+            location: 'Odaiba',
+            description: 'World\'s first digital art museum with immersive installations',
+            significance: 'Revolutionary digital art experience, globally acclaimed',
+            cost: { yen: 3200, usd: 22.40 }
+          },
+          {
+            type: 'activity',
+            time: '2:00 PM - 5:00 PM',
+            title: 'Ginza Shopping & Department Stores',
+            location: 'Ginza',
+            description: 'Japan\'s premier luxury shopping district with air conditioning',
+            cost: { yen: 2000, usd: 14.00 }
+          }
+        ],
+        totalCost: { yen: 6400, usd: 44.80 }
+      },
+      {
+        date: 'Thursday, July 17', 
+        title: 'Tokyo Deep Dive', 
+        city: 'Tokyo',
+        weather: 'Hot & humid with possible afternoon thunderstorms',
+        activities: [
+          {
+            type: 'cultural',
+            time: '8:00 AM - 11:00 AM',
+            title: 'Tsukiji Outer Market Food Tour',
+            location: 'Tsukiji',
+            description: 'Fresh sushi breakfast and market exploration',
+            cost: { yen: 2500, usd: 17.50 }
+          },
+          {
+            type: 'cultural',
+            time: '1:00 PM - 4:00 PM',
+            title: 'Imperial Palace East Gardens',
+            location: 'Imperial Palace',
+            description: 'Former Edo Castle grounds with beautiful gardens',
+            cost: { yen: 0, usd: 0 }
+          }
+        ],
+        totalCost: { yen: 3800, usd: 26.60 }
+      },
+      {
+        date: 'Friday, July 18', 
+        title: 'Final Tokyo Exploration', 
+        city: 'Tokyo',
+        weather: 'Hot morning, possible rain afternoon (29-32°C/84-90°F)',
+        activities: [
+          {
+            type: 'cultural',
+            time: '9:00 AM - 12:00 PM',
+            title: 'Tokyo Skytree',
+            location: 'Sumida',
+            description: 'World\'s second tallest structure with panoramic views',
+            cost: { yen: 2100, usd: 14.70 }
+          },
+          {
+            type: 'activity',
+            time: '2:00 PM - 6:00 PM',
+            title: 'Akihabara Electronics District',
+            location: 'Akihabara',
+            description: 'Anime, manga, and electronics shopping paradise',
+            cost: { yen: 3000, usd: 21.00 }
+          }
+        ],
+        totalCost: { yen: 6200, usd: 43.40 }
+      },
+      {
+        date: 'Saturday, July 19', 
+        title: 'Travel to Kyoto', 
+        city: 'Kyoto',
+        weather: 'Hot travel day, cooler evening in Kyoto (28-31°C/82-88°F)',
+        activities: [
+          {
+            type: 'transport',
+            time: '8:00 AM - 11:00 AM',
+            title: 'Shinkansen to Kyoto',
+            location: 'Tokyo → Kyoto',
+            description: 'Bullet train journey with Mount Fuji views',
+            cost: { yen: 13320, usd: 93.24 }
+          },
+          {
+            type: 'cultural',
+            time: '2:00 PM - 6:00 PM',
+            title: 'Fushimi Inari Shrine',
+            location: 'Fushimi',
+            description: 'Thousands of vermillion torii gates up the mountain',
+            significance: 'Most photographed shrine in Japan, dedicated to rice deity',
+            cost: { yen: 0, usd: 0 }
+          }
+        ],
+        totalCost: { yen: 15120, usd: 105.84 }
+      },
+      {
+        date: 'Sunday, July 20', 
+        title: 'Kyoto Temples & Gardens', 
+        city: 'Kyoto',
+        weather: 'Very hot & humid (30-33°C/86-91°F). Early temple visits recommended',
+        activities: [
+          {
+            type: 'cultural',
+            time: '7:00 AM - 10:00 AM',
+            title: 'Kiyomizu-dera Temple',
+            location: 'Higashiyama',
+            description: 'Wooden temple with panoramic city views',
+            significance: 'UNESCO World Heritage site, founded 778 AD',
+            cost: { yen: 400, usd: 2.80 }
+          },
+          {
+            type: 'cultural',
+            time: '11:00 AM - 3:00 PM',
+            title: 'Bamboo Grove & Tenryu-ji',
+            location: 'Arashiyama',
+            description: 'Ethereal bamboo forest and Zen temple gardens',
+            cost: { yen: 600, usd: 4.20 }
+          }
+        ],
+        totalCost: { yen: 2400, usd: 16.80 }
+      },
+      {
+        date: 'Monday, July 21', 
+        title: 'Kyoto Culture & Festivals', 
+        city: 'Kyoto',
+        weather: 'Extremely hot (31-34°C/88-93°F). Gion Matsuri festival continues',
+        activities: [
+          {
+            type: 'cultural',
+            time: '9:00 AM - 12:00 PM',
+            title: 'Gion District & Geisha Spotting',
+            location: 'Gion',
+            description: 'Traditional geisha district with tea houses',
+            cost: { yen: 800, usd: 5.60 }
+          },
+          {
+            type: 'cultural',
+            time: '5:00 PM - 9:00 PM',
+            title: 'Gion Matsuri Evening Events',
+            location: 'Central Kyoto',
+            description: 'Japan\'s most famous festival with elaborate floats',
+            festivalHighlights: ['Elaborate yamaboko floats displayed', 'Traditional music and performances', 'Festival food stalls throughout the city'],
+            cost: { yen: 1500, usd: 10.50 }
+          }
+        ],
+        totalCost: { yen: 3800, usd: 26.60 }
+      },
+      {
+        date: 'Tuesday, July 22', 
+        title: 'Kyoto Hidden Gems', 
+        city: 'Kyoto',
+        weather: 'Very hot (30-33°C/86-91°F). Seek shade and air conditioning midday',
+        activities: [
+          {
+            type: 'cultural',
+            time: '8:00 AM - 11:00 AM',
+            title: 'Kinkaku-ji (Golden Pavilion)',
+            location: 'Northern Kyoto',
+            description: 'Gold-leafed temple reflected in surrounding pond',
+            significance: 'Japan\'s most iconic temple, UNESCO World Heritage',
+            cost: { yen: 400, usd: 2.80 }
+          },
+          {
+            type: 'cultural',
+            time: '2:00 PM - 5:00 PM',
+            title: 'Philosopher\'s Path & Silver Pavilion',
+            location: 'Eastern Kyoto',
+            description: 'Peaceful walking path connecting temples',
+            cost: { yen: 500, usd: 3.50 }
+          }
+        ],
+        totalCost: { yen: 2200, usd: 15.40 }
+      },
+      {
+        date: 'Wednesday, July 23', 
+        title: 'Travel to Osaka', 
+        city: 'Osaka',
+        weather: 'Hot and humid, typical Kansai summer weather (29-32°C/84-90°F)',
+        activities: [
+          {
+            type: 'transport',
+            time: '10:00 AM - 11:00 AM',
+            title: 'Train to Osaka',
+            location: 'Kyoto → Osaka',
+            description: 'Express train to Japan\'s kitchen',
+            cost: { yen: 560, usd: 3.92 }
+          },
+          {
+            type: 'cultural',
+            time: '2:00 PM - 6:00 PM',
+            title: 'Osaka Castle',
+            location: 'Osaka Castle Park',
+            description: 'Reconstructed castle with city history museum',
+            cost: { yen: 600, usd: 4.20 }
+          },
+          {
+            type: 'dining',
+            time: '7:00 PM - 10:00 PM',
+            title: 'Dotonbori Food Tour',
+            location: 'Dotonbori',
+            description: 'Osaka\'s famous food district with takoyaki and okonomiyaki',
+            cost: { yen: 3000, usd: 21.00 }
+          }
+        ],
+        totalCost: { yen: 5560, usd: 38.92 }
+      },
+      {
+        date: 'Thursday, July 24', 
+        title: 'Osaka & Departure', 
+        city: 'Osaka',
+        weather: 'Hot morning, travel preparations (28-31°C/82-88°F)',
+        activities: [
+          {
+            type: 'cultural',
+            time: '9:00 AM - 12:00 PM',
+            title: 'Kuromon Ichiba Market',
+            location: 'Nipponbashi',
+            description: 'Final food market experience and souvenir shopping',
+            cost: { yen: 2000, usd: 14.00 }
+          },
+          {
+            type: 'transport',
+            time: '2:00 PM - 4:00 PM',
+            title: 'Travel to Kansai Airport',
+            location: 'Osaka → KIX',
+            description: 'Express train to airport for departure',
+            cost: { yen: 1200, usd: 8.40 }
+          }
+        ],
+        totalCost: { yen: 4200, usd: 29.40 }
+      }
     ];
 
     let currentDayIndex = 0;
@@ -605,21 +893,114 @@
       addDebugLog(`📅 Switched to ${currentDay.title} in ${currentDay.city}`, 'info');
     }
 
+    // Activity type styling
+    const activityTypeStyles = {
+      'transport': { bg: 'linear-gradient(135deg, #dcfce7, #bbf7d0)', border: '#86efac', icon: '🚆' },
+      'cultural': { bg: 'linear-gradient(135deg, #ddd6fe, #e0e7ff)', border: '#c4b5fd', icon: '🏛️' },
+      'activity': { bg: 'linear-gradient(135deg, #bfdbfe, #dbeafe)', border: '#93c5fd', icon: '🎯' },
+      'dining': { bg: 'linear-gradient(135deg, #fed7d7, #fecaca)', border: '#fca5a5', icon: '🍜' }
+    };
+
     // Update the main content area
     function updateMainContent(dayData) {
       // Update page title and city
       const titleElement = document.querySelector('.day-title');
       const cityElement = document.querySelector('.city-badge');
       const dateElement = document.querySelector('.date-text');
+      const weatherElement = document.querySelector('.weather-warning span:last-child');
       
       titleElement.textContent = dayData.title;
       cityElement.textContent = dayData.city;
       dateElement.textContent = dayData.date + ', 2025';
+      weatherElement.textContent = dayData.weather;
+      
+      // Update activities
+      updateActivities(dayData.activities);
+      
+      // Update cost summary
+      updateCostSummary(dayData.totalCost);
       
       // Update header date in navigation
       const headerDate = document.getElementById('current-date');
       const dateParts = dayData.date.split(', ');
       headerDate.textContent = dateParts[0] + ', ' + dateParts[1];
+    }
+
+    function updateActivities(activities) {
+      // Find the activities container (everything between weather and cost summary)
+      const content = document.querySelector('.content > div');
+      
+      // Remove existing activity cards
+      const existingCards = content.querySelectorAll('.activity-card');
+      existingCards.forEach(card => card.remove());
+      
+      // Find insertion point (after weather warning)
+      const weatherWarning = content.querySelector('.weather-warning');
+      
+      // Create new activity cards
+      activities.forEach(activity => {
+        const activityCard = createActivityCard(activity);
+        weatherWarning.insertAdjacentHTML('afterend', activityCard);
+      });
+    }
+
+    function createActivityCard(activity) {
+      const style = activityTypeStyles[activity.type] || activityTypeStyles.cultural;
+      const costDisplay = activity.cost.yen > 0 ? 
+        `<div class="activity-cost">
+          <div class="cost-yen">¥${activity.cost.yen.toLocaleString()}</div>
+          <div class="cost-usd">$${activity.cost.usd.toFixed(2)}</div>
+        </div>` : 
+        `<div class="activity-cost">
+          <div class="cost-yen">Free</div>
+        </div>`;
+
+      const significanceSection = activity.significance ? 
+        `<div class="significance-box">
+          <div class="significance-title">Why This Matters:</div>
+          <div style="font-size: 14px;">${activity.significance}</div>
+        </div>` : '';
+
+      const festivalSection = activity.festivalHighlights ? 
+        `<div style="background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 12px; margin-top: 12px;">
+          <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #a16207;">🎌 Festival Highlights:</div>
+          <ul style="margin: 0; padding-left: 16px; font-size: 14px; color: #92400e;">
+            ${activity.festivalHighlights.map(highlight => `<li>${highlight}</li>`).join('')}
+          </ul>
+        </div>` : '';
+
+      return `
+        <div class="activity-card" style="background: ${style.bg}; border-color: ${style.border};">
+          <div class="activity-header">
+            <div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
+                  <span style="font-size: 18px;">${style.icon}</span>
+                </div>
+                <div>
+                  <div class="activity-type">${activity.type}</div>
+                  <div class="activity-time">🕐 ${activity.time}</div>
+                </div>
+              </div>
+            </div>
+            ${costDisplay}
+          </div>
+          <div class="activity-title">${activity.title}</div>
+          <div class="activity-location">📍 ${activity.location}</div>
+          <div class="activity-description">${activity.description}</div>
+          ${significanceSection}
+          ${festivalSection}
+        </div>
+      `;
+    }
+
+    function updateCostSummary(totalCost) {
+      const costSummary = document.querySelector('.content > div > div:last-child');
+      const yenElement = costSummary.querySelector('div[style*="font-size: 24px"]:first-of-type');
+      const usdElement = costSummary.querySelector('div[style*="font-size: 24px"]:last-of-type');
+      
+      yenElement.textContent = `¥${totalCost.yen.toLocaleString()}`;
+      usdElement.textContent = `$${totalCost.usd.toFixed(2)}`;
     }
 
     function previousDay() {
