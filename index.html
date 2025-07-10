@@ -562,8 +562,21 @@
 
     <!-- Main Content -->
     <main class="content">
-      <div id="day-content">
-        <!-- Content will be populated dynamically -->
+      <!-- Today View -->
+      <div id="today-view">
+        <div id="day-content">
+          <!-- Day content will be populated dynamically -->
+        </div>
+      </div>
+      
+      <!-- Overview View -->
+      <div id="overview-view" class="hidden">
+        <!-- Overview content will be populated here -->
+      </div>
+      
+      <!-- Budget View -->
+      <div id="budget-view" class="hidden">
+        <!-- Budget content will be populated here -->
       </div>
     </main>
 
@@ -583,15 +596,15 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-      <button class="nav-button active">
+      <button class="nav-button active" onclick="showView('today')" id="nav-today">
         <span class="nav-icon">📅</span>
         Today
       </button>
-      <button class="nav-button">
+      <button class="nav-button" onclick="showView('overview')" id="nav-overview">
         <span class="nav-icon">📍</span>
         Overview
       </button>
-      <button class="nav-button">
+      <button class="nav-button" onclick="showView('budget')" id="nav-budget">
         <span class="nav-icon">💰</span>
         Budget
       </button>
@@ -2346,6 +2359,186 @@
     setTimeout(() => {
       loadTextSizePreference();
     }, 1000);
+    
+    // View switching functionality
+    function showView(viewName) {
+      // Hide all views
+      document.getElementById('today-view').classList.add('hidden');
+      document.getElementById('overview-view').classList.add('hidden');
+      document.getElementById('budget-view').classList.add('hidden');
+      
+      // Show selected view
+      document.getElementById(`${viewName}-view`).classList.remove('hidden');
+      
+      // Update navigation states
+      document.querySelectorAll('.nav-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`nav-${viewName}`).classList.add('active');
+      
+      // Hide/show day navigation based on view
+      const dayNav = document.querySelector('.day-nav');
+      if (viewName === 'today') {
+        dayNav.style.display = 'flex';
+      } else {
+        dayNav.style.display = 'none';
+      }
+      
+      // Load content for the view
+      if (viewName === 'overview' && document.getElementById('overview-view').children.length === 0) {
+        loadOverviewContent();
+      }
+      if (viewName === 'budget' && document.getElementById('budget-view').children.length === 0) {
+        loadBudgetContent();
+      }
+      
+      addDebugLog(`📱 Switched to ${viewName} view`, 'info');
+    }
+    
+    // Load Overview content
+    function loadOverviewContent() {
+      const overviewView = document.getElementById('overview-view');
+      overviewView.innerHTML = `
+        <div style="padding: 0;">
+          <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+            🇯🇵 Trip Overview
+          </h2>
+          
+          <!-- Trip Summary -->
+          <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #1e40af; margin-bottom: 12px;">📅 July 14-24, 2025</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: var(--base-text);">
+              <div><strong>🏨 Tokyo:</strong> 5 days</div>
+              <div><strong>🏮 Kyoto:</strong> 4 days</div>
+              <div><strong>🍜 Osaka:</strong> 2 days</div>
+              <div><strong>💰 Budget:</strong> $916-1,252</div>
+            </div>
+          </div>
+          
+          <!-- Cultural Highlights -->
+          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #92400e; margin-bottom: 12px;">🎌 Cultural Masterpieces</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #92400e;">
+              <li style="margin-bottom: 8px;"><strong>Mitama Matsuri Festival:</strong> 30,000+ lanterns at Yasukuni Shrine</li>
+              <li style="margin-bottom: 8px;"><strong>Gion Matsuri Atmosphere:</strong> 1,150+ year festival tradition</li>
+              <li style="margin-bottom: 8px;"><strong>Fushimi Inari:</strong> 10,000+ vermillion torii gates</li>
+              <li style="margin-bottom: 8px;"><strong>Tokyo National Museum:</strong> 89 National Treasures</li>
+              <li style="margin-bottom: 8px;"><strong>Sensoji Temple:</strong> Tokyo's oldest temple (7th century)</li>
+            </ul>
+          </div>
+          
+          <!-- Culinary Journey -->
+          <div style="background: linear-gradient(135deg, #fed7d7, #fecaca); border: 1px solid #f87171; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #dc2626; margin-bottom: 12px;">🍜 Culinary Excellence</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #dc2626;">
+              <li style="margin-bottom: 8px;"><strong>Tsukiji Market:</strong> Ultra-fresh sushi at legendary dawn stalls</li>
+              <li style="margin-bottom: 8px;"><strong>Michelin Experiences:</strong> Bib Gourmand ramen under $15</li>
+              <li style="margin-bottom: 8px;"><strong>Dotonbori Marathon:</strong> Osaka's "eat until you drop" capital</li>
+              <li style="margin-bottom: 8px;"><strong>Nishiki Market:</strong> 400+ years of imperial culinary tradition</li>
+              <li style="margin-bottom: 8px;"><strong>Regional Specialties:</strong> Tokyo, Kyoto kaiseki, Osaka cuisine</li>
+            </ul>
+          </div>
+          
+          <!-- Modern Adventures -->
+          <div style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border: 1px solid #8b5cf6; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #7c3aed; margin-bottom: 12px;">🚗 Unique Adventures</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #7c3aed;">
+              <li style="margin-bottom: 8px;"><strong>Mario Kart Racing:</strong> Drive through Shibuya Crossing in costume</li>
+              <li style="margin-bottom: 8px;"><strong>teamLab Planets:</strong> World's most visited digital art museum</li>
+              <li style="margin-bottom: 8px;"><strong>Bullet Train:</strong> 320 km/h engineering marvel</li>
+              <li style="margin-bottom: 8px;"><strong>Golden Gai:</strong> Tiny post-war drinking district</li>
+            </ul>
+          </div>
+          
+          <!-- Premium Nightlife -->
+          <div style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border: 1px solid #a855f7; border-radius: 12px; padding: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #9333ea; margin-bottom: 12px;">🌃 Premium Views & Nightlife</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #9333ea;">
+              <li style="margin-bottom: 8px;"><strong>K36 Kyoto:</strong> Eye-level Yasaka Pagoda view (unique in world)</li>
+              <li style="margin-bottom: 8px;"><strong>WOMB Shibuya:</strong> Tokyo's premier EDM club</li>
+              <li style="margin-bottom: 8px;"><strong>Ni-chome Tokyo:</strong> Asia's largest LGBTQ+ district</li>
+              <li style="margin-bottom: 8px;"><strong>Premium Rooftops:</strong> Craft cocktails with city panoramas</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Load Budget content  
+    function loadBudgetContent() {
+      const budgetView = document.getElementById('budget-view');
+      budgetView.innerHTML = `
+        <div style="padding: 0;">
+          <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+            💰 Complete Trip Budget
+          </h2>
+          
+          <!-- Grand Total -->
+          <div style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 1px solid #4ade80; border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
+            <h3 style="font-size: var(--xl-text); font-weight: bold; color: #15803d; margin-bottom: 8px;">🇯🇵 GRAND TOTAL</h3>
+            <div style="font-size: var(--title-text); font-weight: bold; color: #15803d; margin-bottom: 4px;">$916 - $1,252</div>
+            <div style="font-size: var(--base-text); color: #16a34a;">Daily Average: $83-114 per day</div>
+          </div>
+          
+          <!-- Tokyo Phase -->
+          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #92400e; margin-bottom: 12px;">🗼 Tokyo Phase (5 Days) - July 14-18</h3>
+            <div style="font-size: var(--base-text); color: #92400e; margin-bottom: 12px;"><strong>Total: $505-690</strong></div>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #92400e;">
+              <li>Day 1 (Arrival & Recovery): $31-46</li>
+              <li>Day 2 (Traditional + Mitama Matsuri): $107-142</li>
+              <li>Day 3 (Modern + teamLab + Mario Kart): $140-175</li>
+              <li>Day 4 (Markets + Museums + Culture): $75-95</li>
+              <li>Day 5 (Final Tokyo + Premium Nightlife): $152-232</li>
+            </ul>
+          </div>
+          
+          <!-- Transfer Day -->
+          <div style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border: 1px solid #8b5cf6; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #7c3aed; margin-bottom: 8px;">🚄 Transfer Day - July 19</h3>
+            <div style="font-size: var(--base-text); color: #7c3aed;">
+              <strong>Bullet Train + Food + Transport: $126-141</strong>
+            </div>
+          </div>
+          
+          <!-- Kyoto/Osaka Phase -->
+          <div style="background: linear-gradient(135deg, #fed7d7, #fecaca); border: 1px solid #f87171; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #dc2626; margin-bottom: 12px;">🏮 Kyoto/Osaka Phase (5 Days) - July 20-24</h3>
+            <div style="font-size: var(--base-text); color: #dc2626; margin-bottom: 12px;"><strong>Total: $285-421</strong></div>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #dc2626;">
+              <li>Day 7 (Gion Matsuri Atmosphere): $57-84</li>
+              <li>Day 8 (Temples & Bamboo Grove): $42-57</li>
+              <li>Day 9 (Osaka Culinary Day Trip): $94-147</li>
+              <li>Day 10 (Final Kyoto + Transfer): $59-89</li>
+              <li>Day 11 (Final Day & Departure): $33-44</li>
+            </ul>
+          </div>
+          
+          <!-- What's Included -->
+          <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #1e40af; margin-bottom: 12px;">✅ What This Includes</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #1e40af;">
+              <li style="margin-bottom: 4px;"><strong>All meals:</strong> Street food to Michelin Bib Gourmand dining</li>
+              <li style="margin-bottom: 4px;"><strong>All transportation:</strong> Local trains, buses, bullet train</li>
+              <li style="margin-bottom: 4px;"><strong>Cultural activities:</strong> Museums, temples, digital art, festivals</li>
+              <li style="margin-bottom: 4px;"><strong>Premium nightlife:</strong> Rooftop bars, EDM clubs, LGBTQ+ venues</li>
+              <li style="margin-bottom: 4px;"><strong>Festival experiences:</strong> Mitama Matsuri + Gion Matsuri</li>
+            </ul>
+          </div>
+          
+          <!-- Not Included -->
+          <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 1px solid #f87171; border-radius: 12px; padding: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #dc2626; margin-bottom: 12px;">❌ NOT Included</h3>
+            <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #dc2626;">
+              <li style="margin-bottom: 4px;"><strong>Hotels:</strong> Fully covered by Hyatt Globalist status</li>
+              <li style="margin-bottom: 4px;"><strong>International flights:</strong> CLT-ORD-HND and return</li>
+              <li style="margin-bottom: 4px;"><strong>Personal shopping:</strong> Souvenirs and individual purchases</li>
+              <li style="margin-bottom: 4px;"><strong>Travel insurance:</strong> Recommended but calculated separately</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
 
     // Add click handlers for debugging
     document.addEventListener('click', function(e) {
