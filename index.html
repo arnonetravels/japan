@@ -340,6 +340,94 @@
       display: block;
     }
     
+    /* Text Size Controls */
+    .text-controls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+    
+    .text-size-btn {
+      background: none;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #4f46e5;
+      font-weight: bold;
+      transition: all 0.2s;
+      font-family: serif;
+    }
+    
+    .text-size-btn:nth-child(1) { font-size: 12px; }
+    .text-size-btn:nth-child(2) { font-size: 14px; }
+    .text-size-btn:nth-child(3) { font-size: 16px; }
+    .text-size-btn:nth-child(4) { font-size: 18px; }
+    
+    .text-size-btn:hover {
+      background: #f0f0f0;
+    }
+    
+    .text-size-btn.active {
+      background: #4f46e5;
+      color: white;
+    }
+    
+    /* Text Size Classes */
+    .text-size-small {
+      font-size: 0.85em;
+    }
+    
+    .text-size-medium {
+      font-size: 1em;
+    }
+    
+    .text-size-large {
+      font-size: 1.15em;
+    }
+    
+    .text-size-xlarge {
+      font-size: 1.3em;
+    }
+    
+    /* Apply text size to main content areas */
+    .text-size-small .content,
+    .text-size-small .activity-card,
+    .text-size-small .day-nav {
+      font-size: 0.85em;
+    }
+    
+    .text-size-medium .content,
+    .text-size-medium .activity-card,
+    .text-size-medium .day-nav {
+      font-size: 1em;
+    }
+    
+    .text-size-large .content,
+    .text-size-large .activity-card,
+    .text-size-large .day-nav {
+      font-size: 1.15em;
+    }
+    
+    .text-size-xlarge .content,
+    .text-size-xlarge .activity-card,
+    .text-size-xlarge .day-nav {
+      font-size: 1.3em;
+    }
+
     /* Animations */
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% {
@@ -383,7 +471,15 @@
   </div>
 
   <!-- Main App (initially hidden) -->
-  <div id="app" class="app-container hidden">
+  <div id="app" class="app-container hidden text-size-medium">
+    <!-- Text Size Controls -->
+    <div class="text-controls">
+      <button class="text-size-btn" onclick="setTextSize('small')" id="text-small" title="Small text">A</button>
+      <button class="text-size-btn active" onclick="setTextSize('medium')" id="text-medium" title="Medium text">A</button>
+      <button class="text-size-btn" onclick="setTextSize('large')" id="text-large" title="Large text">A</button>
+      <button class="text-size-btn" onclick="setTextSize('xlarge')" id="text-xlarge" title="Extra large text">A</button>
+    </div>
+    
     <!-- Header -->
     <header class="header">
       <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
@@ -398,86 +494,8 @@
 
     <!-- Main Content -->
     <main class="content">
-      <div>
-        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-          <span class="day-title">Arrival & Gentle Recovery</span>
-          <span class="city-badge">Tokyo</span>
-        </div>
-        <div class="date-text">Monday, July 14, 2025</div>
-        
-        <div class="weather-warning">
-          <span>⚠️</span>
-          <span>Hot & humid (29-32°C/84-90°F). Plan indoor activities 11am-4pm</span>
-        </div>
-        
-        <!-- Activity Cards -->
-        <div class="activity-card">
-          <div class="activity-header">
-            <div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
-                  <span style="font-size: 18px;">🚆</span>
-                </div>
-                <div>
-                  <div class="activity-type">transport</div>
-                  <div class="activity-time">🕐 4:30 AM - 7:30 AM</div>
-                </div>
-              </div>
-            </div>
-            <div class="activity-cost">
-              <div class="cost-yen">¥800</div>
-              <div class="cost-usd">$5.50</div>
-            </div>
-          </div>
-          <div class="activity-title">Airport to Hotel</div>
-          <div class="activity-location">📍 Haneda Airport → Shibuya</div>
-          <div class="activity-description">
-            Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya
-          </div>
-        </div>
-
-        <div class="activity-card">
-          <div class="activity-header">
-            <div>
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
-                  <span style="font-size: 18px;">🏛️</span>
-                </div>
-                <div>
-                  <div class="activity-type">cultural</div>
-                  <div class="activity-time">🕐 9:30 AM - 12:00 PM</div>
-                </div>
-              </div>
-            </div>
-            <div class="activity-cost">
-              <div class="cost-yen">Free</div>
-            </div>
-          </div>
-          <div class="activity-title">Shibuya Crossing Experience</div>
-          <div class="activity-location">📍 Shibuya</div>
-          <div class="activity-description">
-            Iconic Tokyo orientation without overwhelming jetlag
-          </div>
-          <div class="significance-box">
-            <div class="significance-title">Why This Matters:</div>
-            <div style="font-size: 14px;">World's busiest pedestrian crossing - iconic Tokyo moment</div>
-          </div>
-        </div>
-        
-        <!-- Daily Cost Summary -->
-        <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-top: 24px;">
-          <div style="font-weight: bold; font-size: 18px; color: #1e40af; margin-bottom: 12px;">Daily Cost Summary</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">¥3,200</div>
-              <div style="font-size: 14px; color: #3b82f6;">Japanese Yen</div>
-            </div>
-            <div style="text-align: center;">
-              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">$22.40</div>
-              <div style="font-size: 14px; color: #3b82f6;">US Dollars</div>
-            </div>
-          </div>
-        </div>
+      <div id="day-content">
+        <!-- Content will be populated dynamically -->
       </div>
     </main>
 
@@ -550,6 +568,9 @@
                 // Hide loading screen and show app
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
+                
+                // Initialize the first day's content
+                updateDayDisplay();
               }, 500);
             }, 300);
           }, 400);
@@ -1931,25 +1952,46 @@
 
     // Update the main content area
     function updateMainContent(dayData) {
-      // Update page title and city
-      const titleElement = document.querySelector('.day-title');
-      const cityElement = document.querySelector('.city-badge');
-      const dateElement = document.querySelector('.date-text');
-      const weatherElement = document.querySelector('.weather-warning span:last-child');
+      const contentContainer = document.getElementById('day-content');
       
-      titleElement.textContent = dayData.title;
-      cityElement.textContent = dayData.city;
-      dateElement.textContent = dayData.date + ', 2025';
-      weatherElement.textContent = dayData.weather;
+      // Create the complete day structure
+      contentContainer.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <span class="day-title">${dayData.title}</span>
+          <span class="city-badge">${dayData.city}</span>
+        </div>
+        <div class="date-text">${dayData.date}, 2025</div>
+        
+        <div class="weather-warning">
+          <span>⚠️</span>
+          <span>${dayData.weather}</span>
+        </div>
+        
+        <!-- Weather advisory placeholder -->
+        
+        <!-- Activity cards will be inserted here -->
+        
+        <!-- Daily Cost Summary -->
+        <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-top: 24px;">
+          <div style="font-weight: bold; font-size: 18px; color: #1e40af; margin-bottom: 12px;">Daily Cost Summary</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">¥${dayData.totalCost.yen.toLocaleString()}</div>
+              <div style="font-size: 14px; color: #3b82f6;">Japanese Yen</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">$${dayData.totalCost.usd.toFixed(2)}</div>
+              <div style="font-size: 14px; color: #3b82f6;">US Dollars</div>
+            </div>
+          </div>
+        </div>
+      `;
       
       // Update weather advisory if it exists
       updateWeatherAdvisory(dayData.weatherAdvisory);
       
       // Update activities
       updateActivities(dayData.activities);
-      
-      // Update cost summary
-      updateCostSummary(dayData.totalCost);
       
       // Update header date in navigation
       const headerDate = document.getElementById('current-date');
@@ -1958,7 +2000,7 @@
     }
 
     function updateWeatherAdvisory(weatherAdvisory) {
-      const content = document.querySelector('.content > div');
+      const content = document.getElementById('day-content');
       let advisoryElement = content.querySelector('.weather-advisory');
       
       if (weatherAdvisory) {
@@ -1984,8 +2026,8 @@
     }
 
     function updateActivities(activities) {
-      // Find the activities container (everything between weather and cost summary)
-      const content = document.querySelector('.content > div');
+      // Find the activities container 
+      const content = document.getElementById('day-content');
       
       // Remove existing activity cards
       const existingCards = content.querySelectorAll('.activity-card');
@@ -2162,6 +2204,49 @@
         updateDayDisplay();
       }
     }
+
+    // Text size adjustment functionality
+    function setTextSize(size) {
+      const app = document.getElementById('app');
+      const sizes = ['small', 'medium', 'large', 'xlarge'];
+      
+      // Remove all existing text size classes
+      sizes.forEach(s => {
+        app.classList.remove(`text-size-${s}`);
+      });
+      
+      // Add the new text size class
+      app.classList.add(`text-size-${size}`);
+      
+      // Update button states
+      document.querySelectorAll('.text-size-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(`text-${size}`).classList.add('active');
+      
+      // Save preference to localStorage
+      localStorage.setItem('japan-app-text-size', size);
+      
+      addDebugLog(`📝 Text size changed to ${size}`, 'info');
+    }
+    
+    // Load saved text size preference
+    function loadTextSizePreference() {
+      const savedSize = localStorage.getItem('japan-app-text-size');
+      if (savedSize && ['small', 'medium', 'large', 'xlarge'].includes(savedSize)) {
+        setTextSize(savedSize);
+      }
+    }
+    
+    // Initialize text size when app loads
+    document.addEventListener('DOMContentLoaded', function() {
+      loadTextSizePreference();
+    });
+    
+    // Also call this when the app becomes visible to ensure text size is applied
+    setTimeout(() => {
+      loadTextSizePreference();
+    }, 1000);
 
     // Add click handlers for debugging
     document.addEventListener('click', function(e) {
