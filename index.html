@@ -3336,13 +3336,46 @@
           addDebugLog(`📋 Re-attaching version tile listener`, 'info');
           const versionTile = document.getElementById('version-tile');
           if (versionTile) {
-            addDebugLog('✅ Version tile found, re-adding click handler', 'success');
-            versionTile.removeEventListener('click', showVersionHistory); // Remove any existing listener
-            versionTile.addEventListener('click', function() {
-              addDebugLog('🔍 Version tile clicked!', 'info');
-              console.log('Version tile clicked, calling showVersionHistory()');
-              showVersionHistory();
+            addDebugLog('✅ Version tile found, re-adding event handlers', 'success');
+            
+            // Function to handle the version tile interaction
+            function handleVersionTileClick(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              addDebugLog('🔍 Version tile interacted! (re-attached)', 'info');
+              console.log('Version tile interacted (re-attached), calling showVersionHistory()');
+              
+              // Add immediate visual feedback
+              versionTile.style.transform = 'scale(0.95)';
+              versionTile.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+              
+              setTimeout(() => {
+                versionTile.style.transform = 'scale(1)';
+                versionTile.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+                showVersionHistory();
+              }, 100);
+            }
+            
+            // Remove any existing listeners and add new ones
+            versionTile.replaceWith(versionTile.cloneNode(true));
+            const newVersionTile = document.getElementById('version-tile');
+            
+            newVersionTile.addEventListener('click', handleVersionTileClick);
+            newVersionTile.addEventListener('touchend', handleVersionTileClick);
+            
+            // Add visual feedback for touch start
+            newVersionTile.addEventListener('touchstart', function(event) {
+              addDebugLog('👆 Version tile touch started (re-attached)', 'info');
+              newVersionTile.style.transform = 'scale(0.98)';
+              newVersionTile.style.background = 'linear-gradient(135deg, #e0e7ff, #c7d2fe)';
             });
+            
+            // Reset visual feedback if touch is cancelled
+            newVersionTile.addEventListener('touchcancel', function(event) {
+              newVersionTile.style.transform = 'scale(1)';
+              newVersionTile.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+            });
+            
           } else {
             addDebugLog('❌ Version tile not found on re-attach!', 'error');
           }
@@ -3423,7 +3456,7 @@
           </div>
           
           <!-- App Info -->
-          <div id="version-tile" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);">
+          <div id="version-tile" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3); user-select: none;">
             <div style="font-size: var(--base-text); color: #64748b; margin-bottom: 4px;">Japan Travel App</div>
             <div style="font-size: var(--small-text); color: #3b82f6; font-family: monospace; font-weight: 600;">${APP_VERSION}</div>
             <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">📋 Tap to view version history</div>
@@ -3431,15 +3464,46 @@
         </div>
       `;
       
-      // Add click handler to version tile after content is loaded
+      // Add comprehensive touch/click handlers to version tile
       const versionTile = document.getElementById('version-tile');
       if (versionTile) {
-        addDebugLog('✅ Version tile found, adding click handler', 'success');
-        versionTile.addEventListener('click', function() {
-          addDebugLog('🔍 Version tile clicked!', 'info');
-          console.log('Version tile clicked, calling showVersionHistory()');
-          showVersionHistory();
+        addDebugLog('✅ Version tile found, adding event handlers', 'success');
+        
+        // Function to handle the version tile interaction
+        function handleVersionTileClick(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          addDebugLog('🔍 Version tile interacted!', 'info');
+          console.log('Version tile interacted, calling showVersionHistory()');
+          
+          // Add immediate visual feedback
+          versionTile.style.transform = 'scale(0.95)';
+          versionTile.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+          
+          setTimeout(() => {
+            versionTile.style.transform = 'scale(1)';
+            versionTile.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+            showVersionHistory();
+          }, 100);
+        }
+        
+        // Add multiple event types for better mobile compatibility
+        versionTile.addEventListener('click', handleVersionTileClick);
+        versionTile.addEventListener('touchend', handleVersionTileClick);
+        
+        // Add visual feedback for touch start
+        versionTile.addEventListener('touchstart', function(event) {
+          addDebugLog('👆 Version tile touch started', 'info');
+          versionTile.style.transform = 'scale(0.98)';
+          versionTile.style.background = 'linear-gradient(135deg, #e0e7ff, #c7d2fe)';
         });
+        
+        // Reset visual feedback if touch is cancelled
+        versionTile.addEventListener('touchcancel', function(event) {
+          versionTile.style.transform = 'scale(1)';
+          versionTile.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+        });
+        
       } else {
         addDebugLog('❌ Version tile not found!', 'error');
       }
