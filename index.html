@@ -570,13 +570,14 @@
       simulateLoading();
     }, 2000);
 
-    // Complete trip data with all activities
+    // Complete trip data with all activities from reference itinerary
     const tripDays = [
       {
         date: 'Monday, July 14', 
         title: 'Arrival & Gentle Recovery', 
         city: 'Tokyo',
-        weather: 'Hot & humid (29-32°C/84-90°F). Plan indoor activities 11am-4pm',
+        weather: 'Hot & humid (29-32°C/84-90°F with 78-83% humidity)',
+        weatherAdvisory: 'July is Japan\'s hottest, most humid month. Plan indoor activities during peak heat (11am-4pm)',
         activities: [
           {
             type: 'transport',
@@ -584,7 +585,24 @@
             title: 'Airport to Hotel',
             location: 'Haneda Airport → Shibuya',
             description: 'Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya',
+            whatToDo: [
+              'Navigate immigration and customs at Haneda Airport',
+              'Take Airport Express to Shibuya Station',
+              'Check into Hyatt House Shibuya (early if possible)',
+              'Store luggage and freshen up',
+              'Get oriented with hotel amenities'
+            ],
+            whatToExpect: 'Modern, efficient trains with English signage. Early check-in likely available.',
             cost: { yen: 800, usd: 5.50 }
+          },
+          {
+            type: 'dining',
+            time: '8:00 AM',
+            title: 'Hotel Breakfast',
+            location: 'Hyatt House Shibuya',
+            description: 'Breakfast included daily due to Hyatt Globalist status',
+            whatToExpect: 'Quality hotel breakfast with Japanese and Western options',
+            cost: { yen: 0, usd: 0 }
           },
           {
             type: 'cultural',
@@ -593,45 +611,210 @@
             location: 'Shibuya',
             description: 'Iconic Tokyo orientation without overwhelming jetlag',
             significance: 'World\'s busiest pedestrian crossing - iconic Tokyo moment',
+            whatToDo: [
+              'Cross the famous Shibuya Crossing during rush periods',
+              'Take photos with Hachiko statue (loyal dog memorial)',
+              'View crossing from Starbucks 2F for aerial perspective',
+              'Walk through Center Gai for people-watching',
+              'Visit 109 building for youth fashion culture'
+            ],
+            whatToExpect: 'World\'s busiest pedestrian crossing. Overwhelming but exhilarating first Tokyo moment.',
             cost: { yen: 0, usd: 0 }
+          },
+          {
+            type: 'dining',
+            time: '12:00 PM - 1:00 PM',
+            title: 'First Tokyo Lunch',
+            location: 'Shibuya area',
+            description: 'Budget-friendly conveyor belt sushi experience',
+            restaurants: [
+              {
+                name: 'Uobei Shibuya Dogenzaka',
+                cost: '¥130-280 per plate',
+                description: 'Touch panel conveyor sushi, popular with locals and tourists alike',
+                whyRecommended: 'Quality budget option recognized by locals',
+                whatToExpect: 'Casual atmosphere with automated ordering system'
+              },
+              {
+                name: 'Numazuko Sushi (Tokyo Station)',
+                cost: '¥150 per plate',
+                description: 'Fresh sushi delivered by automated belt system with multilingual ordering',
+                whyRecommended: 'Excellent for first-time visitors',
+                whatToExpect: 'Modern conveyor belt system with English support'
+              },
+              {
+                name: 'Ganko Sushi',
+                cost: '¥138+ per plate',
+                description: 'Traditional chain with authentic atmosphere',
+                whyRecommended: 'Recognized by locals as quality budget option',
+                whatToExpect: 'Traditional sushi bar atmosphere'
+              }
+            ],
+            cost: { yen: 265, usd: 1.85 }
+          },
+          {
+            type: 'cultural',
+            time: '1:30 PM - 5:00 PM',
+            title: 'Meiji Shrine & Harajuku',
+            location: 'Meiji Shrine → Harajuku',
+            description: 'Essential Tokyo contrast - sacred shrine + pop culture street',
+            significance: '1920 shrine in forest setting, then colorful kawaii culture',
+            whatToDo: [
+              'Write wishes on ema (wooden plaques) and hang them',
+              'Witness traditional Shinto wedding ceremonies (if occurring)',
+              'Walk peaceful forest paths among 100,000+ trees',
+              'Visit main shrine and bow properly (bow twice, clap twice, bow once)',
+              'Walk down Takeshita Street for kawaii culture',
+              'Try rainbow cotton candy and character crepes',
+              'Browse vintage shops and fashion stores',
+              'Visit Omotesando Hills for luxury contrast'
+            ],
+            culturalEtiquette: 'At Shinto shrines: bow twice, clap twice, bow once. Purify hands and mouth at water basin before entering.',
+            whatToExpect: '1920 shrine in forest setting, then colorful kawaii culture and unique fashion.',
+            cost: { yen: 600, usd: 4.20 }
+          },
+          {
+            type: 'dining',
+            time: '5:30 PM - 7:00 PM',
+            title: 'Early Dinner',
+            location: 'Shibuya/Ginza area',
+            description: 'Quality sushi dinner experience',
+            restaurants: [
+              {
+                name: 'Seamon Ginza',
+                cost: '¥1,800',
+                description: 'Elegant 20-seat restaurant with freshly grated wasabi, 9 pieces + soup + appetizers',
+                whyRecommended: 'Premium quality with traditional preparation',
+                whatToExpect: 'Intimate counter experience with expert sushi chefs'
+              },
+              {
+                name: 'Uobei Shibuya Dogenzaka',
+                cost: '¥130-280 per plate',
+                description: 'Touch panel conveyor sushi with fresh fish delivery by lane',
+                whyRecommended: 'Convenient location, reliable quality',
+                whatToExpected: 'Modern automated system with fresh ingredients'
+              },
+              {
+                name: 'Kura Sushi (Shibuya)',
+                cost: '¥150 per plate average',
+                description: 'Family-friendly conveyor belt with colorful atmosphere and digital ordering',
+                whyRecommended: 'Fun interactive experience with games',
+                whatToExpect: 'Lively atmosphere with digital entertainment'
+              }
+            ],
+            cost: { yen: 1800, usd: 12.60 }
           }
         ],
-        totalCost: { yen: 3200, usd: 22.40 }
+        totalCost: { yen: 3465, usd: 24.25 },
+        costBreakdown: {
+          food: { yen: 2065, usd: 14.45 },
+          transport: { yen: 800, usd: 5.50 },
+          attractions: { yen: 600, usd: 4.20 }
+        }
       },
       {
         date: 'Tuesday, July 15', 
         title: 'Traditional Tokyo & Summer Festival', 
         city: 'Tokyo',
-        weather: 'Very hot & humid (30-33°C/86-91°F). Early morning activities recommended',
+        weather: 'Very hot & humid (30-33°C/86-91°F with 78-83% humidity)',
+        weatherAdvisory: 'Early morning activities recommended. Plan indoor activities during peak heat (11am-4pm)',
         activities: [
+          {
+            type: 'dining',
+            time: '9:00 AM',
+            title: 'Hotel Breakfast',
+            location: 'Hyatt House Shibuya',
+            description: 'Breakfast included daily due to Hyatt Globalist status',
+            whatToExpect: 'Quality hotel breakfast with Japanese and Western options',
+            cost: { yen: 0, usd: 0 }
+          },
           {
             type: 'cultural',
             time: '10:00 AM - 12:00 PM',
-            title: 'Shibuya Sky Observation Deck',
+            title: 'Shibuya Sky',
             location: 'Shibuya Sky',
-            description: 'Modern Tokyo\'s newest iconic viewpoint with 360° city views',
+            description: 'Modern Tokyo\'s newest iconic viewpoint',
+            significance: 'Modern Tokyo\'s newest iconic viewpoint',
+            whatToDo: [
+              'Take panoramic photos from 360° observation deck',
+              'Visit rooftop terrace for open-air city views',
+              'Experience Sky Gallery with digital art installations',
+              'Shop for exclusive Shibuya Sky merchandise'
+            ],
+            whatToExpected: 'Stunning 360° city views, less crowded than Skytree',
             cost: { yen: 2000, usd: 14.00 }
           },
           {
             type: 'cultural',
-            time: '2:00 PM - 6:00 PM',
-            title: 'Senso-ji Temple & Asakusa',
+            time: '1:00 PM - 4:00 PM',
+            title: 'Traditional Asakusa',
             location: 'Asakusa',
-            description: 'Tokyo\'s oldest temple with traditional shopping street',
-            significance: 'Founded in 628 AD, Tokyo\'s spiritual heart',
+            description: 'Tokyo\'s oldest temple (7th century) & traditional shopping street',
+            significance: 'Tokyo\'s oldest temple (7th century) & traditional shopping street',
+            whatToDo: [
+              'Purify yourself at water basin before entering',
+              'Wave incense smoke over yourself for good health',
+              'Draw omikuji (fortune slips) and tie bad ones to racks',
+              'Ring bell and pray at main hall',
+              'Try ningyo-yaki (doll-shaped cakes with sweet filling)',
+              'Sample fresh taiyaki (fish-shaped pastry)',
+              'Buy traditional folding fans and chopsticks',
+              'Watch artisans make traditional crafts'
+            ],
+            culturalEtiquette: 'Purify hands and mouth at water basin. Bow before entering temple grounds. Be respectful during prayers.',
+            whatToExpected: '1,400-year-old temple, traditional architecture, street food culture',
             cost: { yen: 500, usd: 3.50 }
           },
           {
             type: 'cultural',
-            time: '7:00 PM - 10:00 PM',
-            title: 'Mitama Festival (Yasukuni Shrine)',
+            time: '5:30 PM - 8:00 PM',
+            title: 'Mitama Matsuri Festival',
             location: 'Yasukuni Shrine',
-            description: 'Summer lantern festival with 30,000+ illuminated lanterns',
-            festivalHighlights: ['30,000 paper lanterns create magical atmosphere', 'Traditional food stalls (yatai)', 'Live performances and traditional music'],
-            cost: { yen: 1200, usd: 8.40 }
+            description: 'One of Tokyo\'s most spectacular summer festivals (July 13-16, 2025) featuring 30,000+ lanterns',
+            significance: 'One of Tokyo\'s most spectacular summer festivals featuring 30,000+ lanterns at Yasukuni Shrine',
+            whatToDo: [
+              'Walk through lantern-lit pathways for magical photos - lanterns illuminated daily from dusk until 9:30pm',
+              'Watch traditional Bon Odori dancing performances taking place every evening',
+              'Observe Nebuta float parades from Aomori (July 15 at 6:30 PM) and Awa Odori dance demonstrations (July 15 at 7:30 PM)',
+              'Experience food trucks selling street food throughout festival period',
+              'Listen to taiko drumming performances and traditional music',
+              'Access inner shrine courtyard (normally restricted area) during evening hours'
+            ],
+            festivalHighlights: [
+              '30,000+ lanterns illuminated nightly until 9:30pm',
+              'Special Nebuta float parades (July 15 at 6:30 PM)',
+              'Awa Odori dance demonstrations (July 15 at 7:30 PM)',
+              'Traditional Bon Odori dancing every evening',
+              'Taiko drumming and traditional music performances',
+              'Access to normally restricted inner shrine courtyard'
+            ],
+            whatToExpected: 'Memorial lanterns creating ethereal atmosphere honoring spirits of war dead, unique spiritual experience',
+            cost: { yen: 1500, usd: 10.50 }
+          },
+          {
+            type: 'nightlife',
+            time: '8:30 PM - 10:00 PM',
+            title: 'CÉ LA VI Tokyo',
+            location: 'Roppongi Hills',
+            description: 'Premium rooftop experience with city views',
+            significance: 'Premium rooftop experience with city views',
+            whatToDo: [
+              'Enjoy panoramic night views of Tokyo',
+              'Try signature cocktails with Asian influences',
+              'Take photos on outdoor terrace',
+              'Experience sophisticated international atmosphere'
+            ],
+            whatToExpected: 'Sophisticated atmosphere, panoramic night views, quality cocktails',
+            cost: { yen: 4500, usd: 31.50 }
           }
         ],
-        totalCost: { yen: 4800, usd: 33.60 }
+        totalCost: { yen: 8500, usd: 59.50 },
+        costBreakdown: {
+          food: { yen: 1500, usd: 10.50 },
+          transport: { yen: 600, usd: 4.20 },
+          attractions: { yen: 2500, usd: 17.50 },
+          nightlife: { yen: 4500, usd: 31.50 }
+        }
       },
       {
         date: 'Wednesday, July 16', 
@@ -898,7 +1081,8 @@
       'transport': { bg: 'linear-gradient(135deg, #dcfce7, #bbf7d0)', border: '#86efac', icon: '🚆' },
       'cultural': { bg: 'linear-gradient(135deg, #ddd6fe, #e0e7ff)', border: '#c4b5fd', icon: '🏛️' },
       'activity': { bg: 'linear-gradient(135deg, #bfdbfe, #dbeafe)', border: '#93c5fd', icon: '🎯' },
-      'dining': { bg: 'linear-gradient(135deg, #fed7d7, #fecaca)', border: '#fca5a5', icon: '🍜' }
+      'dining': { bg: 'linear-gradient(135deg, #fed7d7, #fecaca)', border: '#fca5a5', icon: '🍜' },
+      'nightlife': { bg: 'linear-gradient(135deg, #e7e5e4, #d6d3d1)', border: '#a8a29e', icon: '🍸' }
     };
 
     // Update the main content area
@@ -914,6 +1098,9 @@
       dateElement.textContent = dayData.date + ', 2025';
       weatherElement.textContent = dayData.weather;
       
+      // Update weather advisory if it exists
+      updateWeatherAdvisory(dayData.weatherAdvisory);
+      
       // Update activities
       updateActivities(dayData.activities);
       
@@ -924,6 +1111,32 @@
       const headerDate = document.getElementById('current-date');
       const dateParts = dayData.date.split(', ');
       headerDate.textContent = dateParts[0] + ', ' + dateParts[1];
+    }
+
+    function updateWeatherAdvisory(weatherAdvisory) {
+      const content = document.querySelector('.content > div');
+      let advisoryElement = content.querySelector('.weather-advisory');
+      
+      if (weatherAdvisory) {
+        if (!advisoryElement) {
+          // Create weather advisory element if it doesn't exist
+          const weatherWarning = content.querySelector('.weather-warning');
+          const advisoryHTML = `
+            <div class="weather-advisory" style="display: flex; align-items: start; gap: 8px; font-size: 14px; color: #ea580c; background: #fed7aa; padding: 12px; border-radius: 8px; border: 1px solid #fb923c; margin-bottom: 16px;">
+              <span style="color: #ea580c; margin-top: 2px; flex-shrink: 0;">⚠️</span>
+              <span>${weatherAdvisory}</span>
+            </div>
+          `;
+          weatherWarning.insertAdjacentHTML('afterend', advisoryHTML);
+        } else {
+          // Update existing advisory
+          const textSpan = advisoryElement.querySelector('span:last-child');
+          textSpan.textContent = weatherAdvisory;
+        }
+      } else if (advisoryElement) {
+        // Remove advisory if none exists for this day
+        advisoryElement.remove();
+      }
     }
 
     function updateActivities(activities) {
@@ -961,12 +1174,95 @@
           <div style="font-size: 14px;">${activity.significance}</div>
         </div>` : '';
 
+      const whatToDoSection = activity.whatToDo ? 
+        `<div style="margin: 12px 0;">
+          <h4 style="font-weight: 500; font-size: 14px; margin-bottom: 8px;">What to Do:</h4>
+          <ul style="margin: 0; padding-left: 16px; font-size: 14px;">
+            ${activity.whatToDo.map(item => {
+              // Strategic emoji mapping for key actions
+              let emoji = "•";
+              const itemLower = item.toLowerCase();
+              
+              if (itemLower.includes("walk") || itemLower.includes("stroll")) emoji = "🚶";
+              else if (itemLower.includes("take photo") || itemLower.includes("photos")) emoji = "📸";
+              else if (itemLower.includes("train") || itemLower.includes("subway") || itemLower.includes("metro")) emoji = "🚆";
+              else if (itemLower.includes("taxi") || itemLower.includes("bus")) emoji = "🚌";
+              else if (itemLower.includes("food") || itemLower.includes("eat") || itemLower.includes("try") || itemLower.includes("sample")) emoji = "🍜";
+              else if (itemLower.includes("temple") || itemLower.includes("shrine") || itemLower.includes("pray")) emoji = "⛩️";
+              else if (itemLower.includes("bow") || itemLower.includes("purify")) emoji = "🙏";
+              else if (itemLower.includes("view") || itemLower.includes("see") || itemLower.includes("watch")) emoji = "👀";
+              else if (itemLower.includes("shop") || itemLower.includes("buy") || itemLower.includes("browse")) emoji = "🛍️";
+              else if (itemLower.includes("experience") || itemLower.includes("enjoy")) emoji = "✨";
+              else if (itemLower.includes("exit") || itemLower.includes("entrance")) emoji = "🚪";
+              else if (itemLower.includes("transfer") || itemLower.includes("change")) emoji = "🔄";
+              
+              return `<li style="display: flex; align-items: start; gap: 8px; margin-bottom: 4px;">
+                <span style="font-size: 14px; margin-top: 2px;">${emoji}</span>
+                <span>${item}</span>
+              </li>`;
+            }).join('')}
+          </ul>
+        </div>` : '';
+
+      const whatToExpectSection = activity.whatToExpect ? 
+        `<div class="significance-box">
+          <div class="significance-title">What to Expect:</div>
+          <div style="font-size: 14px;">${activity.whatToExpect}</div>
+        </div>` : '';
+
+      const culturalEtiquetteSection = activity.culturalEtiquette ? 
+        `<div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin-top: 12px;">
+          <div style="display: flex; align-items: start; gap: 8px;">
+            <span style="color: #92400e; margin-top: 2px;">🙏</span>
+            <div>
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #92400e;">Cultural Etiquette:</div>
+              <div style="font-size: 14px; color: #92400e;">${activity.culturalEtiquette}</div>
+            </div>
+          </div>
+        </div>` : '';
+
       const festivalSection = activity.festivalHighlights ? 
         `<div style="background: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 12px; margin-top: 12px;">
-          <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #a16207;">🎌 Festival Highlights:</div>
-          <ul style="margin: 0; padding-left: 16px; font-size: 14px; color: #92400e;">
-            ${activity.festivalHighlights.map(highlight => `<li>${highlight}</li>`).join('')}
-          </ul>
+          <div style="display: flex; align-items: start; gap: 8px;">
+            <span style="color: #a16207; margin-top: 2px;">🎌</span>
+            <div>
+              <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: #a16207;">Festival Highlights:</div>
+              <ul style="margin: 0; padding-left: 16px; font-size: 14px; color: #92400e;">
+                ${activity.festivalHighlights.map(highlight => `<li style="margin-bottom: 2px;">${highlight}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        </div>` : '';
+
+      const restaurantsSection = activity.restaurants ? 
+        `<div style="margin-top: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 16px;">🍜</span>
+            <h4 style="font-weight: 500; font-size: 14px; margin: 0;">Restaurant Options (${activity.restaurants.length}):</h4>
+          </div>
+          <div style="space-y: 8px;">
+            ${activity.restaurants.map((restaurant, idx) => `
+              <div style="background: rgba(255,255,255,0.5); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                  <h5 style="font-weight: 500; font-size: 14px; margin: 0;">${restaurant.name}</h5>
+                  <span style="font-size: 12px; font-weight: 500; background: rgba(255,255,255,0.7); padding: 4px 8px; border-radius: 4px;">
+                    ${restaurant.cost}
+                  </span>
+                </div>
+                <p style="font-size: 14px; margin: 0 0 8px 0;">${restaurant.description}</p>
+                ${restaurant.whyRecommended ? `
+                  <p style="font-size: 12px; color: #059669; background: rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
+                    <strong>Why recommended:</strong> ${restaurant.whyRecommended}
+                  </p>
+                ` : ''}
+                ${restaurant.whatToExpect ? `
+                  <p style="font-size: 12px; color: #1d4ed8; background: rgba(59, 130, 246, 0.1); padding: 8px; border-radius: 4px; margin: 4px 0;">
+                    <strong>What to expect:</strong> ${restaurant.whatToExpect}
+                  </p>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
         </div>` : '';
 
       return `
@@ -989,7 +1285,11 @@
           <div class="activity-location">📍 ${activity.location}</div>
           <div class="activity-description">${activity.description}</div>
           ${significanceSection}
+          ${whatToDoSection}
+          ${whatToExpectSection}
+          ${culturalEtiquetteSection}
           ${festivalSection}
+          ${restaurantsSection}
         </div>
       `;
     }
