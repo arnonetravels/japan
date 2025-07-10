@@ -136,6 +136,21 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      /* Extend header gradient to cover iPhone status bar */
+      padding-top: max(16px, calc(16px + env(safe-area-inset-top)));
+      position: relative;
+    }
+    
+    /* Status bar background extension */
+    .header::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: env(safe-area-inset-top);
+      background: linear-gradient(90deg, #4f46e5, #7c3aed, #4f46e5);
+      z-index: 99;
     }
     
     .header-title {
@@ -396,7 +411,7 @@
     /* Text Size Controls - Collapsible */
     .text-toggle {
       position: fixed;
-      top: 80px; /* Below sticky header */
+      top: calc(60px + env(safe-area-inset-top)); /* Over sticky header including status bar */
       left: 20px;
       z-index: 1000;
     }
@@ -570,12 +585,12 @@
       </div>
       
       <!-- Overview View -->
-      <div id="overview-view" class="hidden">
+      <div id="overview-view" class="content hidden">
         <!-- Overview content will be populated here -->
       </div>
       
       <!-- Budget View -->
-      <div id="budget-view" class="hidden">
+      <div id="budget-view" class="content hidden">
         <!-- Budget content will be populated here -->
       </div>
     </main>
@@ -657,6 +672,9 @@
                 if (!document.documentElement.getAttribute('data-text-size')) {
                   document.documentElement.setAttribute('data-text-size', 'medium');
                 }
+                
+                // Test showView function availability
+                addDebugLog(`🧪 Testing showView function: ${typeof window.showView}`, 'info');
                 
                 // Initialize the first day's content
                 updateDayDisplay();
@@ -2360,21 +2378,32 @@
       loadTextSizePreference();
     }, 1000);
     
-    // View switching functionality
-    function showView(viewName) {
+    // View switching functionality - make sure it's globally available
+    window.showView = function(viewName) {
+      addDebugLog(`🔄 Attempting to switch to ${viewName} view`, 'info');
+      
       // Hide all views
       document.getElementById('today-view').classList.add('hidden');
       document.getElementById('overview-view').classList.add('hidden');
       document.getElementById('budget-view').classList.add('hidden');
       
       // Show selected view
-      document.getElementById(`${viewName}-view`).classList.remove('hidden');
+      const targetView = document.getElementById(`${viewName}-view`);
+      if (targetView) {
+        targetView.classList.remove('hidden');
+        addDebugLog(`✅ ${viewName} view is now visible`, 'success');
+      } else {
+        addDebugLog(`❌ Could not find ${viewName}-view element`, 'error');
+      }
       
       // Update navigation states
       document.querySelectorAll('.nav-button').forEach(btn => {
         btn.classList.remove('active');
       });
-      document.getElementById(`nav-${viewName}`).classList.add('active');
+      const activeButton = document.getElementById(`nav-${viewName}`);
+      if (activeButton) {
+        activeButton.classList.add('active');
+      }
       
       // Hide/show day navigation based on view
       const dayNav = document.querySelector('.day-nav');
@@ -2386,20 +2415,22 @@
       
       // Load content for the view
       if (viewName === 'overview' && document.getElementById('overview-view').children.length === 0) {
+        addDebugLog(`📋 Loading overview content`, 'info');
         loadOverviewContent();
       }
       if (viewName === 'budget' && document.getElementById('budget-view').children.length === 0) {
+        addDebugLog(`💰 Loading budget content`, 'info');
         loadBudgetContent();
       }
       
       addDebugLog(`📱 Switched to ${viewName} view`, 'info');
-    }
+    };
     
     // Load Overview content
     function loadOverviewContent() {
       const overviewView = document.getElementById('overview-view');
       overviewView.innerHTML = `
-        <div style="padding: 0;">
+        <div>
           <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
             🇯🇵 Trip Overview
           </h2>
@@ -2451,7 +2482,7 @@
           </div>
           
           <!-- Premium Nightlife -->
-          <div style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border: 1px solid #a855f7; border-radius: 12px; padding: 16px;">
+          <div style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border: 1px solid #a855f7; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
             <h3 style="font-size: var(--large-text); font-weight: bold; color: #9333ea; margin-bottom: 12px;">🌃 Premium Views & Nightlife</h3>
             <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #9333ea;">
               <li style="margin-bottom: 8px;"><strong>K36 Kyoto:</strong> Eye-level Yasaka Pagoda view (unique in world)</li>
@@ -2459,6 +2490,12 @@
               <li style="margin-bottom: 8px;"><strong>Ni-chome Tokyo:</strong> Asia's largest LGBTQ+ district</li>
               <li style="margin-bottom: 8px;"><strong>Premium Rooftops:</strong> Craft cocktails with city panoramas</li>
             </ul>
+          </div>
+          
+          <!-- App Info -->
+          <div style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="font-size: var(--base-text); color: #64748b; margin-bottom: 4px;">Japan Travel App</div>
+            <div style="font-size: var(--small-text); color: #94a3b8; font-family: monospace;">${APP_VERSION}</div>
           </div>
         </div>
       `;
@@ -2468,7 +2505,7 @@
     function loadBudgetContent() {
       const budgetView = document.getElementById('budget-view');
       budgetView.innerHTML = `
-        <div style="padding: 0;">
+        <div>
           <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
             💰 Complete Trip Budget
           </h2>
