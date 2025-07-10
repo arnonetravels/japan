@@ -3156,16 +3156,30 @@
     
     // Version History Functions
     window.showVersionHistory = function() {
+      addDebugLog('🔍 showVersionHistory function called!', 'info');
+      console.log('showVersionHistory function called');
       const modal = document.getElementById('version-modal');
-      populateVersionHistory();
-      modal.classList.add('show');
-      addDebugLog('📋 Version history opened', 'info');
+      if (modal) {
+        addDebugLog('✅ Modal element found', 'success');
+        populateVersionHistory();
+        modal.classList.add('show');
+        addDebugLog('📋 Version history opened', 'info');
+      } else {
+        addDebugLog('❌ Modal element not found!', 'error');
+      }
     };
     
     window.closeVersionHistory = function() {
       const modal = document.getElementById('version-modal');
       modal.classList.remove('show');
       addDebugLog('📋 Version history closed', 'info');
+    };
+    
+    // Test function to verify modal works
+    window.testVersionModal = function() {
+      addDebugLog('🧪 Testing version modal directly', 'info');
+      console.log('Testing version modal');
+      showVersionHistory();
     };
     
     function populateVersionHistory() {
@@ -3313,9 +3327,26 @@
       }
       
       // Load content for the view
-      if (viewName === 'overview' && document.getElementById('overview-view').children.length === 0) {
-        addDebugLog(`📋 Loading overview content`, 'info');
-        loadOverviewContent();
+      if (viewName === 'overview') {
+        if (document.getElementById('overview-view').children.length === 0) {
+          addDebugLog(`📋 Loading overview content`, 'info');
+          loadOverviewContent();
+        } else {
+          // Re-attach version tile event listener if content already exists
+          addDebugLog(`📋 Re-attaching version tile listener`, 'info');
+          const versionTile = document.getElementById('version-tile');
+          if (versionTile) {
+            addDebugLog('✅ Version tile found, re-adding click handler', 'success');
+            versionTile.removeEventListener('click', showVersionHistory); // Remove any existing listener
+            versionTile.addEventListener('click', function() {
+              addDebugLog('🔍 Version tile clicked!', 'info');
+              console.log('Version tile clicked, calling showVersionHistory()');
+              showVersionHistory();
+            });
+          } else {
+            addDebugLog('❌ Version tile not found on re-attach!', 'error');
+          }
+        }
       }
       if (viewName === 'budget' && document.getElementById('budget-view').children.length === 0) {
         addDebugLog(`💰 Loading budget content`, 'info');
@@ -3403,9 +3434,14 @@
       // Add click handler to version tile after content is loaded
       const versionTile = document.getElementById('version-tile');
       if (versionTile) {
+        addDebugLog('✅ Version tile found, adding click handler', 'success');
         versionTile.addEventListener('click', function() {
+          addDebugLog('🔍 Version tile clicked!', 'info');
+          console.log('Version tile clicked, calling showVersionHistory()');
           showVersionHistory();
         });
+      } else {
+        addDebugLog('❌ Version tile not found!', 'error');
       }
     }
     
