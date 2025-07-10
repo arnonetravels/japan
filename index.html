@@ -818,79 +818,395 @@
       },
       {
         date: 'Wednesday, July 16', 
-        title: 'Modern Tokyo Culture', 
+        title: 'Modern Tokyo & Immersive Experiences', 
         city: 'Tokyo',
-        weather: 'Extremely hot (31-34°C/88-93°F). Indoor activities during midday essential',
+        weather: 'Extremely hot (31-34°C/88-93°F)',
+        weatherAdvisory: 'Indoor activities during midday essential',
         activities: [
           {
+            type: 'dining',
+            time: '9:00 AM',
+            title: 'Hotel Breakfast',
+            location: 'Hyatt House Shibuya',
+            description: 'Breakfast included daily due to Hyatt Globalist status',
+            whatToExpect: 'Quality hotel breakfast with Japanese and Western options',
+            cost: { yen: 0, usd: 0 }
+          },
+          {
             type: 'cultural',
-            time: '9:00 AM - 12:00 PM',
-            title: 'teamLab Borderless Digital Art',
-            location: 'Odaiba',
-            description: 'World\'s first digital art museum with immersive installations',
-            significance: 'Revolutionary digital art experience, globally acclaimed',
-            cost: { yen: 3200, usd: 22.40 }
+            time: '10:00 AM - 11:30 AM',
+            title: 'Imperial Palace East Gardens',
+            location: 'Imperial Palace',
+            description: 'Historic heart of Tokyo, former Edo Castle grounds',
+            significance: 'Historic heart of Tokyo, former Edo Castle grounds',
+            whatToDo: [
+              'Walk through beautifully maintained Japanese gardens',
+              'Visit ruins of Edo Castle foundations',
+              'Climb to observation deck for city views',
+              'See seasonal flowers and traditional landscaping',
+              'Learn about samurai history at information displays'
+            ],
+            whatToExpect: 'Peaceful contrast to city chaos, beautiful gardens, historical significance',
+            cost: { yen: 0, usd: 0 }
           },
           {
             type: 'activity',
-            time: '2:00 PM - 5:00 PM',
-            title: 'Ginza Shopping & Department Stores',
-            location: 'Ginza',
-            description: 'Japan\'s premier luxury shopping district with air conditioning',
-            cost: { yen: 2000, usd: 14.00 }
+            time: '12:00 PM - 3:30 PM',
+            title: 'Mario Kart Street Racing',
+            location: 'Shibuya Crossing',
+            description: 'Uniquely Tokyo experience - drive through famous intersections',
+            significance: 'Uniquely Tokyo experience - drive through famous intersections',
+            whatToDo: [
+              'Dress up in superhero costumes (no longer Mario-themed due to Nintendo lawsuit)',
+              'Drive go-karts through Shibuya Crossing at street level',
+              'Tour famous Tokyo landmarks in costume',
+              'Take photos with international group participants',
+              'Experience Tokyo traffic from unique perspective'
+            ],
+            whatToExpect: 'Professional guides, Shibuya Crossing at street level, international group fun',
+            note: 'Requires International Driving Permit from AAA (1949 Geneva Convention)',
+            alternative: 'Tokyo Skytree visit - ¥3,000 ($21) if no International Driving Permit',
+            cost: { yen: 14000, usd: 98.00 }
+          },
+          {
+            type: 'cultural',
+            time: '4:00 PM - 7:00 PM',
+            title: 'teamLab Planets',
+            location: 'Toyosu',
+            description: 'World\'s most visited digital art museum with 2025 expansion',
+            significance: 'World\'s most visited digital art museum with 2025 expansion',
+            whatToDo: [
+              'Wade through knee-deep water with digital koi swimming around you',
+              'Walk barefoot through Crystal Universe with infinite mirrors',
+              'Lie down in Floating Flower Garden as flowers move above you',
+              'Jump on rapidly rotating bouncing spheres that light up (NEW 2025 Athletics Forest)',
+              'Create caterpillars by bouncing on same-colored spheres',
+              'Use smartphone to catch and study extinct animals'
+            ],
+            whatToExpect: 'Mind-bending immersive art, walk through water, new athletics area',
+            cost: { yen: 4500, usd: 31.50 }
+          },
+          {
+            type: 'dining',
+            time: '7:30 PM - 8:30 PM',
+            title: 'Ramen Dinner',
+            location: 'Various locations',
+            description: 'Michelin-quality ramen experience',
+            restaurants: [
+              {
+                name: 'Nakiryu (Otsuka)',
+                cost: '¥1,000-1,500',
+                description: 'Michelin Bib Gourmand (formerly 1-star) - Famous for tantanmen (spicy sesame noodles)',
+                whyRecommended: 'World-renowned spicy sesame noodles that earned Michelin recognition',
+                whatToExpect: 'Expect 1-2 hour wait, exceptional quality'
+              },
+              {
+                name: 'Ganko Ramen (Tokyo Station)',
+                cost: '¥800-1,200',
+                description: 'Multiple regional ramen styles under one roof',
+                whyRecommended: 'Variety of regional styles in convenient location',
+                whatToExpect: 'Food court style with multiple ramen options'
+              },
+              {
+                name: 'Ichiran Ramen',
+                cost: '¥900-1,200',
+                description: 'Individual booth experience with customizable tonkotsu ramen',
+                whyRecommended: 'Unique solo dining experience, highly customizable',
+                whatToExpect: 'Private booth with detailed customization options'
+              }
+            ],
+            cost: { yen: 1200, usd: 8.40 }
+          },
+          {
+            type: 'nightlife',
+            time: '9:00 PM - 10:30 PM',
+            title: 'Andaz Tokyo Rooftop',
+            location: 'Toranomon Hills',
+            description: 'Premium ending to immersive day',
+            significance: 'Premium ending to immersive day',
+            whatToDo: [
+              'Enjoy views from one of Tokyo\'s highest bars',
+              'Try craft cocktails with Japanese ingredients',
+              'Take photos of Toranomon Hills night views',
+              'Experience sophisticated business district atmosphere'
+            ],
+            whatToExpect: 'Toranomon Hills views, sophisticated atmosphere',
+            cost: { yen: 5500, usd: 38.50 }
           }
         ],
-        totalCost: { yen: 6400, usd: 44.80 }
+        totalCost: { yen: 25200, usd: 176.40 },
+        costBreakdown: {
+          food: { yen: 1200, usd: 8.40 },
+          transport: { yen: 800, usd: 5.60 },
+          attractions: { yen: 18500, usd: 129.50 },
+          nightlife: { yen: 5500, usd: 38.50 }
+        }
       },
       {
         date: 'Thursday, July 17', 
-        title: 'Tokyo Deep Dive', 
+        title: 'Markets & Cultural Deep Dive', 
         city: 'Tokyo',
         weather: 'Hot & humid with possible afternoon thunderstorms',
+        weatherAdvisory: 'Skip hotel breakfast for market experience',
         activities: [
           {
-            type: 'cultural',
-            time: '8:00 AM - 11:00 AM',
-            title: 'Tsukiji Outer Market Food Tour',
+            type: 'dining',
+            time: '6:00 AM - 8:30 AM',
+            title: 'Tsukiji Market Food Tour',
             location: 'Tsukiji',
-            description: 'Fresh sushi breakfast and market exploration',
+            description: 'Historic fish market, legendary food stalls since 1947',
+            significance: 'Historic fish market, legendary food stalls since 1947',
+            whatToDo: [
+              'Try famous tuna sashimi at Yamacho stall',
+              'Sample fresh tamagoyaki (sweet egg omelet) at Joyato',
+              'Taste various sushi and sashimi from different vendors',
+              'Watch skilled vendors prepare fresh seafood',
+              'Try uni (sea urchin) and seasonal specialties',
+              'Take photos of authentic market atmosphere'
+            ],
+            whatToExpect: 'Ultra-fresh seafood, authentic vendors, traditional preparation methods',
+            cost: { yen: 3500, usd: 24.50 }
+          },
+          {
+            type: 'cultural',
+            time: '9:30 AM - 12:30 PM',
+            title: 'Tokyo National Museum',
+            location: 'Ueno',
+            description: 'Japan\'s premier cultural institution - world\'s largest Japanese art collection',
+            significance: 'Japan\'s premier cultural institution - world\'s largest Japanese art collection',
+            whatToDo: [
+              'See ancient Buddhist sculptures and religious art',
+              'Explore samurai swords and armor collections (89 National Treasures)',
+              'View traditional Japanese paintings and calligraphy',
+              'Learn about Japanese pottery and ceramics from different periods',
+              'Visit Gallery of Hōryū-ji Treasures (7th-8th century artifacts)',
+              'Use English audio guides for comprehensive understanding'
+            ],
+            whatToExpect: 'World\'s largest Japanese art collection, samurai weapons, Buddhist art, National Treasures',
+            cost: { yen: 1000, usd: 7.00 }
+          },
+          {
+            type: 'dining',
+            time: '12:30 PM - 1:30 PM',
+            title: 'Lunch in Ueno Area',
+            location: 'Ueno',
+            description: 'Traditional Japanese lunch',
+            restaurants: [
+              {
+                name: 'Traditional tofu restaurant',
+                cost: '¥1,500-2,000',
+                description: 'Experience Kyoto-style yudofu cuisine',
+                whyRecommended: 'Authentic Buddhist temple-style preparation',
+                whatToExpect: 'Serene atmosphere with traditional tofu preparations'
+              },
+              {
+                name: 'Local Ueno establishments',
+                cost: '¥1,200-1,800',
+                description: 'Sample neighborhood specialties',
+                whyRecommended: 'Local favorites near museum district',
+                whatToExpect: 'Casual atmosphere with regional Tokyo dishes'
+              }
+            ],
+            cost: { yen: 1600, usd: 11.20 }
+          },
+          {
+            type: 'cultural',
+            time: '1:30 PM - 4:00 PM',
+            title: 'Ueno Park Exploration & Rest',
+            location: 'Ueno Park',
+            description: 'Japan\'s first public park with beautiful gardens and temples',
+            significance: 'Japan\'s first public park with beautiful gardens and temples',
+            whatToDo: [
+              'Stroll through traditional Japanese gardens',
+              'Visit Toshogu Shrine dedicated to Tokugawa Ieyasu',
+              'Rest in shaded areas during peak heat',
+              'Take photos of Shinobazu Pond and Bentendo Temple',
+              'Browse park\'s cultural atmosphere'
+            ],
+            whatToExpect: 'Peaceful gardens, traditional temples, relief from July heat',
+            cost: { yen: 0, usd: 0 }
+          },
+          {
+            type: 'dining',
+            time: '6:00 PM - 7:30 PM',
+            title: 'Michelin Dinner',
+            location: 'Various locations',
+            description: 'Michelin-quality ramen experience',
+            restaurants: [
+              {
+                name: 'Nakiryu (Otsuka)',
+                cost: '¥1,000-1,500',
+                description: 'Michelin Bib Gourmand tantanmen specialist - spicy sesame noodles that earned worldwide recognition',
+                whyRecommended: 'Former Michelin star, now Bib Gourmand with exceptional quality',
+                whatToExpect: 'Long wait times, exceptional spicy sesame ramen'
+              },
+              {
+                name: 'Ramen Break Beats (Meguro)',
+                cost: '¥1,200-1,500',
+                description: 'New 2025 Michelin Bib Gourmand entry - sophisticated ramen with porcini mushrooms',
+                whyRecommended: 'Latest Michelin recognition, innovative techniques',
+                whatToExpect: 'Contemporary ramen artistry with premium ingredients'
+              },
+              {
+                name: 'Konjiki Hototogisu (Shinjuku)',
+                cost: '¥1,000-1,300',
+                description: 'Former Michelin-starred, now Bib Gourmand - famous for "triple soup" shoyu soba',
+                whyRecommended: 'Innovative triple-soup technique, complex flavors',
+                whatToExpect: 'Refined ramen with sophisticated preparation methods'
+              }
+            ],
+            cost: { yen: 1300, usd: 9.10 }
+          },
+          {
+            type: 'nightlife',
+            time: '8:30 PM - 10:30 PM',
+            title: 'Golden Gai Exploration',
+            location: 'Shinjuku Golden Gai',
+            description: 'Historic post-war drinking district',
+            significance: 'Historic post-war drinking district',
+            whatToDo: [
+              'Visit 2-3 different tiny bars (5-6 seats each)',
+              'Chat with local salarymen and mama-sans',
+              'Try different types of Japanese whiskey and sake',
+              'Experience authentic post-war Tokyo atmosphere',
+              'Order yakitori and other bar snacks'
+            ],
+            whatToExpect: 'Tiny bars, local salarymen, authentic atmosphere, multiple venue hopping',
             cost: { yen: 2500, usd: 17.50 }
+          }
+        ],
+        totalCost: { yen: 9900, usd: 69.30 },
+        costBreakdown: {
+          food: { yen: 6400, usd: 44.80 },
+          transport: { yen: 600, usd: 4.20 },
+          attractions: { yen: 1000, usd: 7.00 },
+          nightlife: { yen: 2500, usd: 17.50 }
+        }
+      },
+      {
+        date: 'Friday, July 18', 
+        title: 'Final Tokyo & Prime Nightlife', 
+        city: 'Tokyo',
+        weather: 'Hot morning, possible rain afternoon (29-32°C/84-90°F)',
+        weatherAdvisory: 'Final Tokyo day with major nightlife experience',
+        activities: [
+          {
+            type: 'dining',
+            time: '9:00 AM',
+            title: 'Hotel Breakfast',
+            location: 'Hyatt House Shibuya',
+            description: 'Breakfast included daily due to Hyatt Globalist status',
+            whatToExpect: 'Quality hotel breakfast with Japanese and Western options',
+            cost: { yen: 0, usd: 0 }
+          },
+          {
+            type: 'activity',
+            time: '10:00 AM - 12:00 PM',
+            title: 'Harajuku Shopping',
+            location: 'Harajuku',
+            description: 'Youth fashion capital and luxury district',
+            significance: 'Youth fashion capital and luxury district',
+            whatToDo: [
+              'Try rainbow cotton candy and character crepes on Takeshita Street',
+              'Browse kawaii fashion and cosplay stores',
+              'Window shop luxury brands at Omotesando Hills',
+              'Take photos with street fashion enthusiasts'
+            ],
+            whatToExpect: 'Kawaii culture, outrageous fashion, luxury brands',
+            cost: { yen: 1000, usd: 7.00 }
           },
           {
             type: 'cultural',
             time: '1:00 PM - 4:00 PM',
-            title: 'Imperial Palace East Gardens',
-            location: 'Imperial Palace',
-            description: 'Former Edo Castle grounds with beautiful gardens',
-            cost: { yen: 0, usd: 0 }
-          }
-        ],
-        totalCost: { yen: 3800, usd: 26.60 }
-      },
-      {
-        date: 'Friday, July 18', 
-        title: 'Final Tokyo Exploration', 
-        city: 'Tokyo',
-        weather: 'Hot morning, possible rain afternoon (29-32°C/84-90°F)',
-        activities: [
-          {
-            type: 'cultural',
-            time: '9:00 AM - 12:00 PM',
-            title: 'Tokyo Skytree',
-            location: 'Sumida',
-            description: 'World\'s second tallest structure with panoramic views',
-            cost: { yen: 2100, usd: 14.70 }
+            title: 'Tokyo Tower',
+            location: 'Tokyo Tower',
+            description: 'Classic Tokyo landmark for final views',
+            significance: 'Classic Tokyo landmark for final views',
+            whatToDo: [
+              'Visit Main Observatory (150m) and Special Observatory (250m)',
+              'Take photos of iconic red and white tower',
+              'Shop for Tokyo Tower exclusive merchandise',
+              'See panoramic views of Tokyo Bay and city',
+              'Compare views with modern experiences from previous days'
+            ],
+            whatToExpect: 'Iconic tower views, nostalgic Tokyo symbol',
+            cost: { yen: 1200, usd: 8.40 }
           },
           {
-            type: 'activity',
-            time: '2:00 PM - 6:00 PM',
-            title: 'Akihabara Electronics District',
-            location: 'Akihabara',
-            description: 'Anime, manga, and electronics shopping paradise',
-            cost: { yen: 3000, usd: 21.00 }
+            type: 'dining',
+            time: '5:00 PM - 6:30 PM',
+            title: 'Light Dinner',
+            location: 'Near hotel',
+            description: 'Final Tokyo meal before nightlife adventure',
+            restaurants: [
+              {
+                name: 'Local restaurant near hotel',
+                cost: '¥1,500-2,500',
+                description: 'Convenient location for convenience',
+                whyRecommended: 'Close to hotel, prepare for extensive nightlife',
+                whatToExpect: 'Light meal to fuel evening activities'
+              }
+            ],
+            cost: { yen: 2000, usd: 14.00 }
+          },
+          {
+            type: 'nightlife',
+            time: '11:00 PM - 2:00 AM',
+            title: 'WOMB Shibuya (EDM Club)',
+            location: 'Shibuya',
+            description: 'Tokyo\'s premier electronic music venue, ranked among world\'s top clubs by Mixmag magazine',
+            significance: 'Tokyo\'s premier electronic music venue, ranked among world\'s top clubs by Mixmag magazine',
+            whatToDo: [
+              'Experience famous mirror ball room on main floor with Asia\'s largest mirror ball',
+              'Dance to house and techno from international DJs and top local artists',
+              'Explore all 4 floors with different music styles and atmospheres (main floor, intimate basement, lounge areas)',
+              'Enjoy world-class sound system with high-quality lighting and laser productions',
+              'Meet international clubbers and locals in friendly, welcoming crowd'
+            ],
+            whatToExpected: '4 floors of house/techno, serious sound system, diverse international crowd, professional production quality',
+            cost: { yen: 4000, usd: 28.00 }
+          },
+          {
+            type: 'nightlife',
+            time: '2:00 AM - 4:00 AM',
+            title: 'Ni-chome Gay District',
+            location: 'Shinjuku Ni-chome',
+            description: 'Asia\'s largest gay district with over 300 LGBTQ+ venues in compact area',
+            significance: 'Asia\'s largest gay district with over 300 LGBTQ+ venues in compact area',
+            restaurants: [
+              {
+                name: 'Arty Farty',
+                cost: '¥2,000-3,000 + drinks',
+                description: 'Popular dance club with pop and electronic music, diverse international crowd',
+                whyRecommended: 'Most international-friendly, great for tourists',
+                whatToExpect: 'High-energy dance floor with diverse crowd'
+              },
+              {
+                name: 'AiSOTOPE Lounge',
+                cost: '¥1,500-2,500 + drinks',
+                description: 'Intimate bar atmosphere with friendly mama-san culture and local regulars',
+                whyRecommended: 'Authentic Japanese gay bar culture',
+                whatToExpect: 'Intimate setting with local interaction'
+              },
+              {
+                name: 'Dragon Men',
+                cost: '¥1,500-2,000 + drinks',
+                description: 'Casual bar with English-speaking staff and welcoming atmosphere for tourists',
+                whyRecommended: 'Tourist-friendly with English support',
+                whatToExpect: 'Relaxed atmosphere, easy communication'
+              }
+            ],
+            whatToExpected: 'Welcoming inclusive atmosphere, diverse venues from intimate bars to dance clubs, late-night energy until dawn',
+            cost: { yen: 6000, usd: 42.00 }
           }
         ],
-        totalCost: { yen: 6200, usd: 43.40 }
+        totalCost: { yen: 14200, usd: 99.40 },
+        costBreakdown: {
+          food: { yen: 2000, usd: 14.00 },
+          transport: { yen: 600, usd: 4.20 },
+          attractions: { yen: 2200, usd: 15.40 },
+          nightlife: { yen: 10000, usd: 70.00 }
+        }
       },
       {
         date: 'Saturday, July 19', 
@@ -1147,13 +1463,15 @@
       const existingCards = content.querySelectorAll('.activity-card');
       existingCards.forEach(card => card.remove());
       
-      // Find insertion point (after weather warning)
-      const weatherWarning = content.querySelector('.weather-warning');
+      // Find insertion point (after weather advisory or weather warning)
+      let insertionPoint = content.querySelector('.weather-advisory') || content.querySelector('.weather-warning');
       
-      // Create new activity cards
+      // Create new activity cards in chronological order
       activities.forEach(activity => {
         const activityCard = createActivityCard(activity);
-        weatherWarning.insertAdjacentHTML('afterend', activityCard);
+        insertionPoint.insertAdjacentHTML('afterend', activityCard);
+        // Update insertion point to the newly inserted card for next iteration
+        insertionPoint = insertionPoint.nextElementSibling;
       });
     }
 
