@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Japan Travel">
-  <meta name="theme-color" content="#4f46e5">
+  <meta name="theme-color" content="#6366f1">
   
   <style>
     /* Inline CSS - no external dependencies */
@@ -136,21 +136,8 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      /* Extend header gradient to cover iPhone status bar */
+      /* Extend header to account for iPhone status bar */
       padding-top: max(16px, calc(16px + env(safe-area-inset-top)));
-      position: relative;
-    }
-    
-    /* Status bar background extension */
-    .header::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: env(safe-area-inset-top);
-      background: linear-gradient(90deg, #4f46e5, #7c3aed, #4f46e5);
-      z-index: 99;
     }
     
     .header-title {
@@ -411,7 +398,7 @@
     /* Text Size Controls - Collapsible */
     .text-toggle {
       position: fixed;
-      top: calc(60px + env(safe-area-inset-top)); /* Over sticky header including status bar */
+      top: calc(20px + env(safe-area-inset-top)); /* Within header area */
       left: 20px;
       z-index: 1000;
     }
