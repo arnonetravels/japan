@@ -1,0 +1,1264 @@
+{
+  "2025-07-14": {
+    "date": "Monday, July 14, 2025",
+    "title": "Arrival & Gentle Recovery",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "weatherAdvisory": "July is Japan's hottest, most humid month. Plan indoor activities during peak heat (11am-4pm)",
+    "city": "Tokyo",
+    "activities": [
+      {
+        "id": 1,
+        "time": "4:30 AM - 7:30 AM",
+        "title": "Airport to Hotel",
+        "type": "transport",
+        "cost": { "yen": 800, "usd": 5.50 },
+        "description": "Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya",
+        "location": "Haneda Airport → Shibuya",
+        "whatToDo": [
+          "Navigate immigration and customs at Haneda Airport",
+          "Take Airport Express to Shibuya Station",
+          "Check into Hyatt House Shibuya (early if possible)",
+          "Store luggage and freshen up",
+          "Get oriented with hotel amenities"
+        ],
+        "whatToExpect": "Modern, efficient trains with English signage. Early check-in likely available."
+      },
+      {
+        "id": 2,
+        "time": "8:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt House Shibuya",
+        "whatToExpect": "Quality hotel breakfast with Japanese and Western options"
+      },
+      {
+        "id": 3,
+        "time": "9:30 AM - 12:00 PM",
+        "title": "Shibuya Crossing Experience",
+        "type": "cultural",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Iconic Tokyo orientation without overwhelming jetlag",
+        "location": "Shibuya",
+        "significance": "World's busiest pedestrian crossing - iconic Tokyo moment",
+        "whatToDo": [
+          "Cross the famous Shibuya Crossing during rush periods",
+          "Take photos with Hachiko statue (loyal dog memorial)",
+          "View crossing from Starbucks 2F for aerial perspective",
+          "Walk through Center Gai for people-watching",
+          "Visit 109 building for youth fashion culture"
+        ],
+        "whatToExpect": "World's busiest pedestrian crossing. Overwhelming but exhilarating first Tokyo moment."
+      },
+      {
+        "id": 4,
+        "time": "12:00 PM - 1:00 PM",
+        "title": "First Tokyo Lunch",
+        "type": "dining",
+        "cost": { "yen": 265, "usd": 1.85 },
+        "description": "Budget-friendly conveyor belt sushi experience",
+        "location": "Shibuya area",
+        "restaurants": [
+          {
+            "name": "Uobei Shibuya Dogenzaka",
+            "cost": "¥130-280 per plate",
+            "description": "Touch panel conveyor sushi, popular with locals and tourists alike",
+            "whyRecommended": "Quality budget option recognized by locals",
+            "whatToExpect": "Casual atmosphere with automated ordering system"
+          },
+          {
+            "name": "Numazuko Sushi (Tokyo Station)",
+            "cost": "¥150 per plate",
+            "description": "Fresh sushi delivered by automated belt system with multilingual ordering",
+            "whyRecommended": "Excellent for first-time visitors",
+            "whatToExpect": "Modern conveyor belt system with English support"
+          },
+          {
+            "name": "Ganko Sushi",
+            "cost": "¥138+ per plate",
+            "description": "Traditional chain with authentic atmosphere",
+            "whyRecommended": "Recognized by locals as quality budget option",
+            "whatToExpect": "Traditional sushi bar atmosphere"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "time": "1:30 PM - 5:00 PM",
+        "title": "Meiji Shrine & Harajuku",
+        "type": "cultural",
+        "cost": { "yen": 600, "usd": 4.20 },
+        "description": "Essential Tokyo contrast - sacred shrine + pop culture street",
+        "location": "Meiji Shrine → Harajuku",
+        "significance": "1920 shrine in forest setting, then colorful kawaii culture",
+        "whatToDo": [
+          "Write wishes on ema (wooden plaques) and hang them",
+          "Witness traditional Shinto wedding ceremonies (if occurring)",
+          "Walk peaceful forest paths among 100,000+ trees",
+          "Visit main shrine and bow properly (bow twice, clap twice, bow once)",
+          "Walk down Takeshita Street for kawaii culture",
+          "Try rainbow cotton candy and character crepes",
+          "Browse vintage shops and fashion stores",
+          "Visit Omotesando Hills for luxury contrast"
+        ],
+        "culturalEtiquette": "Bow twice, clap twice, bow once at main shrine",
+        "whatToExpect": "Sacred tranquility followed by vibrant youth culture explosion"
+      },
+      {
+        "id": 6,
+        "time": "5:30 PM - 7:00 PM",
+        "title": "Early Dinner",
+        "type": "dining",
+        "cost": { "yen": 1500, "usd": 10.50 },
+        "description": "Premium sushi experience with traditional presentation",
+        "location": "Ginza area",
+        "restaurants": [
+          {
+            "name": "Seamon Ginza",
+            "cost": "¥1,800",
+            "description": "Elegant 20-seat restaurant with freshly grated wasabi, 9 pieces + soup + appetizers",
+            "whyRecommended": "Exceptional value for premium sushi experience",
+            "whatToExpected": "Intimate counter seating with skilled sushi chefs"
+          },
+          {
+            "name": "Uobei Shibuya Dogenzaka",
+            "cost": "¥130-280 per plate",
+            "description": "Touch panel conveyor sushi with fresh fish delivery",
+            "whyRecommended": "Convenient and reliable quality",
+            "whatToExpect": "Modern conveyor belt system"
+          },
+          {
+            "name": "Kura Sushi (Shibuya)",
+            "cost": "¥150 per plate average",
+            "description": "Family-friendly conveyor belt with colorful atmosphere",
+            "whyRecommended": "Fun experience with digital ordering",
+            "whatToExpect": "Playful atmosphere with game elements"
+          }
+        ]
+      }
+    ],
+    "dayTotal": { "yen": 2965, "usd": 20.05 },
+    "costBreakdown": {
+      "food": { "yen": 1765, "usd": 12.35 },
+      "transport": { "yen": 800, "usd": 5.50 },
+      "attractions": { "yen": 600, "usd": 4.20 }
+    }
+  },
+  "2025-07-15": {
+    "date": "Tuesday, July 15, 2025",
+    "title": "Traditional Tokyo & Summer Festival",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Tokyo",
+    "activities": [
+      {
+        "id": 7,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt House Shibuya"
+      },
+      {
+        "id": 8,
+        "time": "10:00 AM - 12:00 PM",
+        "title": "Shibuya Sky",
+        "type": "activity",
+        "cost": { "yen": 2000, "usd": 14.00 },
+        "description": "Modern Tokyo's newest iconic viewpoint",
+        "location": "Shibuya Sky",
+        "significance": "Stunning 360° city views, less crowded than Skytree",
+        "whatToDo": [
+          "Take panoramic photos from 360° observation deck",
+          "Visit rooftop terrace for open-air city views",
+          "Experience Sky Gallery with digital art installations",
+          "Shop for exclusive Shibuya Sky merchandise"
+        ],
+        "whatToExpect": "Stunning 360° city views, less crowded than Skytree"
+      },
+      {
+        "id": 9,
+        "time": "1:00 PM - 4:00 PM",
+        "title": "Traditional Asakusa",
+        "type": "cultural",
+        "cost": { "yen": 450, "usd": 3.15 },
+        "description": "Tokyo's oldest temple (7th century) & traditional shopping street",
+        "location": "Sensoji Temple → Nakamise Street",
+        "significance": "1,400-year-old temple, traditional architecture, street food culture",
+        "whatToDo": [
+          "Purify yourself at water basin before entering",
+          "Wave incense smoke over yourself for good health",
+          "Draw omikuji (fortune slips) and tie bad ones to racks",
+          "Ring bell and pray at main hall",
+          "Try ningyo-yaki (doll-shaped cakes with sweet filling)",
+          "Sample fresh taiyaki (fish-shaped pastry)",
+          "Buy traditional folding fans and chopsticks",
+          "Watch artisans make traditional crafts"
+        ],
+        "culturalEtiquette": "Purify hands and mouth at water basin before entering temple",
+        "whatToExpect": "Ancient temple atmosphere with traditional street food vendors"
+      },
+      {
+        "id": 10,
+        "time": "5:30 PM - 8:00 PM",
+        "title": "Mitama Matsuri Festival",
+        "type": "festival",
+        "cost": { "yen": 1500, "usd": 10.50 },
+        "description": "One of Tokyo's most spectacular summer festivals featuring 30,000+ lanterns",
+        "location": "Yasukuni Shrine",
+        "significance": "One of Tokyo's most spectacular summer festivals (July 13-16, 2025) featuring 30,000+ lanterns",
+        "festivalHighlights": [
+          "30,000+ lanterns illuminated daily from dusk until 9:30pm",
+          "Nebuta float processions from Aomori (July 15 at 6:30 PM)",
+          "Awa Odori dance demonstrations (July 15 at 7:30 PM)",
+          "Access to inner shrine courtyard (normally restricted area)",
+          "Memorial festival honoring spirits of war dead"
+        ],
+        "whatToDo": [
+          "Walk through lantern-lit pathways for magical photos",
+          "Watch traditional Bon Odori dancing performances",
+          "Observe Nebuta float parades from Aomori (July 15 at 6:30 PM)",
+          "Experience Awa Odori dance demonstrations (July 15 at 7:30 PM)",
+          "Experience food trucks selling street food",
+          "Listen to taiko drumming performances",
+          "Access inner shrine courtyard during evening hours"
+        ],
+        "whatToExpect": "Memorial lanterns creating ethereal atmosphere honoring spirits of war dead, unique spiritual experience"
+      },
+      {
+        "id": 11,
+        "time": "8:30 PM - 10:00 PM",
+        "title": "CÉ LA VI Tokyo",
+        "type": "nightlife",
+        "cost": { "yen": 4350, "usd": 30.45 },
+        "description": "Premium rooftop experience with city views",
+        "location": "CÉ LA VI Tokyo",
+        "significance": "Premium rooftop experience with city views",
+        "whatToDo": [
+          "Enjoy panoramic night views of Tokyo",
+          "Try signature cocktails with Asian influences",
+          "Take photos on outdoor terrace",
+          "Experience sophisticated international atmosphere"
+        ],
+        "whatToExpect": "Sophisticated atmosphere, panoramic night views, quality cocktails"
+      }
+    ],
+    "dayTotal": { "yen": 8300, "usd": 58.10 },
+    "costBreakdown": {
+      "food": { "yen": 1500, "usd": 10.50 },
+      "transport": { "yen": 0, "usd": 0 },
+      "attractions": { "yen": 2000, "usd": 14.00 },
+      "nightlife": { "yen": 4350, "usd": 30.45 },
+      "festival": { "yen": 450, "usd": 3.15 }
+    }
+  },
+  "2025-07-16": {
+    "date": "Wednesday, July 16, 2025",
+    "title": "Modern Tokyo & Immersive Experiences",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Tokyo",
+    "activities": [
+      {
+        "id": 12,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt House Shibuya"
+      },
+      {
+        "id": 13,
+        "time": "10:00 AM - 11:30 AM",
+        "title": "Imperial Palace East Gardens",
+        "type": "cultural",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Historic heart of Tokyo, former Edo Castle grounds",
+        "location": "Imperial Palace East Gardens",
+        "significance": "Historic heart of Tokyo, former Edo Castle grounds",
+        "whatToDo": [
+          "Walk through beautifully maintained Japanese gardens",
+          "Visit ruins of Edo Castle foundations",
+          "Climb to observation deck for city views",
+          "See seasonal flowers and traditional landscaping",
+          "Learn about samurai history at information displays"
+        ],
+        "whatToExpect": "Peaceful contrast to city chaos, beautiful gardens, historical significance"
+      },
+      {
+        "id": 14,
+        "time": "12:00 PM - 3:30 PM",
+        "title": "Mario Kart Street Racing",
+        "type": "activity",
+        "cost": { "yen": 14000, "usd": 97.00 },
+        "description": "Uniquely Tokyo experience - drive through famous intersections",
+        "location": "Shibuya area",
+        "significance": "Uniquely Tokyo experience - drive through famous intersections",
+        "whatToDo": [
+          "Dress up in superhero costumes (no longer Mario-themed)",
+          "Drive go-karts through Shibuya Crossing at street level",
+          "Tour famous Tokyo landmarks in costume",
+          "Take photos with international group participants",
+          "Experience Tokyo traffic from unique perspective"
+        ],
+        "whatToExpect": "Professional guides, Shibuya Crossing at street level, international group fun",
+        "note": "Requires International Driving Permit from AAA (1949 Geneva Convention)",
+        "alternative": "Tokyo Skytree visit - ¥3,000 ($21) if no IDP available"
+      },
+      {
+        "id": 15,
+        "time": "4:00 PM - 7:00 PM",
+        "title": "teamLab Planets",
+        "type": "activity",
+        "cost": { "yen": 4500, "usd": 31.50 },
+        "description": "World's most visited digital art museum with 2025 expansion",
+        "location": "teamLab Planets",
+        "significance": "World's most visited digital art museum with 2025 expansion",
+        "whatToDo": [
+          "Wade through knee-deep water with digital koi swimming around you",
+          "Walk barefoot through Crystal Universe with infinite mirrors",
+          "Lie down in Floating Flower Garden as flowers move above you",
+          "Jump on rapidly rotating bouncing spheres that light up",
+          "Create caterpillars by bouncing on same-colored spheres",
+          "Use smartphone to catch and study extinct animals"
+        ],
+        "whatToExpect": "Mind-bending immersive art, walk through water, new athletics area"
+      },
+      {
+        "id": 16,
+        "time": "7:30 PM - 8:30 PM",
+        "title": "Ramen Dinner",
+        "type": "dining",
+        "cost": { "yen": 1200, "usd": 8.40 },
+        "description": "Michelin-quality ramen experience",
+        "location": "Various locations",
+        "restaurants": [
+          {
+            "name": "Nakiryu (Otsuka)",
+            "cost": "¥1,000-1,500",
+            "description": "Michelin Bib Gourmand (formerly 1-star) - Famous for tantanmen (spicy sesame noodles)",
+            "whyRecommended": "Internationally acclaimed ramen specialist",
+            "whatToExpect": "Expect 1-2 hour wait, sophisticated ramen preparation"
+          },
+          {
+            "name": "Ganko Ramen (Tokyo Station)",
+            "cost": "¥800-1,200",
+            "description": "Multiple regional ramen styles under one roof",
+            "whyRecommended": "Great variety of authentic regional styles",
+            "whatToExpect": "Food court setting with multiple ramen options"
+          },
+          {
+            "name": "Ichiran Ramen",
+            "cost": "¥900-1,200",
+            "description": "Individual booth experience with customizable tonkotsu ramen",
+            "whyRecommended": "Unique solo dining experience",
+            "whatToExpect": "Private booth with customizable ramen options"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "time": "9:00 PM - 10:30 PM",
+        "title": "Andaz Tokyo Rooftop",
+        "type": "nightlife",
+        "cost": { "yen": 5500, "usd": 38.50 },
+        "description": "Premium ending to immersive day",
+        "location": "Andaz Tokyo Rooftop",
+        "significance": "Premium ending to immersive day",
+        "whatToDo": [
+          "Enjoy views from one of Tokyo's highest bars",
+          "Try craft cocktails with Japanese ingredients",
+          "Take photos of Toranomon Hills night views",
+          "Experience sophisticated business district atmosphere"
+        ],
+        "whatToExpect": "Toranomon Hills views, sophisticated atmosphere"
+      }
+    ],
+    "dayTotal": { "yen": 25200, "usd": 175.40 },
+    "costBreakdown": {
+      "food": { "yen": 1200, "usd": 8.40 },
+      "transport": { "yen": 0, "usd": 0 },
+      "attractions": { "yen": 18500, "usd": 128.50 },
+      "nightlife": { "yen": 5500, "usd": 38.50 }
+    }
+  },
+  "2025-07-17": {
+    "date": "Thursday, July 17, 2025",
+    "title": "Markets & Cultural Deep Dive",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Tokyo",
+    "activities": [
+      {
+        "id": 18,
+        "time": "6:00 AM - 8:30 AM",
+        "title": "Tsukiji Market Food Tour",
+        "type": "dining",
+        "cost": { "yen": 3500, "usd": 24.50 },
+        "description": "Historic fish market, legendary food stalls since 1947",
+        "location": "Tsukiji Market",
+        "significance": "Historic fish market, legendary food stalls since 1947",
+        "whatToDo": [
+          "Try famous tuna sashimi at Yamacho stall",
+          "Sample fresh tamagoyaki (sweet egg omelet) at Joyato",
+          "Taste various sushi and sashimi from different vendors",
+          "Watch skilled vendors prepare fresh seafood",
+          "Try uni (sea urchin) and seasonal specialties",
+          "Take photos of authentic market atmosphere"
+        ],
+        "whatToExpect": "Ultra-fresh seafood, authentic vendors, traditional preparation methods"
+      },
+      {
+        "id": 19,
+        "time": "9:30 AM - 12:30 PM",
+        "title": "Tokyo National Museum",
+        "type": "cultural",
+        "cost": { "yen": 1000, "usd": 7.00 },
+        "description": "Japan's premier cultural institution - world's largest Japanese art collection",
+        "location": "Tokyo National Museum",
+        "significance": "Japan's premier cultural institution - world's largest Japanese art collection",
+        "whatToDo": [
+          "See ancient Buddhist sculptures and religious art",
+          "Explore samurai swords and armor collections (89 National Treasures)",
+          "View traditional Japanese paintings and calligraphy",
+          "Learn about Japanese pottery and ceramics from different periods",
+          "Visit Gallery of Hōryū-ji Treasures (7th-8th century artifacts)",
+          "Use English audio guides for comprehensive understanding"
+        ],
+        "whatToExpect": "World's largest Japanese art collection, samurai weapons, Buddhist art, National Treasures"
+      },
+      {
+        "id": 20,
+        "time": "12:30 PM - 1:30 PM",
+        "title": "Lunch in Ueno Area",
+        "type": "dining",
+        "cost": { "yen": 1500, "usd": 10.50 },
+        "description": "Traditional tofu restaurant or local Ueno establishments",
+        "location": "Ueno area",
+        "restaurants": [
+          {
+            "name": "Traditional tofu restaurant",
+            "cost": "¥1,200-2,000",
+            "description": "Experience Kyoto-style yudofu cuisine",
+            "whyRecommended": "Authentic traditional preparation",
+            "whatToExpect": "Refined tofu dishes in traditional setting"
+          },
+          {
+            "name": "Local Ueno establishments",
+            "cost": "¥1,200-2,000",
+            "description": "Sample neighborhood specialties",
+            "whyRecommended": "Local authentic experience",
+            "whatToExpect": "Neighborhood atmosphere with local favorites"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "time": "1:30 PM - 4:00 PM",
+        "title": "Ueno Park Exploration & Rest",
+        "type": "cultural",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Japan's first public park with beautiful gardens and temples",
+        "location": "Ueno Park",
+        "significance": "Japan's first public park with beautiful gardens and temples",
+        "whatToDo": [
+          "Stroll through traditional Japanese gardens",
+          "Visit Toshogu Shrine dedicated to Tokugawa Ieyasu",
+          "Rest in shaded areas during peak heat",
+          "Take photos of Shinobazu Pond and Bentendo Temple",
+          "Browse park's cultural atmosphere"
+        ],
+        "whatToExpect": "Peaceful gardens, traditional temples, relief from July heat"
+      },
+      {
+        "id": 22,
+        "time": "6:00 PM - 7:30 PM",
+        "title": "Michelin Dinner",
+        "type": "dining",
+        "cost": { "yen": 1300, "usd": 9.10 },
+        "description": "Michelin Bib Gourmand ramen experience",
+        "location": "Various locations",
+        "restaurants": [
+          {
+            "name": "Nakiryu (Otsuka)",
+            "cost": "¥1,000-1,500",
+            "description": "Michelin Bib Gourmand tantanmen specialist - spicy sesame noodles",
+            "whyRecommended": "Worldwide recognition for excellence",
+            "whatToExpect": "Sophisticated ramen preparation, expect wait"
+          },
+          {
+            "name": "Ramen Break Beats (Meguro)",
+            "cost": "¥1,200-1,500",
+            "description": "New 2025 Michelin Bib Gourmand entry - sophisticated ramen with porcini mushrooms",
+            "whyRecommended": "Latest Michelin recognition",
+            "whatToExpect": "Innovation in traditional ramen"
+          },
+          {
+            "name": "Konjiki Hototogisu (Shinjuku)",
+            "cost": "¥1,000-1,300",
+            "description": "Former Michelin-starred, now Bib Gourmand - famous for 'triple soup' shoyu soba",
+            "whyRecommended": "Maintained excellence despite rating change",
+            "whatToExpect": "Complex layered flavors in signature broth"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "time": "8:30 PM - 10:30 PM",
+        "title": "Golden Gai Exploration",
+        "type": "nightlife",
+        "cost": { "yen": 2400, "usd": 16.80 },
+        "description": "Historic post-war drinking district",
+        "location": "Golden Gai",
+        "significance": "Historic post-war drinking district",
+        "whatToDo": [
+          "Visit 2-3 different tiny bars (5-6 seats each)",
+          "Chat with local salarymen and mama-sans",
+          "Try different types of Japanese whiskey and sake",
+          "Experience authentic post-war Tokyo atmosphere",
+          "Order yakitori and other bar snacks"
+        ],
+        "whatToExpect": "Tiny bars, local salarymen, authentic atmosphere, multiple venue hopping"
+      }
+    ],
+    "dayTotal": { "yen": 9700, "usd": 67.90 },
+    "costBreakdown": {
+      "food": { "yen": 6300, "usd": 44.10 },
+      "transport": { "yen": 500, "usd": 3.50 },
+      "attractions": { "yen": 1000, "usd": 7.00 },
+      "nightlife": { "yen": 2400, "usd": 16.80 }
+    }
+  },
+  "2025-07-18": {
+    "date": "Friday, July 18, 2025",
+    "title": "Final Tokyo & Prime Nightlife",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Tokyo",
+    "activities": [
+      {
+        "id": 24,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt House Shibuya"
+      },
+      {
+        "id": 25,
+        "time": "10:00 AM - 12:00 PM",
+        "title": "Harajuku Shopping",
+        "type": "activity",
+        "cost": { "yen": 1000, "usd": 7.00 },
+        "description": "Youth fashion capital and luxury district",
+        "location": "Harajuku",
+        "significance": "Youth fashion capital and luxury district",
+        "whatToDo": [
+          "Try rainbow cotton candy and character crepes on Takeshita Street",
+          "Browse kawaii fashion and cosplay stores",
+          "Window shop luxury brands at Omotesando Hills",
+          "Take photos with street fashion enthusiasts"
+        ],
+        "whatToExpect": "Kawaii culture, outrageous fashion, luxury brands"
+      },
+      {
+        "id": 26,
+        "time": "1:00 PM - 4:00 PM",
+        "title": "Tokyo Tower",
+        "type": "activity",
+        "cost": { "yen": 1200, "usd": 8.50 },
+        "description": "Classic Tokyo landmark for final views",
+        "location": "Tokyo Tower",
+        "significance": "Classic Tokyo landmark for final views",
+        "whatToDo": [
+          "Visit Main Observatory (150m) and Special Observatory (250m)",
+          "Take photos of iconic red and white tower",
+          "Shop for Tokyo Tower exclusive merchandise",
+          "See panoramic views of Tokyo Bay and city",
+          "Compare views with modern experiences from previous days"
+        ],
+        "whatToExpect": "Iconic tower views, nostalgic Tokyo symbol"
+      },
+      {
+        "id": 27,
+        "time": "5:00 PM - 6:30 PM",
+        "title": "Light Dinner",
+        "type": "dining",
+        "cost": { "yen": 2000, "usd": 14.00 },
+        "description": "Final Tokyo meal before nightlife adventure",
+        "location": "Near hotel",
+        "restaurants": [
+          {
+            "name": "Local restaurant near hotel",
+            "cost": "¥1,500-2,500",
+            "description": "Convenient location for final Tokyo meal",
+            "whyRecommended": "Easy access before nightlife",
+            "whatToExpect": "Comfortable local dining"
+          },
+          {
+            "name": "Tokyo specialties",
+            "cost": "¥1,500-2,500", 
+            "description": "Any remaining Tokyo specialties you've missed",
+            "whyRecommended": "Last chance for specific dishes",
+            "whatToExpect": "Varied authentic options"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "time": "11:00 PM - 2:00 AM",
+        "title": "WOMB Shibuya (EDM Club)",
+        "type": "nightlife",
+        "cost": { "yen": 6000, "usd": 42.00 },
+        "description": "Tokyo's premier electronic music venue",
+        "location": "WOMB Shibuya",
+        "significance": "Tokyo's premier electronic music venue, ranked among world's top clubs by Mixmag magazine",
+        "whatToDo": [
+          "Experience famous mirror ball room on main floor with Asia's largest mirror ball",
+          "Dance to house and techno from international DJs and top local artists",
+          "Explore all 4 floors with different music styles and atmospheres",
+          "Enjoy world-class sound system with high-quality lighting and laser productions",
+          "Meet international clubbers and locals in friendly, welcoming crowd"
+        ],
+        "whatToExpect": "4 floors of house/techno, serious sound system, diverse international crowd, professional production quality"
+      },
+      {
+        "id": 29,
+        "time": "2:00 AM - 4:00 AM",
+        "title": "Ni-chome Gay District",
+        "type": "nightlife",
+        "cost": { "yen": 4500, "usd": 31.50 },
+        "description": "Asia's largest gay district with over 300 LGBTQ+ venues",
+        "location": "Ni-chome",
+        "significance": "Asia's largest gay district with over 300 LGBTQ+ venues in compact area",
+        "whatToDo": [
+          "Visit Arty Farty - popular dance club with pop and electronic music",
+          "Experience AiSOTOPE Lounge - intimate bar atmosphere with friendly mama-san culture",
+          "Try Dragon Men - casual bar with English-speaking staff and welcoming atmosphere"
+        ],
+        "whatToExpect": "Welcoming inclusive atmosphere, diverse venues from intimate bars to dance clubs, late-night energy until dawn"
+      }
+    ],
+    "dayTotal": { "yen": 14700, "usd": 102.90 },
+    "costBreakdown": {
+      "food": { "yen": 2000, "usd": 14.00 },
+      "transport": { "yen": 500, "usd": 3.50 },
+      "attractions": { "yen": 2200, "usd": 15.50 },
+      "nightlife": { "yen": 10500, "usd": 73.50 }
+    }
+  },
+  "2025-07-19": {
+    "date": "Saturday, July 19, 2025",
+    "title": "Tokyo to Kyoto via Bullet Train",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Tokyo → Kyoto",
+    "activities": [
+      {
+        "id": 30,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt House Shibuya"
+      },
+      {
+        "id": 31,
+        "time": "10:00 AM - 12:00 PM",
+        "title": "Final Tokyo Moments",
+        "type": "activity",
+        "cost": { "yen": 750, "usd": 5.25 },
+        "description": "Pack and prepare for bullet train journey",
+        "location": "Shibuya",
+        "whatToDo": [
+          "Pack souvenirs and organize luggage for bullet train journey",
+          "Check out of Hyatt House Shibuya (store luggage until departure)",
+          "Visit convenience store for gourmet train snacks and drinks",
+          "Take final photos around iconic Shibuya Crossing",
+          "Purchase last-minute Tokyo character goods and regional snacks"
+        ],
+        "whatToExpect": "Incredible convenience store quality with gourmet options, perfect travel snacks"
+      },
+      {
+        "id": 32,
+        "time": "12:00 PM - 3:00 PM",
+        "title": "Shinkansen Bullet Train Experience",
+        "type": "transport",
+        "cost": { "yen": 15050, "usd": 105.35 },
+        "description": "Japan's engineering marvel - 320 km/h journey with legendary punctuality",
+        "location": "Tokyo → Kyoto",
+        "significance": "Japan's engineering marvel - 320 km/h journey with legendary punctuality (average delay: 18 seconds annually)",
+        "whatToDo": [
+          "Purchase ekiben (luxury train bento) from Tokyo Station vendors before boarding",
+          "Reserve seats D or E on right side for potential Mount Fuji views",
+          "Take photos of sleek bullet train nose and marvel at engineering precision",
+          "Experience legendary punctuality and smooth 320 km/h travel",
+          "Enjoy gourmet ekiben featuring seasonal ingredients and artistic presentation",
+          "Use onboard WiFi to research Kyoto activities and traditional customs",
+          "Watch Japanese countryside transform from urban Tokyo to historic Kansai region"
+        ],
+        "whatToExpect": "Ultra-smooth high-speed experience with potential Mount Fuji views on clear days, exceptional on-board dining"
+      },
+      {
+        "id": 33,
+        "time": "3:00 PM - 8:00 PM",
+        "title": "Kyoto Arrival & Gion Preview",
+        "type": "cultural",
+        "cost": { "yen": 2500, "usd": 17.50 },
+        "description": "Traditional Japan atmosphere and Gion district introduction",
+        "location": "Kyoto - Gion",
+        "whatToDo": [
+          "Check into Hyatt Place Kyoto and settle into traditional-modern atmosphere",
+          "Purchase Kyoto City Bus Day Pass (¥600) for unlimited bus travel",
+          "Walk through Gion district's historic preserved streets (Hanami-koji)",
+          "Visit Yasaka Shrine for sunset photos",
+          "Experience dramatically different pace from Tokyo's kinetic energy",
+          "Light traditional kaiseki-style dinner to prepare palate for Kyoto cuisine",
+          "Spot geiko and maiko if fortunate (early evening is optimal time)"
+        ],
+        "whatToExpect": "Immediate atmospheric change to traditional Japan, preserved Edo-period architecture"
+      }
+    ],
+    "dayTotal": { "yen": 18300, "usd": 128.10 },
+    "costBreakdown": {
+      "food": { "yen": 1200, "usd": 8.40 },
+      "transport": { "yen": 15050, "usd": 105.35 },
+      "attractions": { "yen": 750, "usd": 5.25 },
+      "accommodation": { "yen": 600, "usd": 4.20 },
+      "dining": { "yen": 700, "usd": 4.90 }
+    }
+  },
+  "2025-07-20": {
+    "date": "Sunday, July 20, 2025",
+    "title": "Gion Matsuri Festival Culture & Kyoto",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Kyoto",
+    "activities": [
+      {
+        "id": 34,
+        "time": "8:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt Place Kyoto"
+      },
+      {
+        "id": 35,
+        "time": "9:00 AM - 1:00 PM",
+        "title": "Gion Matsuri Festival Atmosphere",
+        "type": "festival",
+        "cost": { "yen": 1500, "usd": 10.50 },
+        "description": "Experience the ongoing month-long festival atmosphere",
+        "location": "Various districts",
+        "significance": "Experience the ongoing month-long festival atmosphere during active celebration period",
+        "festivalHighlights": [
+          "1,150+ year festival tradition continuing",
+          "Float construction viewing - artisans build by hand",
+          "Festival atmosphere at Yasaka Shrine",
+          "Chimaki sacred good luck charms available",
+          "Traditional Gion Hayashi music practicing",
+          "Float museums displaying priceless artifacts"
+        ],
+        "whatToDo": [
+          "Watch artisans build floats by hand",
+          "Experience ongoing celebration at Yasaka Shrine",
+          "Buy sacred good luck charms from float neighborhoods",
+          "See completed floats on display in various districts",
+          "Listen to Gion Hayashi musicians practicing",
+          "Try traditional festival snacks from vendors",
+          "Visit float museums displaying tapestries and artifacts"
+        ],
+        "whatToExpect": "Intimate festival experience without parade crowds, authentic local participation"
+      },
+      {
+        "id": 36,
+        "time": "1:00 PM - 2:30 PM",
+        "title": "Festival Lunch",
+        "type": "dining",
+        "cost": { "yen": 2500, "usd": 17.50 },
+        "description": "Traditional Kyoto cuisine",
+        "location": "Kyoto Station area",
+        "restaurants": [
+          {
+            "name": "Katsukura Kyoto Station",
+            "cost": "¥2,000-3,000",
+            "description": "Premium tonkatsu specialist since 1965",
+            "whyRecommended": "Historical establishment with excellent reputation",
+            "whatToExpect": "High-quality tonkatsu in traditional setting"
+          },
+          {
+            "name": "Kyoto Station Ramen Koji",
+            "cost": "¥1,200-2,000",
+            "description": "8 regional ramen styles under one roof",
+            "whyRecommended": "Variety of authentic regional styles",
+            "whatToExpect": "Multiple ramen options in convenient location"
+          }
+        ]
+      },
+      {
+        "id": 37,
+        "time": "3:00 PM - 6:00 PM",
+        "title": "Gion District Deep Dive",
+        "type": "cultural",
+        "cost": { "yen": 600, "usd": 4.20 },
+        "description": "Japan's most famous geisha district",
+        "location": "Gion District",
+        "significance": "Japan's most famous geisha district preserving 400+ years of traditional culture",
+        "whatToDo": [
+          "Hanami-koji (3:00-4:00 PM): Main geisha spotting street with historic tea houses",
+          "Shirakawa area (4:00-5:00 PM): Most photogenic traditional buildings and canal views",
+          "Kennin-ji Temple (5:00-6:00 PM): Japan's oldest Zen temple (1202) with rock gardens",
+          "Browse traditional craft shops: kimono accessories, handmade paper, incense",
+          "Take photos of traditional machiya (wooden townhouse) architecture",
+          "Experience refined aesthetics representing 1,200 years of imperial taste",
+          "Respectfully observe geiko and maiko if encountered"
+        ],
+        "culturalEtiquette": "No photos of geiko/maiko without permission, respect their work and privacy",
+        "whatToExpect": "Preserved Edo-period streets, traditional wooden architecture, potential geiko sightings"
+      },
+      {
+        "id": 38,
+        "time": "8:00 PM - 10:00 PM",
+        "title": "Traditional Kyoto Evening",
+        "type": "dining",
+        "cost": { "yen": 4000, "usd": 28.00 },
+        "description": "Authentic Kyoto dining experience",
+        "location": "Higashiyama/Gion area",
+        "restaurants": [
+          {
+            "name": "K36 Rooftop Bar",
+            "cost": "¥3,600-5,100",
+            "description": "Eye-level Yasaka Pagoda view (unique in the world) with craft cocktails",
+            "whyRecommended": "Impossible view available nowhere else",
+            "whatToExpect": "Stunning pagoda views with premium cocktails"
+          },
+          {
+            "name": "Hanasaki Manjiro (Higashiyama)",
+            "cost": "¥6,000-8,000",
+            "description": "Affordable kaiseki dinner near Yasaka Shrine",
+            "whyRecommended": "Authentic multi-course experience",
+            "whatToExpect": "Traditional kaiseki presentation in historic setting"
+          },
+          {
+            "name": "Traditional Tea House in Gion",
+            "cost": "¥2,000-3,000",
+            "description": "Experience geiko district evening culture with matcha and wagashi sweets",
+            "whyRecommended": "Authentic cultural immersion",
+            "whatToExpect": "Traditional tea ceremony in historic district"
+          }
+        ]
+      }
+    ],
+    "dayTotal": { "yen": 8600, "usd": 60.20 },
+    "costBreakdown": {
+      "food": { "yen": 6500, "usd": 45.50 },
+      "transport": { "yen": 600, "usd": 4.20 },
+      "attractions": { "yen": 600, "usd": 4.20 },
+      "festival": { "yen": 1500, "usd": 10.50 }
+    }
+  },
+  "2025-07-21": {
+    "date": "Monday, July 21, 2025",
+    "title": "Temples & Bamboo Grove",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Kyoto",
+    "activities": [
+      {
+        "id": 39,
+        "time": "7:00 AM - 10:00 AM",
+        "title": "Fushimi Inari Shrine (Early Morning)",
+        "type": "cultural",
+        "cost": { "yen": 400, "usd": 2.80 },
+        "description": "10,000+ vermillion torii gates before crowds arrive",
+        "location": "Fushimi Inari Shrine",
+        "significance": "10,000+ vermillion torii gates create tunnels up sacred Inari mountain, representing Japan's unique blend of spirituality and commerce",
+        "whatToDo": [
+          "Begin hike through famous vermillion torii tunnels before crowds arrive",
+          "Climb sacred mountain path to summit (2-3 hours for full hike)",
+          "Read inscriptions on torii gates showing business donor names and dates",
+          "Visit multiple sub-shrines along mountain path dedicated to different kami",
+          "Take photos in early morning light without tourist crowds",
+          "Purchase small torii plaques (¥500-1,000) to leave prayers for business success"
+        ],
+        "whatToExpect": "Thousands of vermillion gates creating tunnel effect, mountain hiking with stone steps, early morning tranquility"
+      },
+      {
+        "id": 40,
+        "time": "11:00 AM - 12:00 PM",
+        "title": "Late Breakfast/Early Lunch",
+        "type": "dining",
+        "cost": { "yen": 2000, "usd": 14.00 },
+        "description": "Traditional tofu cuisine",
+        "location": "Arashiyama area",
+        "restaurants": [
+          {
+            "name": "Yudofu Sagano (Arashiyama)",
+            "cost": "¥3,800",
+            "description": "Traditional tofu cuisine in beautiful garden setting",
+            "whyRecommended": "Authentic Kyoto tofu preparation",
+            "whatToExpect": "Refined tofu dishes with garden views"
+          },
+          {
+            "name": "Rengetsu-jaya (Higashiyama)",
+            "cost": "¥4,000+",
+            "description": "Tofu kaiseki in traditional machiya townhouse",
+            "whyRecommended": "Historic setting with refined tofu experience",
+            "whatToExpect": "Multi-course tofu presentation in traditional architecture"
+          },
+          {
+            "name": "Local Kyoto specialties",
+            "cost": "¥1,500-2,500",
+            "description": "Seasonal kaiseki-style presentations featuring Kyoto vegetables",
+            "whyRecommended": "Authentic local flavors",
+            "whatToExpect": "Seasonal ingredients in traditional presentation"
+          }
+        ]
+      },
+      {
+        "id": 41,
+        "time": "1:30 PM - 5:30 PM",
+        "title": "Arashiyama Bamboo Grove & Tenryu-ji",
+        "type": "cultural",
+        "cost": { "yen": 960, "usd": 6.72 },
+        "description": "Thousands of towering bamboo create natural cathedral",
+        "location": "Arashiyama",
+        "significance": "Thousands of towering bamboo create natural cathedral with unique acoustic properties",
+        "whatToDo": [
+          "Walk through famous bamboo forest pathways - main path 500m long",
+          "Listen carefully to unique bamboo rustling sounds (take video for audio)",
+          "Take photos in natural green cathedral lighting effect",
+          "Experience one of Japan's most iconic natural photography locations",
+          "Feel temperature drop of 5-10°F inside bamboo grove",
+          "Visit UNESCO World Heritage Zen temple (1339) and rock garden",
+          "Learn about Buddhist philosophy and traditional temple architecture",
+          "See seasonal flowers and traditional Japanese landscaping techniques",
+          "Experience classic 'borrowed scenery' (shakkei) garden design",
+          "Browse bamboo crafts and traditional Kyoto souvenirs",
+          "Try local Arashiyama specialties: bamboo ice cream, traditional sweets"
+        ],
+        "whatToExpect": "Towering bamboo tunnels creating otherworldly atmosphere, unique acoustic experience"
+      },
+      {
+        "id": 42,
+        "time": "7:00 PM - 8:30 PM",
+        "title": "Traditional Kyoto Dinner",
+        "type": "dining",
+        "cost": { "yen": 4000, "usd": 28.00 },
+        "description": "Multi-course tofu kaiseki or traditional Kyoto cuisine",
+        "location": "Gion or Arashiyama",
+        "restaurants": [
+          {
+            "name": "Tousuiro (Gion or Nakagyo location)",
+            "cost": "¥5,000-7,000",
+            "description": "Multi-course tofu kaiseki featuring Kyoto's famous tofu preparations",
+            "whyRecommended": "Authentic kaiseki experience",
+            "whatToExpect": "Refined multi-course presentation"
+          },
+          {
+            "name": "Yudofu Sagano",
+            "cost": "¥3,800",
+            "description": "Buddhist-style yudofu (simmered tofu) in traditional Arashiyama setting",
+            "whyRecommended": "Traditional Buddhist cuisine",
+            "whatToExpect": "Simple, refined tofu preparation"
+          },
+          {
+            "name": "Local kaiseki restaurant",
+            "cost": "¥4,000-6,000",
+            "description": "Authentic Kyoto cuisine representing 1,200 years of imperial culinary refinement",
+            "whyRecommended": "Historical culinary tradition",
+            "whatToExpect": "Imperial-style presentation and flavors"
+          }
+        ]
+      }
+    ],
+    "dayTotal": { "yen": 7360, "usd": 51.52 },
+    "costBreakdown": {
+      "food": { "yen": 6000, "usd": 42.00 },
+      "transport": { "yen": 400, "usd": 2.80 },
+      "attractions": { "yen": 960, "usd": 6.72 }
+    }
+  },
+  "2025-07-22": {
+    "date": "Tuesday, July 22, 2025",
+    "title": "Osaka Day Trip - Culinary Capital",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Kyoto → Osaka → Kyoto",
+    "activities": [
+      {
+        "id": 43,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt Place Kyoto"
+      },
+      {
+        "id": 44,
+        "time": "10:00 AM - 11:00 AM",
+        "title": "Travel to Osaka",
+        "type": "transport",
+        "cost": { "yen": 570, "usd": 4.00 },
+        "description": "Express train from Kyoto to Osaka",
+        "location": "Kyoto → Osaka",
+        "whatToDo": [
+          "Take comfortable express train from Kyoto to Osaka",
+          "Prepare mentally for food-focused day in Japan's culinary capital",
+          "Review Dotonbori street food map and must-try specialties"
+        ],
+        "whatToExpect": "45-minute comfortable journey through Kansai countryside"
+      },
+      {
+        "id": 45,
+        "time": "11:30 AM - 1:00 PM",
+        "title": "Osaka Castle",
+        "type": "cultural",
+        "cost": { "yen": 600, "usd": 4.20 },
+        "description": "Symbol of Toyotomi Hideyoshi's unification of Japan (1583)",
+        "location": "Osaka Castle",
+        "significance": "Symbol of Toyotomi Hideyoshi's unification of Japan (1583), represents Osaka's historical role as Japan's commercial heart",
+        "whatToDo": [
+          "Explore reconstructed castle's 8 floors with historical exhibits",
+          "Learn about Japanese unification period and Hideyoshi's rise from farmer to ruler",
+          "Enjoy panoramic views of modern Osaka from top floor observation deck",
+          "Walk through castle park and traditional Japanese gardens",
+          "See artifacts from Sengoku (Warring States) period",
+          "Take photos of iconic white castle architecture against modern skyline"
+        ],
+        "whatToExpect": "Modern reconstruction with historical exhibits and elevator access, panoramic city views"
+      },
+      {
+        "id": 46,
+        "time": "2:00 PM - 5:00 PM",
+        "title": "Dotonbori Street Food Marathon",
+        "type": "dining",
+        "cost": { "yen": 2750, "usd": 19.25 },
+        "description": "Osaka's signature 'kuidaore' culture - eat until you drop",
+        "location": "Dotonbori",
+        "significance": "Dotonbori embodies Osaka's 'kuidaore' culture - eat until you drop. Birthplace of takoyaki, okonomiyaki, and kushikatsu",
+        "whatToDo": [
+          "Takoyaki at Wanaka (2:00-2:30 PM): Original octopus balls - Osaka's signature dish (¥500-800)",
+          "Okonomiyaki at Mizuno (2:30-3:15 PM): Osaka-style savory pancake with special sauce (¥800-1,200)",
+          "Kushikatsu at Daruma (3:15-4:00 PM): Fried skewers with strict no double-dipping rule (¥100-300 per stick)",
+          "Ikayaki from street stalls (4:00-4:30 PM): Grilled whole squid pressed flat (¥300-500)",
+          "Taiyaki for dessert (4:30-5:00 PM): Fish-shaped pastry with various fillings (¥200-400)",
+          "Take mandatory photos with iconic Glico running man neon sign"
+        ],
+        "whatToExpect": "Overwhelming sensory experience with neon signs and canal views, incredible street food variety"
+      },
+      {
+        "id": 47,
+        "time": "6:00 PM - 7:30 PM",
+        "title": "Proper Sit-Down Dinner",
+        "type": "dining",
+        "cost": { "yen": 2500, "usd": 17.50 },
+        "description": "Authentic Osaka-style okonomiyaki restaurant",
+        "location": "Osaka",
+        "restaurants": [
+          {
+            "name": "Authentic Osaka-style okonomiyaki",
+            "cost": "¥2,000-3,000",
+            "description": "Established sit-down restaurant with authentic preparation",
+            "whyRecommended": "Experience famous Osaka hospitality",
+            "whatToExpect": "Welcoming 'Osaka no obachan' (auntie) culture"
+          }
+        ]
+      },
+      {
+        "id": 48,
+        "time": "9:00 PM - 11:30 PM",
+        "title": "Osaka Nightlife Experience",
+        "type": "nightlife",
+        "cost": { "yen": 6000, "usd": 42.00 },
+        "description": "Osaka's progressive and inclusive LGBTQ+ culture",
+        "location": "Doyama District",
+        "significance": "Osaka's Doyama District represents Japan's progressive and inclusive LGBTQ+ culture",
+        "whatToDo": [
+          "Grand Slam: Traditional Japanese gay bar with welcoming mama-san atmosphere",
+          "EXPLOSION: High-energy gay dance club with international crowd and latest J-pop/EDM",
+          "Club Circus: Multi-floor EDM venue for electronic music enthusiasts"
+        ],
+        "whatToExpect": "Diverse venues with different energy levels, welcoming LGBTQ+ community atmosphere"
+      },
+      {
+        "id": 49,
+        "time": "12:00 AM - 1:00 AM",
+        "title": "Return to Kyoto",
+        "type": "transport",
+        "cost": { "yen": 570, "usd": 4.00 },
+        "description": "Late train back to Kyoto",
+        "location": "Osaka → Kyoto"
+      }
+    ],
+    "dayTotal": { "yen": 12990, "usd": 90.93 },
+    "costBreakdown": {
+      "food": { "yen": 5250, "usd": 36.75 },
+      "transport": { "yen": 1140, "usd": 7.98 },
+      "attractions": { "yen": 600, "usd": 4.20 },
+      "nightlife": { "yen": 6000, "usd": 42.00 }
+    }
+  },
+  "2025-07-23": {
+    "date": "Wednesday, July 23, 2025",
+    "title": "Final Kyoto & Transfer to Osaka",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Kyoto → Osaka",
+    "activities": [
+      {
+        "id": 50,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Breakfast included daily due to Hyatt Globalist status",
+        "location": "Hyatt Place Kyoto"
+      },
+      {
+        "id": 51,
+        "time": "10:00 AM - 12:00 PM",
+        "title": "Nijo Castle",
+        "type": "cultural",
+        "cost": { "yen": 800, "usd": 5.60 },
+        "description": "Where Japan's last Shogun surrendered power in 1867",
+        "location": "Nijo Castle",
+        "significance": "Where Japan's last Shogun surrendered power in 1867, ending 700+ years of samurai rule",
+        "whatToDo": [
+          "Walk on famous 'nightingale floors' that squeak as security warning system",
+          "See historic room where Shogun Yoshinobu abdicated power to Emperor Meiji",
+          "Admire ornate painted screens (fusuma-e) and ceiling art by Kano school artists",
+          "Explore beautiful traditional Japanese castle gardens with seasonal plantings",
+          "Learn about end of samurai era and Japan's transition to modern state"
+        ],
+        "whatToExpect": "Unique squeaking security floors, ornate interior art representing pinnacle of Japanese craftsmanship"
+      },
+      {
+        "id": 52,
+        "time": "1:00 PM - 3:00 PM",
+        "title": "Nishiki Market Final Exploration",
+        "type": "dining",
+        "cost": { "yen": 2750, "usd": 19.25 },
+        "description": "'Kyoto's Kitchen' serving the imperial capital for 400+ years",
+        "location": "Nishiki Market",
+        "significance": "'Kyoto's Kitchen' serving the imperial capital for 400+ years. 126 specialty shops in 390-meter covered market",
+        "whatToDo": [
+          "Try tofu doughnuts and yuba (soy skin) specialties unique to Kyoto",
+          "Sample Kyoto's famous matcha and traditional wagashi (seasonal sweets)",
+          "Buy traditional Kyoto pickles (tsukemono) and specialty seasonings",
+          "Watch traditional food preparation methods passed down through generations",
+          "Purchase authentic Kyoto souvenirs: matcha tea, traditional ceramics",
+          "Interact with vendors who represent family businesses spanning centuries"
+        ],
+        "whatToExpect": "Highest quality ingredients reflecting imperial standards, traditional preparation methods, unique Kyoto flavors"
+      },
+      {
+        "id": 53,
+        "time": "4:00 PM - 5:30 PM",
+        "title": "Transfer to Osaka",
+        "type": "transport",
+        "cost": { "yen": 570, "usd": 4.00 },
+        "description": "Final express train journey to Osaka",
+        "location": "Kyoto → Osaka",
+        "whatToDo": [
+          "Check out of Hyatt Place Kyoto and organize luggage efficiently",
+          "Take final express train journey (45 minutes) to Osaka's energetic Namba district",
+          "Check into Caption by Hyatt Namba Osaka in heart of entertainment district",
+          "Rest and prepare for final evening in Japan"
+        ],
+        "whatToExpect": "Quick comfortable journey through Kansai region, modern hotel in Osaka's busiest entertainment district"
+      },
+      {
+        "id": 54,
+        "time": "7:00 PM - 9:00 PM",
+        "title": "Farewell Dinner",
+        "type": "dining",
+        "cost": { "yen": 4500, "usd": 31.50 },
+        "description": "Celebration meal reflecting merchant city's excellence",
+        "location": "Osaka/Namba",
+        "restaurants": [
+          {
+            "name": "High-end Osaka restaurant",
+            "cost": "¥4,000-6,000",
+            "description": "Celebrate with premium okonomiyaki or takoyaki at established restaurant",
+            "whyRecommended": "Authentic high-quality preparation",
+            "whatToExpect": "Premium ingredients in traditional Osaka style"
+          },
+          {
+            "name": "Dotonbori finale",
+            "cost": "¥2,000-3,000",
+            "description": "Return to iconic street food area for final Japanese specialties missed during trip",
+            "whyRecommended": "Last chance for missed specialties",
+            "whatToExpect": "Nostalgic return to iconic food district"
+          },
+          {
+            "name": "Luxury kaiseki",
+            "cost": "¥5,000-8,000",
+            "description": "Special celebration meal reflecting merchant city's culinary excellence",
+            "whyRecommended": "Memorable finale experience",
+            "whatToExpected": "Refined kaiseki reflecting Osaka's merchant culture"
+          }
+        ]
+      }
+    ],
+    "dayTotal": { "yen": 8620, "usd": 60.34 },
+    "costBreakdown": {
+      "food": { "yen": 7250, "usd": 50.75 },
+      "transport": { "yen": 570, "usd": 4.00 },
+      "attractions": { "yen": 800, "usd": 5.60 }
+    }
+  },
+  "2025-07-24": {
+    "date": "Thursday, July 24, 2025",
+    "title": "Final Day & Departure",
+    "weather": "Hot & humid (29-32°C/84-90°F with 78-83% humidity)",
+    "city": "Osaka",
+    "activities": [
+      {
+        "id": 55,
+        "time": "9:00 AM",
+        "title": "Hotel Breakfast",
+        "type": "dining",
+        "cost": { "yen": 0, "usd": 0 },
+        "description": "Final breakfast included due to Hyatt Globalist status",
+        "location": "Caption by Hyatt Namba Osaka"
+      },
+      {
+        "id": 56,
+        "time": "9:30 AM - 12:00 PM",
+        "title": "Final Osaka Exploration",
+        "type": "activity",
+        "cost": { "yen": 1750, "usd": 12.25 },
+        "description": "Last-minute shopping and final Japan moments",
+        "location": "Namba district",
+        "whatToDo": [
+          "Pack souvenirs and organize luggage efficiently for international departure",
+          "Explore Namba district around hotel for last-minute shopping",
+          "Purchase final Japanese snacks and treats for flight and home",
+          "Visit any missed local shops or convenience stores",
+          "Take last-minute photos around Osaka capturing final Japan moments"
+        ],
+        "whatToExpect": "Bittersweet final morning with last-minute discoveries, efficient shopping district"
+      },
+      {
+        "id": 57,
+        "time": "1:00 PM - 2:35 PM",
+        "title": "Departure Preparation",
+        "type": "transport",
+        "cost": { "yen": 1200, "usd": 8.50 },
+        "description": "Final luggage organization and departure",
+        "location": "Osaka → Itami Airport",
+        "whatToDo": [
+          "Final luggage organization for international departure",
+          "Depart Itami Airport (ITM) at 2:35 PM for journey home via NRT",
+          "Reflect on incredible cultural experiences and personal transformation"
+        ],
+        "whatToExpect": "Efficient Japanese airport service, final experience of Japanese hospitality"
+      }
+    ],
+    "dayTotal": { "yen": 2950, "usd": 20.65 },
+    "costBreakdown": {
+      "shopping": { "yen": 1750, "usd": 12.25 },
+      "transport": { "yen": 1200, "usd": 8.50 }
+    }
+  }
+}
