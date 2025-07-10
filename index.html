@@ -881,7 +881,39 @@
 
   <script>
     // App version
-    const APP_VERSION = 'v1.1.1.20250110';
+    const APP_VERSION = 'v1.2.0.20250110';
+    
+    // Weather API Configuration
+    // SETUP: Replace 'YOUR_API_KEY_HERE' with your OpenWeatherMap API key
+    const WEATHER_CONFIG = {
+      apiKey: '30812f90aa07f58d0028e8649f21e58a',
+      baseUrl: 'https://api.openweathermap.org/data/2.5/',
+      updateInterval: 30 * 60 * 1000, // 30 minutes
+      cache: {
+        duration: 15 * 60 * 1000, // 15 minutes
+        key: 'japan_weather_cache'
+      }
+    };
+    
+    // City coordinates for weather API
+    const CITY_COORDINATES = {
+      'Tokyo': { lat: 35.6762, lon: 139.6503 },
+      'Kyoto': { lat: 35.0116, lon: 135.7681 },
+      'Osaka': { lat: 34.6937, lon: 135.5023 }
+    };
+    
+    // Weather icons mapping
+    const WEATHER_ICONS = {
+      'clear': '☀️',
+      'clouds': '☁️',
+      'rain': '🌧️',
+      'drizzle': '🌦️',
+      'thunderstorm': '⛈️',
+      'snow': '❄️',
+      'mist': '🌫️',
+      'fog': '🌫️',
+      'haze': '🌫️'
+    };
     
     // Comprehensive version history
     const VERSION_HISTORY = [
@@ -1332,6 +1364,171 @@
       }
     };
     
+    // Weather API Functions
+    class WeatherCache {
+      static isValid(timestamp) {
+        return Date.now() - timestamp < WEATHER_CONFIG.cache.duration;
+      }
+      
+      static save(city, data) {
+        try {
+          localStorage.setItem(`weather_${city}`, JSON.stringify({
+            data,
+            timestamp: Date.now()
+          }));
+        } catch (error) {
+          console.warn('Weather cache save failed:', error);
+        }
+      }
+      
+      static load(city) {
+        try {
+          const cached = localStorage.getItem(`weather_${city}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (this.isValid(parsed.timestamp)) {
+              return parsed.data;
+            }
+          }
+        } catch (error) {
+          console.warn('Weather cache load failed:', error);
+        }
+        return null;
+      }
+    }
+    
+    async function getCurrentWeather(city) {
+      if (!WEATHER_CONFIG.apiKey || WEATHER_CONFIG.apiKey === 'YOUR_API_KEY_HERE') {
+        throw new Error('Weather API key not configured');
+      }
+      
+      const coords = CITY_COORDINATES[city];
+      if (!coords) {
+        throw new Error(`No coordinates found for city: ${city}`);
+      }
+      
+      const url = `${WEATHER_CONFIG.baseUrl}weather?lat=${coords.lat}&lon=${coords.lon}&appid=${WEATHER_CONFIG.apiKey}&units=metric`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Weather API error: ${response.status}`);
+      }
+      
+      return response.json();
+    }
+    
+    async function getWeatherWithFallback(city) {
+      try {
+        // Try cache first
+        const cached = WeatherCache.load(city);
+        if (cached) {
+          addDebugLog(`☁️ Using cached weather for ${city}`, 'info');
+          return cached;
+        }
+        
+        // Fetch fresh data
+        addDebugLog(`🌐 Fetching live weather for ${city}`, 'info');
+        const weather = await getCurrentWeather(city);
+        WeatherCache.save(city, weather);
+        addDebugLog(`✅ Live weather loaded for ${city}`, 'success');
+        return weather;
+      } catch (error) {
+        addDebugLog(`❌ Weather API error: ${error.message}`, 'error');
+        console.error('Weather API error:', error);
+        // Fall back to static weather data
+        return getStaticWeatherData(city);
+      }
+    }
+    
+    function getStaticWeatherData(city) {
+      // Fallback weather data for July in Japan
+      return {
+        main: {
+          temp: 30,
+          feels_like: 35,
+          humidity: 78,
+          temp_min: 28,
+          temp_max: 32
+        },
+        weather: [{
+          main: 'Clear',
+          description: 'hot and humid',
+          icon: '01d'
+        }],
+        name: city,
+        isStatic: true
+      };
+    }
+    
+    function getWeatherIcon(weatherMain) {
+      const main = weatherMain.toLowerCase();
+      return WEATHER_ICONS[main] || '🌤️';
+    }
+    
+    function createWeatherDisplay(weatherData, includeDetails = true) {
+      const icon = getWeatherIcon(weatherData.weather[0].main);
+      const isStatic = weatherData.isStatic;
+      const staticIndicator = isStatic ? ' (estimated)' : '';
+      
+      if (!includeDetails) {
+        return `${icon} ${Math.round(weatherData.main.temp)}°C${staticIndicator}`;
+      }
+      
+      return `
+        <div style="display: flex; align-items: center; gap: 8px; font-size: var(--base-text);">
+          <span style="font-size: var(--medium-text);">${icon}</span>
+          <div>
+            <div style="font-weight: 600;">${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)${staticIndicator}</div>
+            <div style="font-size: var(--small-text); opacity: 0.8;">${weatherData.weather[0].description} • ${weatherData.main.humidity}% humidity</div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function getWeatherRecommendation(weatherData) {
+      const temp = weatherData.main.temp;
+      const humidity = weatherData.main.humidity;
+      const condition = weatherData.weather[0].main.toLowerCase();
+      
+      if (condition.includes('rain') || condition.includes('drizzle')) {
+        return {
+          type: 'rain',
+          icon: '☔',
+          message: 'Rain expected - consider indoor activities like museums, shopping centers, or covered markets'
+        };
+      }
+      
+      if (condition.includes('thunderstorm')) {
+        return {
+          type: 'storm',
+          icon: '⛈️',
+          message: 'Thunderstorms possible - stay indoors and avoid outdoor sightseeing'
+        };
+      }
+      
+      if (temp > 32 || (temp > 28 && humidity > 75)) {
+        return {
+          type: 'heat',
+          icon: '🌡️',
+          message: 'Very hot and humid - stay hydrated, seek air conditioning, and plan outdoor activities for early morning or evening'
+        };
+      }
+      
+      if (temp > 28) {
+        return {
+          type: 'warm',
+          icon: '☀️',
+          message: 'Hot weather - stay hydrated and take breaks in air-conditioned spaces'
+        };
+      }
+      
+      return {
+        type: 'good',
+        icon: '✨',
+        message: 'Great weather for outdoor activities!'
+      };
+    }
+    
     // Function to create map links (Apple Maps for iOS)
     function createMapLink(locationName, displayName = null) {
       const location = locationDatabase[locationName];
@@ -1381,7 +1578,7 @@
               addDebugLog('✅ Interface ready', 'success');
               addDebugLog('🚀 Launching app...');
               
-              setTimeout(() => {
+              setTimeout(async () => {
                 // Hide loading screen and show app
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
@@ -1399,7 +1596,7 @@
                 addDebugLog(`📅 Starting on trip day ${currentDayIndex + 1}`, 'info');
                 
                 // Initialize the current day's content
-                updateDayDisplay();
+                await updateDayDisplay();
               }, 500);
             }, 300);
           }, 400);
@@ -2783,7 +2980,7 @@
     }
 
     // Day navigation functions
-    function updateDayDisplay() {
+    async function updateDayDisplay() {
       const currentDay = tripDays[currentDayIndex];
       const actualTodayIndex = getCurrentTripDay();
       
@@ -2801,7 +2998,7 @@
       document.getElementById('next-day').disabled = currentDayIndex === tripDays.length - 1;
       
       // Update main content
-      updateMainContent(currentDay);
+      await updateMainContent(currentDay);
       
       // Update date picker if it's open
       const datePicker = document.getElementById('date-picker-tray');
@@ -2822,10 +3019,10 @@
     };
 
     // Update the main content area
-    function updateMainContent(dayData) {
+    async function updateMainContent(dayData) {
       const contentContainer = document.getElementById('day-content');
       
-      // Create the complete day structure
+      // Create the complete day structure with placeholder weather
       contentContainer.innerHTML = `
         <div style="display: flex; align-items: center; margin-bottom: 8px;">
           <span class="day-title">${dayData.title}</span>
@@ -2833,9 +3030,9 @@
         </div>
         <div class="date-text">${dayData.date}, 2025</div>
         
-        <div class="weather-warning">
-          <span>⚠️</span>
-          <span style="font-size: var(--base-text);">${dayData.weather}</span>
+        <div class="weather-warning" id="live-weather-display">
+          <span>🌐</span>
+          <span style="font-size: var(--base-text);">Loading current weather...</span>
         </div>
         
         <!-- Weather advisory placeholder -->
@@ -2858,6 +3055,9 @@
         </div>
       `;
       
+      // Load live weather data
+      await updateLiveWeather(dayData.city);
+      
       // Update weather advisory if it exists
       updateWeatherAdvisory(dayData.weatherAdvisory);
       
@@ -2868,6 +3068,67 @@
       const headerDate = document.getElementById('current-date');
       const dateParts = dayData.date.split(', ');
       headerDate.textContent = dateParts[0] + ', ' + dateParts[1];
+    }
+    
+    async function updateLiveWeather(city) {
+      try {
+        const weatherData = await getWeatherWithFallback(city);
+        const weatherDisplay = document.getElementById('live-weather-display');
+        const recommendation = getWeatherRecommendation(weatherData);
+        
+        if (weatherDisplay) {
+          weatherDisplay.innerHTML = `
+            <div style="display: flex; align-items: start; gap: 8px;">
+              <span style="font-size: var(--medium-text); margin-top: 2px;">${getWeatherIcon(weatherData.weather[0].main)}</span>
+              <div style="flex: 1;">
+                <div style="font-size: var(--base-text); font-weight: 600; margin-bottom: 4px;">
+                  ${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)
+                  ${weatherData.isStatic ? ' (estimated)' : ''}
+                </div>
+                <div style="font-size: var(--small-text); opacity: 0.8; margin-bottom: 8px;">
+                  ${weatherData.weather[0].description} • ${weatherData.main.humidity}% humidity
+                </div>
+                <div style="display: flex; align-items: start; gap: 6px; font-size: var(--small-text);">
+                  <span style="margin-top: 1px;">${recommendation.icon}</span>
+                  <span>${recommendation.message}</span>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // Update weather warning background color based on conditions
+          if (recommendation.type === 'storm') {
+            weatherDisplay.style.background = '#fef2f2';
+            weatherDisplay.style.borderColor = '#f87171';
+            weatherDisplay.style.color = '#dc2626';
+          } else if (recommendation.type === 'rain') {
+            weatherDisplay.style.background = '#f0f9ff';
+            weatherDisplay.style.borderColor = '#38bdf8';
+            weatherDisplay.style.color = '#0284c7';
+          } else if (recommendation.type === 'heat') {
+            weatherDisplay.style.background = '#fed7aa';
+            weatherDisplay.style.borderColor = '#fb923c';
+            weatherDisplay.style.color = '#ea580c';
+          } else if (recommendation.type === 'warm') {
+            weatherDisplay.style.background = '#fef3c7';
+            weatherDisplay.style.borderColor = '#fbbf24';
+            weatherDisplay.style.color = '#92400e';
+          } else {
+            weatherDisplay.style.background = '#f0fdf4';
+            weatherDisplay.style.borderColor = '#4ade80';
+            weatherDisplay.style.color = '#16a34a';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to update live weather:', error);
+        const weatherDisplay = document.getElementById('live-weather-display');
+        if (weatherDisplay) {
+          weatherDisplay.innerHTML = `
+            <span>⚠️</span>
+            <span style="font-size: var(--base-text);">Hot & humid (29-32°C/84-90°F with 78-83% humidity) - estimated</span>
+          `;
+        }
+      }
     }
 
     function updateWeatherAdvisory(weatherAdvisory) {
@@ -3064,26 +3325,26 @@
       usdElement.textContent = `$${totalCost.usd.toFixed(2)}`;
     }
 
-    function previousDay() {
+    async function previousDay() {
       if (currentDayIndex > 0) {
         currentDayIndex--;
-        updateDayDisplay();
+        await updateDayDisplay();
       }
     }
 
-    function nextDay() {
+    async function nextDay() {
       if (currentDayIndex < tripDays.length - 1) {
         currentDayIndex++;
-        updateDayDisplay();
+        await updateDayDisplay();
       }
     }
     
     // Function for "Today" button - navigates to actual current day
-    function goToToday() {
+    async function goToToday() {
       const todayIndex = getCurrentTripDay();
       if (todayIndex !== currentDayIndex) {
         currentDayIndex = todayIndex;
-        updateDayDisplay();
+        await updateDayDisplay();
         addDebugLog(`📅 Navigated to actual trip day ${todayIndex + 1}`, 'info');
       } else {
         addDebugLog(`📅 Already viewing current trip day ${todayIndex + 1}`, 'info');
@@ -3147,9 +3408,9 @@
       });
     }
     
-    function selectDate(dayIndex) {
+    async function selectDate(dayIndex) {
       currentDayIndex = dayIndex;
-      updateDayDisplay();
+      await updateDayDisplay();
       closeDatePicker();
       addDebugLog(`📅 Selected day ${dayIndex + 1}`, 'info');
     }
