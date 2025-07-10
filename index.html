@@ -3035,8 +3035,6 @@
           <span style="font-size: var(--base-text);">Loading current weather...</span>
         </div>
         
-        <!-- Weather advisory placeholder -->
-        
         <!-- Activity cards will be inserted here -->
         
         <!-- Daily Cost Summary -->
@@ -3058,9 +3056,6 @@
       // Load live weather data
       await updateLiveWeather(dayData.city);
       
-      // Update weather advisory if it exists
-      updateWeatherAdvisory(dayData.weatherAdvisory);
-      
       // Update activities
       updateActivities(dayData.activities);
       
@@ -3078,19 +3073,24 @@
         
         if (weatherDisplay) {
           weatherDisplay.innerHTML = `
-            <div style="display: flex; align-items: start; gap: 8px;">
-              <span style="font-size: var(--medium-text); margin-top: 2px;">${getWeatherIcon(weatherData.weather[0].main)}</span>
-              <div style="flex: 1;">
-                <div style="font-size: var(--base-text); font-weight: 600; margin-bottom: 4px;">
-                  ${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)
-                  ${weatherData.isStatic ? ' (estimated)' : ''}
-                </div>
-                <div style="font-size: var(--small-text); opacity: 0.8; margin-bottom: 8px;">
-                  ${weatherData.weather[0].description} • ${weatherData.main.humidity}% humidity
-                </div>
-                <div style="display: flex; align-items: start; gap: 6px; font-size: var(--small-text);">
-                  <span style="margin-top: 1px;">${recommendation.icon}</span>
-                  <span>${recommendation.message}</span>
+            <div>
+              <div style="font-size: var(--small-text); font-weight: 600; opacity: 0.7; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                📡 Live Weather
+              </div>
+              <div style="display: flex; align-items: start; gap: 8px;">
+                <span style="font-size: var(--medium-text); margin-top: 2px;">${getWeatherIcon(weatherData.weather[0].main)}</span>
+                <div style="flex: 1;">
+                  <div style="font-size: var(--base-text); font-weight: 600; margin-bottom: 4px;">
+                    ${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)
+                    ${weatherData.isStatic ? ' (estimated)' : ''}
+                  </div>
+                  <div style="font-size: var(--small-text); opacity: 0.8; margin-bottom: 8px;">
+                    ${weatherData.weather[0].description} • ${weatherData.main.humidity}% humidity
+                  </div>
+                  <div style="display: flex; align-items: start; gap: 6px; font-size: var(--small-text);">
+                    <span style="margin-top: 1px;">${recommendation.icon}</span>
+                    <span>${recommendation.message}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3131,32 +3131,6 @@
       }
     }
 
-    function updateWeatherAdvisory(weatherAdvisory) {
-      const content = document.getElementById('day-content');
-      let advisoryElement = content.querySelector('.weather-advisory');
-      
-      if (weatherAdvisory) {
-        if (!advisoryElement) {
-          // Create weather advisory element if it doesn't exist
-          const weatherWarning = content.querySelector('.weather-warning');
-          const advisoryHTML = `
-            <div class="weather-advisory" style="display: flex; align-items: start; gap: 8px; font-size: var(--base-text); color: #ea580c; background: #fed7aa; padding: 12px; border-radius: 8px; border: 1px solid #fb923c; margin-bottom: 16px;">
-              <span style="color: #ea580c; margin-top: 2px; flex-shrink: 0;">⚠️</span>
-              <span style="font-size: var(--base-text);">${weatherAdvisory}</span>
-            </div>
-          `;
-          weatherWarning.insertAdjacentHTML('afterend', advisoryHTML);
-        } else {
-          // Update existing advisory
-          const textSpan = advisoryElement.querySelector('span:last-child');
-          textSpan.textContent = weatherAdvisory;
-        }
-      } else if (advisoryElement) {
-        // Remove advisory if none exists for this day
-        advisoryElement.remove();
-      }
-    }
-
     function updateActivities(activities) {
       // Find the activities container 
       const content = document.getElementById('day-content');
@@ -3165,8 +3139,8 @@
       const existingCards = content.querySelectorAll('.activity-card');
       existingCards.forEach(card => card.remove());
       
-      // Find insertion point (after weather advisory or weather warning)
-      let insertionPoint = content.querySelector('.weather-advisory') || content.querySelector('.weather-warning');
+      // Find insertion point (after weather warning)
+      let insertionPoint = content.querySelector('.weather-warning');
       
       // Create new activity cards in chronological order
       activities.forEach(activity => {
@@ -3640,6 +3614,9 @@
           } else {
             addDebugLog('❌ Version tile not found on re-attach!', 'error');
           }
+          
+          // Reload weather advisory
+          loadOverviewWeatherAdvisory();
         }
       }
       if (viewName === 'budget' && document.getElementById('budget-view').children.length === 0) {
@@ -3658,6 +3635,11 @@
           <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
             🇯🇵 Trip Overview
           </h2>
+          
+          <!-- Weather Advisory Section -->
+          <div id="overview-weather-advisory" style="margin-bottom: 16px;">
+            <!-- Weather advisory will be populated here -->
+          </div>
           
           <!-- Trip Summary -->
           <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
@@ -3767,6 +3749,145 @@
         
       } else {
         addDebugLog('❌ Version tile not found!', 'error');
+      }
+      
+      // Load weather advisory for overview
+      loadOverviewWeatherAdvisory();
+    }
+    
+    async function loadOverviewWeatherAdvisory() {
+      const advisoryContainer = document.getElementById('overview-weather-advisory');
+      if (!advisoryContainer) return;
+      
+      try {
+        // Get weather for all cities
+        const tokyoWeather = await getWeatherWithFallback('Tokyo');
+        const kyotoWeather = await getWeatherWithFallback('Kyoto');
+        const osakaWeather = await getWeatherWithFallback('Osaka');
+        
+        const tokyoRec = getWeatherRecommendation(tokyoWeather);
+        const kyotoRec = getWeatherRecommendation(kyotoWeather);
+        const osakaRec = getWeatherRecommendation(osakaWeather);
+        
+        // Determine overall trip weather advisory
+        let overallAdvice = '';
+        let adviceType = 'good';
+        let adviceIcon = '✨';
+        
+        // Check for severe weather across all cities
+        if ([tokyoRec, kyotoRec, osakaRec].some(rec => rec.type === 'storm')) {
+          adviceType = 'storm';
+          adviceIcon = '⛈️';
+          overallAdvice = 'Severe weather warnings across Japan - monitor conditions closely and have indoor backup plans ready';
+        } else if ([tokyoRec, kyotoRec, osakaRec].some(rec => rec.type === 'rain')) {
+          adviceType = 'rain';
+          adviceIcon = '☔';
+          overallAdvice = 'Rain expected in some areas - pack umbrella and consider indoor activities like museums, shopping centers, and covered markets';
+        } else if ([tokyoRec, kyotoRec, osakaRec].some(rec => rec.type === 'heat')) {
+          adviceType = 'heat';
+          adviceIcon = '🌡️';
+          overallAdvice = 'Very hot and humid conditions across Japan - stay hydrated, seek air conditioning frequently, and plan outdoor activities for early morning or evening';
+        } else if ([tokyoRec, kyotoRec, osakaRec].some(rec => rec.type === 'warm')) {
+          adviceType = 'warm';
+          adviceIcon = '☀️';
+          overallAdvice = 'Warm weather expected - stay hydrated and take breaks in air-conditioned spaces';
+        } else {
+          overallAdvice = 'Great weather conditions across all destinations - perfect for outdoor sightseeing and activities!';
+        }
+        
+        // Add current conditions note if using live data
+        const isLiveData = !tokyoWeather.isStatic;
+        const dataNote = isLiveData ? 
+          'Based on current weather conditions. Trip dates are in July 2025.' : 
+          'Estimated conditions for July travel period.';
+        
+        advisoryContainer.innerHTML = `
+          <div style="background: ${getAdvisoryBackground(adviceType)}; border: 1px solid ${getAdvisoryBorder(adviceType)}; border-radius: 12px; padding: 16px;">
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <span style="font-size: var(--large-text); margin-top: 2px;">${adviceIcon}</span>
+              <div style="flex: 1;">
+                <h3 style="font-size: var(--large-text); font-weight: bold; color: ${getAdvisoryTextColor(adviceType)}; margin-bottom: 8px;">
+                  Trip Weather Advisory
+                </h3>
+                <p style="font-size: var(--base-text); color: ${getAdvisoryTextColor(adviceType)}; margin-bottom: 12px; line-height: 1.5;">
+                  ${overallAdvice}
+                </p>
+                
+                <!-- City Weather Summary -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
+                    <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(tokyoWeather.weather[0].main)}</div>
+                    <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Tokyo</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(tokyoWeather.main.temp)}°C</div>
+                  </div>
+                  <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
+                    <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(kyotoWeather.weather[0].main)}</div>
+                    <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Kyoto</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(kyotoWeather.main.temp)}°C</div>
+                  </div>
+                  <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
+                    <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(osakaWeather.weather[0].main)}</div>
+                    <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Osaka</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(osakaWeather.main.temp)}°C</div>
+                  </div>
+                </div>
+                
+                <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)}; opacity: 0.8; font-style: italic;">
+                  ${dataNote}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+      } catch (error) {
+        console.error('Failed to load overview weather advisory:', error);
+        // Show default July advisory
+        advisoryContainer.innerHTML = `
+          <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 12px; padding: 16px;">
+            <div style="display: flex; align-items: start; gap: 12px;">
+              <span style="font-size: var(--large-text); margin-top: 2px;">🌡️</span>
+              <div>
+                <h3 style="font-size: var(--large-text); font-weight: bold; color: #92400e; margin-bottom: 8px;">
+                  July Weather Advisory
+                </h3>
+                <p style="font-size: var(--base-text); color: #92400e; line-height: 1.5;">
+                  July is Japan's hottest, most humid month (29-32°C/84-90°F with 78-83% humidity). Plan indoor activities during peak heat (11am-4pm) and save outdoor sightseeing for early morning or evening.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    function getAdvisoryBackground(type) {
+      switch(type) {
+        case 'storm': return '#fef2f2';
+        case 'rain': return '#f0f9ff';
+        case 'heat': return '#fed7aa';
+        case 'warm': return '#fef3c7';
+        default: return '#f0fdf4';
+      }
+    }
+    
+    function getAdvisoryBorder(type) {
+      switch(type) {
+        case 'storm': return '#f87171';
+        case 'rain': return '#38bdf8';
+        case 'heat': return '#fb923c';
+        case 'warm': return '#fbbf24';
+        default: return '#4ade80';
+      }
+    }
+    
+    function getAdvisoryTextColor(type) {
+      switch(type) {
+        case 'storm': return '#dc2626';
+        case 'rain': return '#0284c7';
+        case 'heat': return '#ea580c';
+        case 'warm': return '#92400e';
+        default: return '#16a34a';
       }
     }
     
