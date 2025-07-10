@@ -123,6 +123,8 @@
     /* App styles */
     .app-container {
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     
     .header {
@@ -130,6 +132,10 @@
       color: white;
       padding: 16px;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .header-title {
@@ -144,8 +150,11 @@
     }
     
     .content {
+      flex: 1;
       padding: 16px;
       padding-bottom: 140px; /* Space for both navigation bars */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
     
     .day-title {
@@ -274,6 +283,7 @@
       align-items: center;
       padding: 12px 16px;
       box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+      z-index: 90;
     }
     
     .day-nav-button {
@@ -326,6 +336,8 @@
       background: white;
       border-top: 1px solid #e5e7eb;
       display: flex;
+      z-index: 80;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
     }
     
     .nav-button {
@@ -384,7 +396,7 @@
     /* Text Size Controls - Collapsible */
     .text-toggle {
       position: fixed;
-      top: 20px;
+      top: 80px; /* Below sticky header */
       left: 20px;
       z-index: 1000;
     }
@@ -465,6 +477,7 @@
     .size-preview.medium { font-size: 13px; }
     .size-preview.large { font-size: 15px; }
     .size-preview.xlarge { font-size: 17px; }
+    
 
     /* Animations */
     @keyframes bounce {
@@ -2306,11 +2319,10 @@
       // Close the controls menu
       document.getElementById('text-controls').classList.remove('show');
       
-      // Debug: Check if CSS variables are updating
+      // Text size change confirmation
       setTimeout(() => {
         const scale = getComputedStyle(document.documentElement).getPropertyValue('--text-scale').trim();
-        const baseText = getComputedStyle(document.documentElement).getPropertyValue('--base-text').trim();
-        addDebugLog(`📝 Text size: ${size}, scale: ${scale}, base-text: ${baseText}`, 'info');
+        addDebugLog(`📝 Text size changed to ${size} (scale: ${scale})`, 'info');
       }, 100);
     }
     
