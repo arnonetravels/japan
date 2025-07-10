@@ -881,16 +881,26 @@
 
   <script>
     // App version
-    const APP_VERSION = 'v1.1.20250110';
+    const APP_VERSION = 'v1.1.1.20250110';
     
     // Comprehensive version history
     const VERSION_HISTORY = [
+      {
+        version: 'v1.1.1.20250110',
+        date: 'January 10, 2025',
+        changes: [
+          { type: 'fixed', text: 'Version history modal access - entire version tile now clickable' },
+          { type: 'improved', text: 'Enhanced version tile with touch feedback and visual cues' },
+          { type: 'improved', text: 'Added tap indicator and mobile-optimized interactions' }
+        ]
+      },
       {
         version: 'v1.1.20250110',
         date: 'January 10, 2025',
         changes: [
           { type: 'added', text: 'Interactive date picker tray with slide-up animation' },
           { type: 'added', text: 'Quick day selection by tapping date in navigation bar' },
+          { type: 'added', text: 'Comprehensive version history library with modal access' },
           { type: 'improved', text: 'Visual indicators for current day and actual "today"' },
           { type: 'improved', text: 'Enhanced mobile UX with smooth transitions' }
         ]
@@ -3145,18 +3155,18 @@
     }
     
     // Version History Functions
-    function showVersionHistory() {
+    window.showVersionHistory = function() {
       const modal = document.getElementById('version-modal');
       populateVersionHistory();
       modal.classList.add('show');
       addDebugLog('📋 Version history opened', 'info');
-    }
+    };
     
-    function closeVersionHistory() {
+    window.closeVersionHistory = function() {
       const modal = document.getElementById('version-modal');
       modal.classList.remove('show');
       addDebugLog('📋 Version history closed', 'info');
-    }
+    };
     
     function populateVersionHistory() {
       const versionList = document.getElementById('version-history-list');
@@ -3382,9 +3392,14 @@
           </div>
           
           <!-- App Info -->
-          <div style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center;">
+          <div onclick="showVersionHistory()" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: rgba(59, 130, 246, 0.1);" 
+               ontouchstart="this.style.background='linear-gradient(135deg, #eff6ff, #dbeafe)'; this.style.borderColor='#93c5fd'; this.style.transform='scale(0.98)'" 
+               ontouchend="this.style.background='linear-gradient(135deg, #f8fafc, #e2e8f0)'; this.style.borderColor='#cbd5e1'; this.style.transform='scale(1)'"
+               onmouseover="this.style.background='linear-gradient(135deg, #eff6ff, #dbeafe)'; this.style.borderColor='#93c5fd'" 
+               onmouseout="this.style.background='linear-gradient(135deg, #f8fafc, #e2e8f0)'; this.style.borderColor='#cbd5e1'">
             <div style="font-size: var(--base-text); color: #64748b; margin-bottom: 4px;">Japan Travel App</div>
-            <div onclick="showVersionHistory()" style="font-size: var(--small-text); color: #3b82f6; font-family: monospace; cursor: pointer; text-decoration: underline;">${APP_VERSION}</div>
+            <div style="font-size: var(--small-text); color: #3b82f6; font-family: monospace; font-weight: 600;">${APP_VERSION}</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">📋 Tap to view version history</div>
           </div>
         </div>
       `;
