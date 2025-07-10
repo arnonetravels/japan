@@ -916,7 +916,7 @@
       }
     };
     
-    // Function to create map links
+    // Function to create map links (Apple Maps for iOS)
     function createMapLink(locationName, displayName = null) {
       const location = locationDatabase[locationName];
       if (!location) {
@@ -925,7 +925,9 @@
       
       const display = displayName || locationName;
       const encodedAddress = encodeURIComponent(location.address);
-      const mapUrl = `https://maps.google.com/maps?q=${encodedAddress}`;
+      
+      // Use Apple Maps URL scheme for better iOS integration
+      const mapUrl = `https://maps.apple.com/?q=${encodedAddress}`;
       
       return `<a href="${mapUrl}" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;"><div style="display: inline-block;"><span style="text-decoration: underline; font-weight: 500;">${display}</span><div style="font-size: 0.8em; color: #6b7280; margin-top: 2px;">📍 ${location.address}</div></div></a>`;
     }
