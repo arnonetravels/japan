@@ -135,7 +135,7 @@
     
     .content {
       padding: 16px;
-      padding-bottom: 100px;
+      padding-bottom: 140px; /* Space for both navigation bars */
     }
     
     .day-title {
@@ -251,6 +251,63 @@
       margin-bottom: 4px;
     }
     
+    /* Day Navigation */
+    .day-nav {
+      position: fixed;
+      bottom: 70px; /* Above bottom nav */
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .day-nav-button {
+      background: #f3f4f6;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+    
+    .day-nav-button:hover {
+      background: #e5e7eb;
+    }
+    
+    .day-nav-button:disabled {
+      background: #f9fafb;
+      color: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .day-nav-center {
+      flex: 1;
+      text-align: center;
+      padding: 0 16px;
+    }
+    
+    .day-nav-date {
+      font-weight: 600;
+      font-size: 14px;
+      color: #1f2937;
+      margin-bottom: 2px;
+    }
+    
+    .day-nav-day {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -424,6 +481,20 @@
       </div>
     </main>
 
+    <!-- Day Navigation -->
+    <div class="day-nav">
+      <button class="day-nav-button" onclick="previousDay()" id="prev-day">
+        ←
+      </button>
+      <div class="day-nav-center">
+        <div class="day-nav-date" id="current-date">Monday, July 14</div>
+        <div class="day-nav-day" id="current-day">Day 1 of 11</div>
+      </div>
+      <button class="day-nav-button" onclick="nextDay()" id="next-day">
+        →
+      </button>
+    </div>
+
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
       <button class="nav-button active">
@@ -498,6 +569,51 @@
       addDebugLog('⚠️ Fallback loading triggered', 'error');
       simulateLoading();
     }, 2000);
+
+    // Trip data
+    const tripDays = [
+      { date: 'Monday, July 14', title: 'Arrival & Gentle Recovery', city: 'Tokyo' },
+      { date: 'Tuesday, July 15', title: 'Traditional Tokyo & Summer Festival', city: 'Tokyo' },
+      { date: 'Wednesday, July 16', title: 'Modern Tokyo Culture', city: 'Tokyo' },
+      { date: 'Thursday, July 17', title: 'Tokyo Deep Dive', city: 'Tokyo' },
+      { date: 'Friday, July 18', title: 'Final Tokyo Exploration', city: 'Tokyo' },
+      { date: 'Saturday, July 19', title: 'Travel to Kyoto', city: 'Kyoto' },
+      { date: 'Sunday, July 20', title: 'Kyoto Temples & Gardens', city: 'Kyoto' },
+      { date: 'Monday, July 21', title: 'Kyoto Culture & Festivals', city: 'Kyoto' },
+      { date: 'Tuesday, July 22', title: 'Kyoto Hidden Gems', city: 'Kyoto' },
+      { date: 'Wednesday, July 23', title: 'Travel to Osaka', city: 'Osaka' },
+      { date: 'Thursday, July 24', title: 'Osaka & Departure', city: 'Osaka' }
+    ];
+
+    let currentDayIndex = 0;
+
+    // Day navigation functions
+    function updateDayDisplay() {
+      const currentDay = tripDays[currentDayIndex];
+      document.getElementById('current-date').textContent = currentDay.date;
+      document.getElementById('current-day').textContent = `Day ${currentDayIndex + 1} of ${tripDays.length}`;
+      
+      // Update navigation buttons
+      document.getElementById('prev-day').disabled = currentDayIndex === 0;
+      document.getElementById('next-day').disabled = currentDayIndex === tripDays.length - 1;
+      
+      // Update main content (for now just log it)
+      addDebugLog(`📅 Switched to ${currentDay.title} in ${currentDay.city}`, 'info');
+    }
+
+    function previousDay() {
+      if (currentDayIndex > 0) {
+        currentDayIndex--;
+        updateDayDisplay();
+      }
+    }
+
+    function nextDay() {
+      if (currentDayIndex < tripDays.length - 1) {
+        currentDayIndex++;
+        updateDayDisplay();
+      }
+    }
 
     // Add click handlers for debugging
     document.addEventListener('click', function(e) {
