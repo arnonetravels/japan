@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>🇯🇵 Japan Travel App</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f9fafb 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+    
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    
+    .app {
+      min-height: 100vh;
+      display: none;
+    }
+    
+    .header {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed, #4f46e5);
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .content {
+      padding: 16px;
+      padding-bottom: 100px;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .nav-button {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 500;
+    }
+    
+    .nav-button.active {
+      color: #4f46e5;
+    }
+    
+    .nav-icon {
+      font-size: 16px;
+      margin-bottom: 2px;
+      display: block;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .card {
+      background: linear-gradient(135deg, #ddd6fe, #e0e7ff);
+      border: 1px solid #c4b5fd;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading" class="loading">
+    <div style="font-size: 48px; margin-bottom: 20px;">🇯🇵</div>
+    <div style="font-size: 24px; font-weight: bold; color: #4f46e5; margin-bottom: 10px;">Japan Travel App</div>
+    <div style="font-size: 16px; color: #6b7280;">Loading your adventure...</div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="app">
+    <!-- Header -->
+    <header class="header">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <span style="font-size: 24px;">🏔️</span>
+        <div>
+          <div style="font-size: 20px; font-weight: bold;">Japan Adventure</div>
+          <div style="font-size: 14px; opacity: 0.9;">Tokyo • Kyoto • Osaka</div>
+        </div>
+        <span style="font-size: 24px;">🌸</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Today View -->
+      <div id="today-view">
+        <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+          Today's Adventure
+        </h2>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">🚆 Airport to Hotel</h3>
+          <p style="color: #6b7280; margin-bottom: 8px;">4:30 AM - 7:30 AM</p>
+          <p>Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station</p>
+          <div style="margin-top: 12px; font-weight: bold; color: #059669;">¥800 ($5.50)</div>
+        </div>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">🏛️ Shibuya Crossing</h3>
+          <p style="color: #6b7280; margin-bottom: 8px;">9:30 AM - 12:00 PM</p>
+          <p>Iconic Tokyo orientation without overwhelming jetlag - world's busiest pedestrian crossing</p>
+          <div style="margin-top: 12px; font-weight: bold; color: #059669;">Free</div>
+        </div>
+      </div>
+      
+      <!-- Currency View -->
+      <div id="currency-view" class="hidden">
+        <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+          💱 Currency Converter
+        </h2>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">USD to JPY</h3>
+          <input type="number" id="usd-input" placeholder="Enter USD amount" style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 8px;">
+          <div id="usd-result" style="font-weight: bold; color: #059669;"></div>
+        </div>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">Quick Reference</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="text-align: center; padding: 8px; background: white; border-radius: 8px;">$10 ≈ ¥1,435</div>
+            <div style="text-align: center; padding: 8px; background: white; border-radius: 8px;">$20 ≈ ¥2,870</div>
+            <div style="text-align: center; padding: 8px; background: white; border-radius: 8px;">$50 ≈ ¥7,175</div>
+            <div style="text-align: center; padding: 8px; background: white; border-radius: 8px;">$100 ≈ ¥14,350</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Budget View -->
+      <div id="budget-view" class="hidden">
+        <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+          💰 Trip Budget
+        </h2>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">Total Trip Cost</h3>
+          <div style="text-align: center;">
+            <div style="font-size: 32px; font-weight: bold; color: #059669;">$916 - $1,252</div>
+            <div style="color: #6b7280;">Daily Average: $83-114 per day</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Overview View -->
+      <div id="overview-view" class="hidden">
+        <h2 style="font-size: 24px; font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+          📍 Trip Overview
+        </h2>
+        
+        <div class="card">
+          <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">11-Day Japan Adventure</h3>
+          <p style="margin-bottom: 8px;"><strong>Tokyo:</strong> July 14-19 (5 days)</p>
+          <p style="margin-bottom: 8px;"><strong>Kyoto:</strong> July 19-23 (4 days)</p>
+          <p style="margin-bottom: 8px;"><strong>Osaka:</strong> July 23-24 (1 day)</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-button active" onclick="showView('today')" id="nav-today">
+        <span class="nav-icon">📅</span>
+        Today
+      </button>
+      <button class="nav-button" onclick="showView('overview')" id="nav-overview">
+        <span class="nav-icon">📍</span>
+        Overview
+      </button>
+      <button class="nav-button" onclick="showView('budget')" id="nav-budget">
+        <span class="nav-icon">💰</span>
+        Budget
+      </button>
+      <button class="nav-button" onclick="showView('currency')" id="nav-currency">
+        <span class="nav-icon">💱</span>
+        Currency
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Simple 1-second loading, then show app
+    setTimeout(() => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+    }, 1000);
+    
+    // View switching
+    function showView(viewName) {
+      // Hide all views
+      document.getElementById('today-view').classList.add('hidden');
+      document.getElementById('overview-view').classList.add('hidden');
+      document.getElementById('budget-view').classList.add('hidden');
+      document.getElementById('currency-view').classList.add('hidden');
+      
+      // Show selected view
+      document.getElementById(viewName + '-view').classList.remove('hidden');
+      
+      // Update navigation
+      document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('nav-' + viewName).classList.add('active');
+    }
+    
+    // Currency converter
+    document.getElementById('usd-input').addEventListener('input', function() {
+      const usd = parseFloat(this.value);
+      if (usd && usd > 0) {
+        const jpy = (usd * 143.5).toFixed(0);
+        document.getElementById('usd-result').textContent = `= ¥${jpy} JPY`;
+      } else {
+        document.getElementById('usd-result').textContent = '';
+      }
+    });
+  </script>
+</body>
+</html>
