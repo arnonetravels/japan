@@ -2083,14 +2083,19 @@
       
       addDebugLog('🔄 DOM loaded', 'success');
       addDebugLog(`📱 Japan Travel App ${APP_VERSION}`, 'info');
+      
+      // Load text size preference
+      loadTextSizePreference();
+      
       simulateLoading();
     });
 
     // Fallback in case DOMContentLoaded doesn't fire
     setTimeout(() => {
-      if (!document.getElementById('app').classList.contains('hidden')) return;
-      addDebugLog('⚠️ Fallback loading triggered', 'error');
-      simulateLoading();
+      if (document.getElementById('app').classList.contains('hidden')) {
+        addDebugLog('⚠️ Fallback loading triggered', 'error');
+        simulateLoading();
+      }
     }, 2000);
 
     // Complete trip data with all activities from reference itinerary
@@ -4185,15 +4190,9 @@
       }
     }
     
-    // Initialize text size when app loads
-    document.addEventListener('DOMContentLoaded', function() {
-      loadTextSizePreference();
-    });
+    // Text size preference will be loaded in the main DOMContentLoaded listener
     
-    // Also call this when the app becomes visible to ensure text size is applied
-    setTimeout(() => {
-      loadTextSizePreference();
-    }, 1000);
+    // Text size preference is loaded in the main DOMContentLoaded listener
     
     // View switching functionality - make sure it's globally available
     window.showView = function(viewName) {
