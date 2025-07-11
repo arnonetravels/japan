@@ -1,3 +1,14 @@
+## 🚨 CRITICAL DEVELOPMENT RULES
+
+### **NEVER LAUNCH WITHOUT CONSENT**
+**RULE #1: NEVER run `open` command or launch the app for testing without explicit user permission.**
+- Always ask "Should I test this?" or "Ready to test?" before opening the app
+- User has experienced frustration from unexpected launches during development
+- Respect user's workflow and only test when they're ready
+- This rule takes precedence over all other development practices
+
+---
+
 Do not create an artifact until you receive confirmation to begin.
 
 We are using this project to plan a trip to Japan. The Trip is July 12-24, 2025.
