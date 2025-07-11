@@ -7,6 +7,13 @@
 - Respect user's workflow and only test when they're ready
 - This rule takes precedence over all other development practices
 
+### **API KEY SECURITY**
+**RULE #2: NEVER commit API keys to git repositories.**
+- API keys should be stored in environment variables or secure config files
+- Add .env files to .gitignore to prevent accidental commits
+- Use null values in code with security comments
+- For OpenRouteService: Store API key securely and reference via environment variables
+
 ---
 
 Do not create an artifact until you receive confirmation to begin.

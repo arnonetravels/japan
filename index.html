@@ -896,11 +896,18 @@
       }
     };
     
-    // Transit fallback configuration (Google Maps API removed for security)
-    const TRANSIT_CONFIG = {
+    // OpenRouteService Configuration (API key should be in environment variables)
+    const ORS_CONFIG = {
+      apiKey: null, // SETUP: Add your OpenRouteService API key here for testing, remove before commit
+      baseUrl: 'https://api.openrouteservice.org/v2/directions',
       cache: {
-        duration: 5 * 60 * 1000, // 5 minutes for static data
-        key: 'japan_transit_cache'
+        duration: 5 * 60 * 1000, // 5 minutes for routing data
+        key: 'japan_routing_cache'
+      },
+      // Free tier: 2,000 requests/day, 40 requests/minute
+      rateLimit: {
+        requestsPerMinute: 35, // Stay under limit
+        lastRequest: 0
       }
     };
     
@@ -1581,10 +1588,213 @@
       }
     }
     
+    // OpenRouteService Cache Management
+    const ORSCache = {
+      save(key, data) {
+        try {
+          const cacheData = {
+            data: data,
+            timestamp: Date.now()
+          };
+          localStorage.setItem(`${ORS_CONFIG.cache.key}_${key}`, JSON.stringify(cacheData));
+        } catch (error) {
+          console.warn('ORS cache save failed:', error);
+        }
+      },
+      
+      load(key) {
+        try {
+          const cached = localStorage.getItem(`${ORS_CONFIG.cache.key}_${key}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < ORS_CONFIG.cache.duration) {
+              return parsed.data;
+            }
+          }
+        } catch (error) {
+          console.warn('ORS cache load failed:', error);
+        }
+        return null;
+      }
+    };
+
+    // Rate limiting for OpenRouteService
+    function checkRateLimit() {
+      const now = Date.now();
+      const timeSinceLastRequest = now - ORS_CONFIG.rateLimit.lastRequest;
+      const minInterval = 60000 / ORS_CONFIG.rateLimit.requestsPerMinute; // ms between requests
+      
+      if (timeSinceLastRequest < minInterval) {
+        const waitTime = minInterval - timeSinceLastRequest;
+        return waitTime;
+      }
+      
+      ORS_CONFIG.rateLimit.lastRequest = now;
+      return 0;
+    }
+
+    // Convert address to coordinates (simple geocoding for major Japan locations)
+    function getCoordinatesFromAddress(address) {
+      const locations = {
+        // Tokyo major locations
+        'Tokyo Station': { lat: 35.6812, lon: 139.7671 },
+        'Shibuya': { lat: 35.6595, lon: 139.7006 },
+        'Shinjuku': { lat: 35.6902, lon: 139.7006 },
+        'Harajuku': { lat: 35.6706, lon: 139.7026 },
+        'Asakusa': { lat: 35.7148, lon: 139.7967 },
+        'Ginza': { lat: 35.6714, lon: 139.7656 },
+        'Haneda Airport': { lat: 35.5494, lon: 139.7798 },
+        
+        // Kyoto major locations
+        'Kyoto Station': { lat: 34.9857, lon: 135.7588 },
+        'Gion': { lat: 35.0033, lon: 135.7778 },
+        'Fushimi Inari': { lat: 34.9669, lon: 135.7727 },
+        'Arashiyama': { lat: 35.0170, lon: 135.6761 },
+        
+        // Osaka major locations
+        'Osaka Station': { lat: 34.7024, lon: 135.4959 },
+        'Dotonbori': { lat: 34.6686, lon: 135.5023 },
+        'Kansai Airport': { lat: 34.4347, lon: 135.2441 }
+      };
+      
+      // Try exact match first
+      if (locations[address]) {
+        return locations[address];
+      }
+      
+      // Try partial match
+      for (const [key, coords] of Object.entries(locations)) {
+        if (address.includes(key) || key.includes(address)) {
+          return coords;
+        }
+      }
+      
+      return null;
+    }
+
+    async function getORSDirections(origin, destination, profile = 'driving-car') {
+      // Check if we have API key
+      if (!ORS_CONFIG.apiKey) {
+        addDebugLog('🔑 OpenRouteService API key not configured', 'warning');
+        throw new Error('OpenRouteService API key not configured');
+      }
+      
+      // Check rate limit
+      const waitTime = checkRateLimit();
+      if (waitTime > 0) {
+        addDebugLog(`⏳ Rate limit: waiting ${waitTime}ms`, 'warning');
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+      
+      // Get coordinates
+      const originCoords = getCoordinatesFromAddress(origin);
+      const destCoords = getCoordinatesFromAddress(destination);
+      
+      if (!originCoords || !destCoords) {
+        throw new Error(`Could not find coordinates for ${origin} or ${destination}`);
+      }
+      
+      // Create cache key
+      const cacheKey = `${origin}_${destination}_${profile}`.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      // Check cache first
+      const cached = ORSCache.load(cacheKey);
+      if (cached) {
+        addDebugLog(`📋 Using cached ORS data for ${origin} → ${destination}`, 'info');
+        return cached;
+      }
+      
+      try {
+        const url = `${ORS_CONFIG.baseUrl}/${profile}`;
+        const requestBody = {
+          coordinates: [
+            [originCoords.lon, originCoords.lat],
+            [destCoords.lon, destCoords.lat]
+          ],
+          format: 'json',
+          instructions: false,
+          geometry: false
+        };
+        
+        addDebugLog(`🌐 Fetching ORS directions: ${profile}`, 'info');
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Authorization': ORS_CONFIG.apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`ORS API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          const result = {
+            distance: route.summary.distance, // meters
+            duration: route.summary.duration, // seconds
+            profile: profile
+          };
+          
+          // Cache the result
+          ORSCache.save(cacheKey, result);
+          addDebugLog(`✅ ORS directions loaded: ${Math.round(result.distance/1000)}km, ${Math.round(result.duration/60)}min`, 'success');
+          
+          return result;
+        } else {
+          throw new Error('No routes found');
+        }
+        
+      } catch (error) {
+        addDebugLog(`❌ ORS API error: ${error.message}`, 'error');
+        throw error;
+      }
+    }
+
     async function getMultiModalDirections(origin, destination) {
-      // Google Maps API removed for security - always use static fallback estimates
-      addDebugLog(`🚆 Using static estimates for ${origin} → ${destination}`, 'info');
-      throw new Error('Using static estimates - Google API removed for security');
+      // Try OpenRouteService first
+      try {
+        addDebugLog(`🚆 Fetching multi-modal directions: ${origin} → ${destination}`, 'info');
+        
+        const results = {};
+        const profiles = [
+          { name: 'walking', ors: 'foot-walking' },
+          { name: 'driving', ors: 'driving-car' },
+          { name: 'cycling', ors: 'cycling-regular' }
+        ];
+        
+        // Get multiple transport modes
+        for (const profile of profiles) {
+          try {
+            const result = await getORSDirections(origin, destination, profile.ors);
+            results[profile.name] = {
+              distance: result.distance,
+              duration: result.duration,
+              mode: profile.name
+            };
+          } catch (error) {
+            addDebugLog(`⚠️ Failed to get ${profile.name} directions: ${error.message}`, 'warning');
+          }
+        }
+        
+        if (Object.keys(results).length > 0) {
+          addDebugLog(`✅ Multi-modal ORS data loaded (${Object.keys(results).length} modes)`, 'success');
+          return results;
+        } else {
+          throw new Error('No transportation modes available from ORS');
+        }
+        
+      } catch (error) {
+        addDebugLog(`❌ OpenRouteService error: ${error.message}`, 'error');
+        // Fall back to static estimates
+        addDebugLog(`🚆 Falling back to static estimates for ${origin} → ${destination}`, 'info');
+        throw new Error('Using static estimates - ORS unavailable');
+      }
     }
     
     async function getTransitWithFallback(origin, destination) {
