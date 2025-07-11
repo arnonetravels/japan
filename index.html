@@ -1573,7 +1573,7 @@
       }
     }
     
-    async function getTransitDirections(origin, destination) {
+    async function getMultiModalDirections(origin, destination) {
       if (!TRANSIT_CONFIG.apiKey || TRANSIT_CONFIG.apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
         throw new Error('Google Maps API key not configured');
       }
@@ -1584,143 +1584,269 @@
       // Check cache first
       const cached = TransitCache.load(routeKey);
       if (cached) {
-        addDebugLog(`🚆 Using cached transit data for ${origin} → ${destination}`, 'info');
+        addDebugLog(`🚆 Using cached multi-modal data for ${origin} → ${destination}`, 'info');
         return cached;
       }
       
-      // Build API URL
-      const params = new URLSearchParams({
-        origin: origin,
-        destination: destination,
-        mode: 'transit',
-        departure_time: 'now',
-        key: TRANSIT_CONFIG.apiKey,
-        language: 'en',
-        region: 'jp'
-      });
+      // Get multiple transportation modes
+      const modes = ['walking', 'transit', 'driving'];
+      const results = {};
       
-      const url = `${TRANSIT_CONFIG.baseUrl}?${params}`;
-      
-      // Use CORS proxy for browser-based requests
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-      
-      const response = await fetch(proxyUrl);
-      if (!response.ok) {
-        throw new Error(`Transit API error: ${response.status}`);
+      for (const mode of modes) {
+        try {
+          const params = new URLSearchParams({
+            origin: origin,
+            destination: destination,
+            mode: mode,
+            departure_time: 'now',
+            key: TRANSIT_CONFIG.apiKey,
+            language: 'en',
+            region: 'jp'
+          });
+          
+          const url = `${TRANSIT_CONFIG.baseUrl}?${params}`;
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+          
+          const response = await fetch(proxyUrl);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.routes && data.routes.length > 0) {
+              results[mode] = data;
+            }
+          }
+        } catch (error) {
+          console.warn(`Failed to get ${mode} directions:`, error);
+        }
       }
       
-      const data = await response.json();
-      
       // Cache the result
-      TransitCache.save(routeKey, data);
+      TransitCache.save(routeKey, results);
       
-      return data;
+      return results;
     }
     
     async function getTransitWithFallback(origin, destination) {
       try {
-        addDebugLog(`🚆 Fetching live transit: ${origin} → ${destination}`, 'info');
-        const transitData = await getTransitDirections(origin, destination);
-        addDebugLog(`✅ Live transit data loaded`, 'success');
-        return parseTransitData(transitData);
+        addDebugLog(`🚆 Fetching multi-modal transit: ${origin} → ${destination}`, 'info');
+        const multiModalData = await getMultiModalDirections(origin, destination);
+        addDebugLog(`✅ Multi-modal transit data loaded`, 'success');
+        return parseMultiModalData(multiModalData);
       } catch (error) {
         addDebugLog(`❌ Transit API error: ${error.message}`, 'error');
         console.error('Transit API error:', error);
         // Fall back to static transit data
-        return getStaticTransitData(origin, destination);
+        return getStaticMultiModalData(origin, destination);
       }
     }
     
-    function parseTransitData(transitData) {
-      if (!transitData.routes || transitData.routes.length === 0) {
-        throw new Error('No transit routes found');
+    function parseMultiModalData(multiModalData) {
+      const options = [];
+      
+      // Parse walking
+      if (multiModalData.walking) {
+        const walkingRoute = multiModalData.walking.routes[0];
+        const walkingLeg = walkingRoute.legs[0];
+        options.push({
+          mode: 'walking',
+          icon: '🚶',
+          duration: walkingLeg.duration.text,
+          distance: walkingLeg.distance.text,
+          description: 'Walking route',
+          isLive: true
+        });
       }
       
-      const route = transitData.routes[0];
-      const leg = route.legs[0];
+      // Parse transit
+      if (multiModalData.transit) {
+        const transitRoute = multiModalData.transit.routes[0];
+        const transitLeg = transitRoute.legs[0];
+        const transitSteps = transitLeg.steps.filter(step => step.travel_mode === 'TRANSIT');
+        
+        options.push({
+          mode: 'transit',
+          icon: '🚆',
+          duration: transitLeg.duration.text,
+          distance: transitLeg.distance.text,
+          departure_time: transitLeg.departure_time?.text || 'Now',
+          arrival_time: transitLeg.arrival_time?.text || 'Unknown',
+          steps: transitSteps.map(step => ({
+            line: step.transit_details?.line?.short_name || step.transit_details?.line?.name || 'Train',
+            departure_stop: step.transit_details?.departure_stop?.name || 'Unknown',
+            arrival_stop: step.transit_details?.arrival_stop?.name || 'Unknown',
+            departure_time: step.transit_details?.departure_time?.text || 'Unknown',
+            num_stops: step.transit_details?.num_stops || 0
+          })),
+          fare: transitRoute.fare?.text || null,
+          description: `${transitSteps.length} transit step${transitSteps.length > 1 ? 's' : ''}`,
+          isLive: true
+        });
+      }
+      
+      // Parse driving (taxi)
+      if (multiModalData.driving) {
+        const drivingRoute = multiModalData.driving.routes[0];
+        const drivingLeg = drivingRoute.legs[0];
+        options.push({
+          mode: 'driving',
+          icon: '🚕',
+          duration: drivingLeg.duration.text,
+          distance: drivingLeg.distance.text,
+          description: 'Taxi/ride-sharing',
+          estimatedCost: estimateTaxiCost(drivingLeg.distance.value, drivingLeg.duration.value),
+          isLive: true
+        });
+      }
+      
+      return options;
+    }
+    
+    function estimateTaxiCost(distanceMeters, durationSeconds) {
+      // Tokyo taxi rates (approximate): ¥410 initial + ¥80 per 280m or 90 seconds
+      const initialFare = 410;
+      const additionalUnits = Math.max(
+        Math.ceil(distanceMeters / 280), 
+        Math.ceil(durationSeconds / 90)
+      ) - 1;
+      const totalYen = initialFare + (additionalUnits * 80);
+      const totalUSD = totalYen * 0.007; // Approximate conversion
       
       return {
-        duration: leg.duration.text,
-        distance: leg.distance.text,
-        departure_time: leg.departure_time?.text || 'Now',
-        arrival_time: leg.arrival_time?.text || 'Unknown',
-        steps: leg.steps.filter(step => step.travel_mode === 'TRANSIT').map(step => ({
-          line: step.transit_details?.line?.short_name || step.transit_details?.line?.name || 'Train',
-          departure_stop: step.transit_details?.departure_stop?.name || 'Unknown',
-          arrival_stop: step.transit_details?.arrival_stop?.name || 'Unknown',
-          departure_time: step.transit_details?.departure_time?.text || 'Unknown',
-          num_stops: step.transit_details?.num_stops || 0
-        })),
-        fare: route.fare?.text || null,
-        isLive: true
+        yen: `¥${totalYen.toLocaleString()}`,
+        usd: `$${totalUSD.toFixed(2)}`
       };
     }
     
-    function getStaticTransitData(origin, destination) {
-      // Fallback static data for common Japan routes
-      const staticRoutes = {
-        'Haneda_Airport_to_Shibuya_Station': {
-          duration: '45 minutes',
-          distance: '25 km',
-          departure_time: 'Every 10 minutes',
-          arrival_time: '~45 min',
-          steps: [{
-            line: 'Airport Express',
-            departure_stop: 'Haneda Airport Terminal 2',
-            arrival_stop: 'Shibuya Station',
-            departure_time: 'Every 10 min',
-            num_stops: 8
-          }],
-          fare: '¥800',
+    function getStaticMultiModalData(origin, destination) {
+      // Estimate distances for common Tokyo routes
+      const estimatedDistance = estimateDistance(origin, destination);
+      const walkingTime = Math.max(5, Math.ceil(estimatedDistance * 12)); // ~12 min per km
+      const transitTime = Math.max(10, Math.ceil(estimatedDistance * 8)); // ~8 min per km via transit
+      const taxiTime = Math.max(8, Math.ceil(estimatedDistance * 6)); // ~6 min per km via taxi
+      
+      return [
+        {
+          mode: 'walking',
+          icon: '🚶',
+          duration: `${walkingTime} min`,
+          distance: `${estimatedDistance.toFixed(1)} km`,
+          description: 'Walking route',
+          isLive: false
+        },
+        {
+          mode: 'transit',
+          icon: '🚆',
+          duration: `${transitTime} min`,
+          distance: `${estimatedDistance.toFixed(1)} km`,
+          description: 'Local train/subway',
+          fare: `¥${Math.max(150, Math.ceil(estimatedDistance * 200))}`,
+          isLive: false
+        },
+        {
+          mode: 'driving',
+          icon: '🚕',
+          duration: `${taxiTime} min`,
+          distance: `${estimatedDistance.toFixed(1)} km`,
+          description: 'Taxi/ride-sharing',
+          estimatedCost: {
+            yen: `¥${Math.max(500, Math.ceil(estimatedDistance * 600)).toLocaleString()}`,
+            usd: `$${(Math.max(500, Math.ceil(estimatedDistance * 600)) * 0.007).toFixed(2)}`
+          },
           isLive: false
         }
-      };
-      
-      const routeKey = `${origin}_to_${destination}`.replace(/[^a-zA-Z0-9]/g, '_');
-      return staticRoutes[routeKey] || {
-        duration: '30-60 minutes',
-        distance: 'Unknown',
-        departure_time: 'Regular service',
-        arrival_time: 'Check local schedules',
-        steps: [{
-          line: 'Local Train',
-          departure_stop: origin,
-          arrival_stop: destination,
-          departure_time: 'Regular service',
-          num_stops: 'Multiple'
-        }],
-        fare: 'Varies',
-        isLive: false
-      };
+      ];
     }
     
-    function createTransitDisplay(transitData, isDetailed = false) {
-      const liveIndicator = transitData.isLive ? '🔴 Live' : '📅 Scheduled';
-      const fareDisplay = transitData.fare || 'Check fare';
+    function estimateDistance(origin, destination) {
+      // Simple distance estimation for Tokyo area
+      const distances = {
+        'shibuya_to_harajuku': 1.2,
+        'shibuya_to_meiji': 1.5,
+        'harajuku_to_meiji': 0.3,
+        'shibuya_to_ginza': 3.5,
+        'tokyo_to_kyoto': 475,
+        'kyoto_to_osaka': 55,
+        'osaka_to_itami': 15
+      };
       
-      if (!isDetailed) {
-        return `${liveIndicator} • ${transitData.duration} • ${fareDisplay}`;
+      const key = `${origin}_to_${destination}`.toLowerCase()
+        .replace(/[^a-z]/g, '_')
+        .replace(/_+/g, '_');
+      
+      // Check for direct matches or partial matches
+      for (const [route, dist] of Object.entries(distances)) {
+        if (key.includes(route) || route.includes(key.split('_').slice(0,2).join('_'))) {
+          return dist;
+        }
       }
       
-      const stepsHtml = transitData.steps.map(step => `
-        <div style="margin: 4px 0; font-size: var(--small-text);">
-          <strong>${step.line}</strong>: ${step.departure_stop} → ${step.arrival_stop}
-          <div style="opacity: 0.7;">Departure: ${step.departure_time} • ${step.num_stops} stops</div>
-        </div>
-      `).join('');
+      // Default estimate for Tokyo area
+      return 2.5;
+    }
+    
+    function createMultiModalDisplay(transitOptions, isDetailed = false) {
+      if (!Array.isArray(transitOptions) || transitOptions.length === 0) {
+        return '<div style="font-size: var(--small-text);">No transit options available</div>';
+      }
+      
+      const liveIndicator = transitOptions[0].isLive ? '🔴 Live' : '📅 Estimated';
+      
+      if (!isDetailed) {
+        // Show just the fastest option for compact view
+        const fastest = transitOptions[0];
+        return `${liveIndicator} • ${fastest.duration} • ${fastest.icon} ${fastest.description}`;
+      }
+      
+      // Detailed view with all transportation options
+      const optionsHtml = transitOptions.map(option => {
+        let costDisplay = '';
+        if (option.fare) {
+          costDisplay = `<span style="font-weight: 600; color: #059669;">${option.fare}</span>`;
+        } else if (option.estimatedCost) {
+          costDisplay = `<span style="font-weight: 600; color: #059669;">${option.estimatedCost.yen} (${option.estimatedCost.usd})</span>`;
+        } else if (option.mode === 'walking') {
+          costDisplay = `<span style="font-weight: 600; color: #059669;">Free</span>`;
+        }
+        
+        let detailsHtml = '';
+        if (option.steps && option.steps.length > 0) {
+          detailsHtml = `
+            <div style="margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 4px;">
+              ${option.steps.map(step => `
+                <div style="font-size: var(--small-text); margin: 2px 0;">
+                  <strong>${step.line}</strong>: ${step.departure_stop} → ${step.arrival_stop}
+                  <div style="opacity: 0.7;">Departure: ${step.departure_time} • ${step.num_stops} stops</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+        
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; background: rgba(255,255,255,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);">
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span style="font-size: var(--medium-text);">${option.icon}</span>
+                <div>
+                  <div style="font-size: var(--base-text); font-weight: 600;">${option.duration}</div>
+                  <div style="font-size: var(--small-text); opacity: 0.8;">${option.distance} • ${option.description}</div>
+                </div>
+              </div>
+              ${detailsHtml}
+            </div>
+            <div style="text-align: right; margin-left: 12px;">
+              ${costDisplay}
+            </div>
+          </div>
+        `;
+      }).join('');
       
       return `
         <div style="margin-top: 8px;">
-          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: var(--small-text); color: #059669; font-weight: 600;">${liveIndicator}</span>
-            <span style="font-size: var(--small-text); font-weight: 600;">${fareDisplay}</span>
+            <span style="font-size: var(--small-text); opacity: 0.7;">Choose your transport</span>
           </div>
-          <div style="font-size: var(--small-text); margin-bottom: 8px;">
-            <strong>Duration:</strong> ${transitData.duration} • <strong>Distance:</strong> ${transitData.distance}
-          </div>
-          <div style="background: rgba(255,255,255,0.5); padding: 8px; border-radius: 6px;">
-            ${stepsHtml}
-          </div>
+          ${optionsHtml}
         </div>
       `;
     }
@@ -3363,12 +3489,97 @@
       let insertionPoint = content.querySelector('.weather-warning');
       
       // Create new activity cards in chronological order
-      for (const activity of activities) {
+      for (let i = 0; i < activities.length; i++) {
+        const activity = activities[i];
         const activityCard = await createActivityCard(activity);
         insertionPoint.insertAdjacentHTML('afterend', activityCard);
-        // Update insertion point to the newly inserted card for next iteration
         insertionPoint = insertionPoint.nextElementSibling;
+        
+        // Add transit card between activities if locations differ
+        if (i < activities.length - 1) {
+          const nextActivity = activities[i + 1];
+          if (shouldShowTransitBetween(activity, nextActivity)) {
+            const transitCard = await createTransitBetweenActivities(activity, nextActivity);
+            insertionPoint.insertAdjacentHTML('afterend', transitCard);
+            insertionPoint = insertionPoint.nextElementSibling;
+          }
+        }
       }
+    }
+    
+    function shouldShowTransitBetween(currentActivity, nextActivity) {
+      // Don't show transit for transport activities (they already have transit info)
+      if (currentActivity.type === 'transport' || nextActivity.type === 'transport') {
+        return false;
+      }
+      
+      // Don't show if activities are in the same location
+      if (currentActivity.location === nextActivity.location) {
+        return false;
+      }
+      
+      // Don't show if locations are very similar (same area)
+      const currentLoc = (currentActivity.location || '').toLowerCase();
+      const nextLoc = (nextActivity.location || '').toLowerCase();
+      
+      if (currentLoc.includes('shibuya') && nextLoc.includes('shibuya')) {
+        return false;
+      }
+      
+      return true;
+    }
+    
+    async function createTransitBetweenActivities(fromActivity, toActivity) {
+      const fromLocation = getLocationForTransit(fromActivity.location);
+      const toLocation = getLocationForTransit(toActivity.location);
+      
+      try {
+        const transitOptions = await getTransitWithFallback(fromLocation, toLocation);
+        
+        return `
+          <div class="activity-card" style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-color: #94a3b8; border-style: dashed;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
+                <span style="font-size: 18px;">🚶‍➡️</span>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: var(--base-text);">Getting There</div>
+                <div style="font-size: var(--small-text); opacity: 0.7;">${fromActivity.location} → ${toActivity.location}</div>
+              </div>
+            </div>
+            ${createMultiModalDisplay(transitOptions, true)}
+          </div>
+        `;
+      } catch (error) {
+        return `
+          <div class="activity-card" style="background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-color: #94a3b8; border-style: dashed;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
+                <span style="font-size: 18px;">🚶‍➡️</span>
+              </div>
+              <div>
+                <div style="font-weight: 600; font-size: var(--base-text);">Getting There</div>
+                <div style="font-size: var(--small-text); opacity: 0.7;">${fromActivity.location} → ${toActivity.location}</div>
+                <div style="font-size: var(--small-text); margin-top: 4px;">Check local transit options</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    function getLocationForTransit(location) {
+      // Convert activity locations to transit-friendly addresses
+      const locationMap = {
+        'Shibuya': 'Shibuya Station, Tokyo, Japan',
+        'Shibuya area': 'Shibuya Station, Tokyo, Japan',
+        'Meiji Shrine → Harajuku': 'Meiji-jingu-mae Station, Tokyo, Japan',
+        'Harajuku': 'Harajuku Station, Tokyo, Japan',
+        'Shibuya/Ginza area': 'Ginza Station, Tokyo, Japan',
+        'Hyatt House Shibuya': 'Shibuya Station, Tokyo, Japan'
+      };
+      
+      return locationMap[location] || `${location}, Tokyo, Japan`;
     }
 
     async function createActivityCard(activity) {
@@ -3492,7 +3703,7 @@
                 <span style="font-size: var(--medium-text);">🚆</span>
                 <h4 style="font-weight: 600; font-size: var(--base-text); margin: 0;">Live Transit Info</h4>
               </div>
-              ${createTransitDisplay(transitData, true)}
+              ${createMultiModalDisplay(transitData, true)}
             </div>
           `;
         } catch (error) {
