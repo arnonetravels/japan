@@ -884,10 +884,10 @@
     // App version
     const APP_VERSION = 'v1.4.0.20250111';
     
-    // Weather API Configuration
-    // SETUP: Replace 'YOUR_API_KEY_HERE' with your OpenWeatherMap API key
+    // Weather API Configuration (API key removed for security)
+    // SETUP: Add your OpenWeatherMap API key to environment variables or secure config
     const WEATHER_CONFIG = {
-      apiKey: '30812f90aa07f58d0028e8649f21e58a',
+      apiKey: null, // REMOVED: API key removed for security - do not commit API keys to git
       baseUrl: 'https://api.openweathermap.org/data/2.5/',
       updateInterval: 30 * 60 * 1000, // 30 minutes
       cache: {
@@ -896,13 +896,10 @@
       }
     };
     
-    // Transit API Configuration
-    // SETUP: Add your Google Maps API key here
+    // Transit fallback configuration (Google Maps API removed for security)
     const TRANSIT_CONFIG = {
-      apiKey: 'AIzaSyAhuKHxeg8f-OVpS1o50pwBGHCDcBa0pxk',
-      baseUrl: 'https://maps.googleapis.com/maps/api/directions/json',
       cache: {
-        duration: 5 * 60 * 1000, // 5 minutes for transit data
+        duration: 5 * 60 * 1000, // 5 minutes for static data
         key: 'japan_transit_cache'
       }
     };
@@ -1493,14 +1490,14 @@
       const staticIndicator = isStatic ? ' (estimated)' : '';
       
       if (!includeDetails) {
-        return `${icon} ${Math.round(weatherData.main.temp)}°C${staticIndicator}`;
+        return `${icon} ${celsiusToFahrenheit(weatherData.main.temp)}°F${staticIndicator}`;
       }
       
       return `
         <div style="display: flex; align-items: center; gap: 8px; font-size: var(--base-text);">
           <span style="font-size: var(--medium-text);">${icon}</span>
           <div>
-            <div style="font-weight: 600;">${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)${staticIndicator}</div>
+            <div style="font-weight: 600;">${celsiusToFahrenheit(weatherData.main.temp)}°F (feels like ${celsiusToFahrenheit(weatherData.main.feels_like)}°F)${staticIndicator}</div>
             <div style="font-size: var(--small-text); opacity: 0.8;">${weatherData.weather[0].description} • ${weatherData.main.humidity}% humidity</div>
           </div>
         </div>
@@ -1585,55 +1582,9 @@
     }
     
     async function getMultiModalDirections(origin, destination) {
-      if (!TRANSIT_CONFIG.apiKey || TRANSIT_CONFIG.apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
-        throw new Error('Google Maps API key not configured');
-      }
-      
-      // Create route key for caching
-      const routeKey = `${origin}_to_${destination}`.replace(/[^a-zA-Z0-9]/g, '_');
-      
-      // Check cache first
-      const cached = TransitCache.load(routeKey);
-      if (cached) {
-        addDebugLog(`🚆 Using cached multi-modal data for ${origin} → ${destination}`, 'info');
-        return cached;
-      }
-      
-      // Get multiple transportation modes
-      const modes = ['walking', 'transit', 'driving'];
-      const results = {};
-      
-      for (const mode of modes) {
-        try {
-          const params = new URLSearchParams({
-            origin: origin,
-            destination: destination,
-            mode: mode,
-            departure_time: 'now',
-            key: TRANSIT_CONFIG.apiKey,
-            language: 'en',
-            region: 'jp'
-          });
-          
-          const url = `${TRANSIT_CONFIG.baseUrl}?${params}`;
-          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-          
-          const response = await fetch(proxyUrl);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.routes && data.routes.length > 0) {
-              results[mode] = data;
-            }
-          }
-        } catch (error) {
-          console.warn(`Failed to get ${mode} directions:`, error);
-        }
-      }
-      
-      // Cache the result
-      TransitCache.save(routeKey, results);
-      
-      return results;
+      // Google Maps API removed for security - always use static fallback estimates
+      addDebugLog(`🚆 Using static estimates for ${origin} → ${destination}`, 'info');
+      throw new Error('Using static estimates - Google API removed for security');
     }
     
     async function getTransitWithFallback(origin, destination) {
@@ -1736,14 +1687,14 @@
       
       if (estimatedDistance >= 50) { // Inter-city (bullet train routes)
         walkingTime = 999; // Not walkable
-        transitTime = Math.ceil(estimatedDistance / 5); // ~300 km/h average including stops
-        taxiTime = Math.ceil(estimatedDistance / 1.2); // ~70 km/h highway average
+        transitTime = Math.ceil(estimatedDistance / 5); // ~186 mph average including stops
+        taxiTime = Math.ceil(estimatedDistance / 1.2); // ~43 mph highway average
       } else if (estimatedDistance >= 10) { // Long distance within city
-        walkingTime = Math.ceil(estimatedDistance * 12); // 5 km/h walking speed
+        walkingTime = Math.ceil(estimatedDistance * 12); // 3 mph walking speed
         transitTime = Math.max(15, Math.ceil(estimatedDistance * 3.5 + 10)); // Transit + waiting time
         taxiTime = Math.max(15, Math.ceil(estimatedDistance * 2.5 + 5)); // Traffic + pickup time
       } else { // Local neighborhood travel
-        walkingTime = Math.max(3, Math.ceil(estimatedDistance * 12)); // 5 km/h walking
+        walkingTime = Math.max(3, Math.ceil(estimatedDistance * 12)); // 3 mph walking
         transitTime = Math.max(8, Math.ceil(estimatedDistance * 4 + 8)); // Local trains + walking to stations
         taxiTime = Math.max(5, Math.ceil(estimatedDistance * 4 + 3)); // City traffic
       }
@@ -1756,7 +1707,7 @@
           mode: 'walking',
           icon: '🚶',
           duration: `${walkingTime} min`,
-          distance: `${estimatedDistance.toFixed(1)} km`,
+          distance: `${kmToMiles(estimatedDistance)} mi`,
           description: walkingTime <= 20 ? 'Pleasant walk' : walkingTime <= 45 ? 'Long walk' : 'Very long walk',
           isLive: false
         });
@@ -1773,7 +1724,7 @@
         mode: 'transit',
         icon: transitIcon,
         duration: `${transitTime} min`,
-        distance: `${estimatedDistance.toFixed(1)} km`,
+        distance: `${kmToMiles(estimatedDistance)} mi`,
         description: transitDesc,
         fare: `¥${transitFare.toLocaleString()}`,
         isLive: false
@@ -1789,7 +1740,7 @@
           mode: 'driving',
           icon: '🚕',
           duration: `${taxiTime} min`,
-          distance: `${estimatedDistance.toFixed(1)} km`,
+          distance: `${kmToMiles(estimatedDistance)} mi`,
           description: estimatedDistance >= 10 ? 'Long taxi ride' : 'Taxi/ride-sharing',
           estimatedCost: {
             yen: `¥${taxiCost.toLocaleString()}`,
@@ -2104,7 +2055,7 @@
         date: 'Monday, July 14', 
         title: 'Arrival & Gentle Recovery', 
         city: 'Tokyo',
-        weather: 'Hot & humid (29-32°C/84-90°F with 78-83% humidity)',
+        weather: 'Hot & humid (84-90°F with 78-83% humidity)',
         weatherAdvisory: 'July is Japan\'s hottest, most humid month. Plan indoor activities during peak heat (11am-4pm)',
         activities: [
           {
@@ -2248,7 +2199,7 @@
         date: 'Tuesday, July 15', 
         title: 'Traditional Tokyo & Summer Festival', 
         city: 'Tokyo',
-        weather: 'Very hot & humid (30-33°C/86-91°F with 78-83% humidity)',
+        weather: 'Very hot & humid (86-93°F with 78-83% humidity)',
         weatherAdvisory: 'Early morning activities recommended. Plan indoor activities during peak heat (11am-4pm)',
         activities: [
           {
@@ -2352,7 +2303,7 @@
         date: 'Wednesday, July 16', 
         title: 'Modern Tokyo & Immersive Experiences', 
         city: 'Tokyo',
-        weather: 'Extremely hot (31-34°C/88-93°F)',
+        weather: 'Extremely hot (88-93°F)',
         weatherAdvisory: 'Indoor activities during midday essential',
         activities: [
           {
@@ -2619,7 +2570,7 @@
         date: 'Friday, July 18', 
         title: 'Final Tokyo & Prime Nightlife', 
         city: 'Tokyo',
-        weather: 'Hot morning, possible rain afternoon (29-32°C/84-90°F)',
+        weather: 'Hot morning, possible rain afternoon (84-90°F)',
         weatherAdvisory: 'Final Tokyo day with major nightlife experience',
         activities: [
           {
@@ -2744,7 +2695,7 @@
         date: 'Saturday, July 19', 
         title: 'Tokyo to Kyoto via Bullet Train', 
         city: 'Kyoto',
-        weather: 'Hot travel day, cooler evening in Kyoto (28-31°C/82-88°F)',
+        weather: 'Hot travel day, cooler evening in Kyoto (82-88°F)',
         weatherAdvisory: 'Travel day with evening arrival in Kyoto',
         activities: [
           {
@@ -2781,13 +2732,13 @@
               origin: 'Tokyo Station, Tokyo, Japan',
               destination: 'Kyoto Station, Kyoto, Japan'
             },
-            description: 'Japan\'s engineering marvel - 320 km/h journey with legendary punctuality (average delay: 18 seconds annually)',
-            significance: 'Japan\'s engineering marvel - 320 km/h journey with legendary punctuality',
+            description: 'Japan\'s engineering marvel - 200 mph journey with legendary punctuality (average delay: 18 seconds annually)',
+            significance: 'Japan\'s engineering marvel - 200 mph journey with legendary punctuality',
             whatToDo: [
               'Purchase ekiben (luxury train bento) from Tokyo Station vendors before boarding - featuring regional specialties',
               'Reserve seats D or E on right side for potential Mount Fuji views (weather permitting in July)',
               'Take photos of sleek bullet train nose and marvel at engineering precision',
-              'Experience legendary punctuality and smooth 320 km/h travel with no turbulence',
+              'Experience legendary punctuality and smooth 200 mph travel with no turbulence',
               'Enjoy gourmet ekiben featuring seasonal ingredients and artistic presentation',
               'Use onboard WiFi to research Kyoto activities and traditional customs',
               'Watch Japanese countryside transform from urban Tokyo to historic Kansai region'
@@ -2827,7 +2778,7 @@
         date: 'Sunday, July 20', 
         title: 'Gion Matsuri Festival Culture & Kyoto', 
         city: 'Kyoto',
-        weather: 'Very hot & humid (30-33°C/86-91°F with 78-83% humidity)',
+        weather: 'Very hot & humid (86-93°F with 78-83% humidity)',
         weatherAdvisory: 'Early temple visits recommended. Experience ongoing month-long festival atmosphere',
         activities: [
           {
@@ -2956,7 +2907,7 @@
         date: 'Monday, July 21', 
         title: 'Temples & Bamboo Grove', 
         city: 'Kyoto',
-        weather: 'Very hot & humid (30-33°C/86-91°F with 78-83% humidity)',
+        weather: 'Very hot & humid (86-93°F with 78-83% humidity)',
         weatherAdvisory: 'Early start for temple visits before heat. Skip hotel breakfast for early departure',
         activities: [
           {
@@ -3076,7 +3027,7 @@
         date: 'Tuesday, July 22', 
         title: 'Osaka Day Trip - Culinary Capital', 
         city: 'Osaka',
-        weather: 'Hot and humid, typical Kansai summer weather (29-32°C/84-90°F)',
+        weather: 'Hot and humid, typical Kansai summer weather (84-90°F)',
         weatherAdvisory: 'Full day trip to Japan\'s culinary capital - return to Kyoto evening',
         activities: [
           {
@@ -3241,7 +3192,7 @@
         date: 'Wednesday, July 23', 
         title: 'Final Kyoto & Transfer to Osaka', 
         city: 'Osaka',
-        weather: 'Hot and humid, typical Kansai summer weather (29-32°C/84-90°F)',
+        weather: 'Hot and humid, typical Kansai summer weather (84-90°F)',
         weatherAdvisory: 'Final Kyoto exploration before moving to Osaka for departure preparations',
         activities: [
           {
@@ -3276,7 +3227,7 @@
             time: '1:00 PM - 3:00 PM',
             title: 'Nishiki Market Final Exploration',
             location: 'Nishiki Market, Kyoto',
-            description: '"Kyoto\'s Kitchen" serving the imperial capital for 400+ years with 126 specialty shops in 390-meter covered market',
+            description: '"Kyoto\'s Kitchen" serving the imperial capital for 400+ years with 126 specialty shops in 1,280-foot covered market',
             significance: '"Kyoto\'s Kitchen" serving the imperial capital for 400+ years',
             whatToDo: [
               'Try tofu doughnuts and yuba (soy skin) specialties unique to Kyoto',
@@ -3376,7 +3327,7 @@
         date: 'Thursday, July 24', 
         title: 'Final Day & Departure', 
         city: 'Osaka',
-        weather: 'Hot morning, travel preparations (28-31°C/82-88°F)',
+        weather: 'Hot morning, travel preparations (82-88°F)',
         weatherAdvisory: 'Final morning in Japan before departure - organize efficiently for international travel',
         activities: [
           {
@@ -3582,7 +3533,7 @@
                 <span style="font-size: var(--medium-text); margin-top: 2px;">${getWeatherIcon(weatherData.weather[0].main)}</span>
                 <div style="flex: 1;">
                   <div style="font-size: var(--base-text); font-weight: 600; margin-bottom: 4px;">
-                    ${Math.round(weatherData.main.temp)}°C (feels like ${Math.round(weatherData.main.feels_like)}°C)
+                    ${celsiusToFahrenheit(weatherData.main.temp)}°F (feels like ${celsiusToFahrenheit(weatherData.main.feels_like)}°F)
                     ${weatherData.isStatic ? ' (estimated)' : ''}
                   </div>
                   <div style="font-size: var(--small-text); opacity: 0.8; margin-bottom: 8px;">
@@ -3626,7 +3577,7 @@
         if (weatherDisplay) {
           weatherDisplay.innerHTML = `
             <span>⚠️</span>
-            <span style="font-size: var(--base-text);">Hot & humid (29-32°C/84-90°F with 78-83% humidity) - estimated</span>
+            <span style="font-size: var(--base-text);">Hot & humid (84-90°F with 78-83% humidity) - estimated</span>
           `;
         }
       }
@@ -4352,7 +4303,7 @@
             <ul style="margin: 0; padding-left: 16px; font-size: var(--base-text); color: #7c3aed;">
               <li style="margin-bottom: 8px;"><strong>Mario Kart Racing:</strong> Drive through Shibuya Crossing in costume</li>
               <li style="margin-bottom: 8px;"><strong>teamLab Planets:</strong> World's most visited digital art museum</li>
-              <li style="margin-bottom: 8px;"><strong>Bullet Train:</strong> 320 km/h engineering marvel</li>
+              <li style="margin-bottom: 8px;"><strong>Bullet Train:</strong> 200 mph engineering marvel</li>
               <li style="margin-bottom: 8px;"><strong>Golden Gai:</strong> Tiny post-war drinking district</li>
             </ul>
           </div>
@@ -4488,17 +4439,17 @@
                   <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
                     <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(tokyoWeather.weather[0].main)}</div>
                     <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Tokyo</div>
-                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(tokyoWeather.main.temp)}°C</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${celsiusToFahrenheit(tokyoWeather.main.temp)}°F</div>
                   </div>
                   <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
                     <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(kyotoWeather.weather[0].main)}</div>
                     <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Kyoto</div>
-                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(kyotoWeather.main.temp)}°C</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${celsiusToFahrenheit(kyotoWeather.main.temp)}°F</div>
                   </div>
                   <div style="text-align: center; padding: 8px; background: rgba(255,255,255,0.3); border-radius: 8px;">
                     <div style="font-size: var(--medium-text); margin-bottom: 4px;">${getWeatherIcon(osakaWeather.weather[0].main)}</div>
                     <div style="font-size: var(--small-text); font-weight: 600; color: ${getAdvisoryTextColor(adviceType)};">Osaka</div>
-                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${Math.round(osakaWeather.main.temp)}°C</div>
+                    <div style="font-size: var(--small-text); color: ${getAdvisoryTextColor(adviceType)};">${celsiusToFahrenheit(osakaWeather.main.temp)}°F</div>
                   </div>
                 </div>
                 
@@ -4522,7 +4473,7 @@
                   July Weather Advisory
                 </h3>
                 <p style="font-size: var(--base-text); color: #92400e; line-height: 1.5;">
-                  July is Japan's hottest, most humid month (29-32°C/84-90°F with 78-83% humidity). Plan indoor activities during peak heat (11am-4pm) and save outdoor sightseeing for early morning or evening.
+                  July is Japan's hottest, most humid month (84-90°F with 78-83% humidity). Plan indoor activities during peak heat (11am-4pm) and save outdoor sightseeing for early morning or evening.
                 </p>
               </div>
             </div>
@@ -4638,6 +4589,19 @@
     }
 
     // Currency converter features removed for stability
+
+    // Temperature and distance conversion utilities
+    function celsiusToFahrenheit(celsius) {
+      return Math.round((celsius * 9/5) + 32);
+    }
+    
+    function kmToMiles(km) {
+      return (km * 0.621371).toFixed(1);
+    }
+    
+    function metersToFeet(meters) {
+      return Math.round(meters * 3.28084);
+    }
 
     // Add click handlers for debugging
     document.addEventListener('click', function(e) {
