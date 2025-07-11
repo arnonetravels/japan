@@ -586,13 +586,13 @@
     
     .nav-button {
       flex: 1;
-      padding: 16px;
+      padding: 12px 8px;
       text-align: center;
       border: none;
       background: none;
       cursor: pointer;
       color: #6b7280;
-      font-size: var(--small-text);
+      font-size: 10px;
       font-weight: 500;
     }
     
@@ -601,8 +601,8 @@
     }
     
     .nav-icon {
-      font-size: 18px;
-      margin-bottom: 4px;
+      font-size: 16px;
+      margin-bottom: 2px;
       display: block;
     }
     
@@ -822,6 +822,11 @@
       <div id="budget-view" class="content hidden">
         <!-- Budget content will be populated here -->
       </div>
+      
+      <!-- Currency View -->
+      <div id="currency-view" class="content hidden">
+        <!-- Currency content will be populated here -->
+      </div>
     </main>
 
     <!-- Day Navigation -->
@@ -876,12 +881,16 @@
         <span class="nav-icon">💰</span>
         Budget
       </button>
+      <button class="nav-button" onclick="showView('currency')" id="nav-currency">
+        <span class="nav-icon">💱</span>
+        Currency
+      </button>
     </div>
   </div>
 
   <script>
     // App version
-    const APP_VERSION = 'v1.3.0.20250110';
+    const APP_VERSION = 'v1.4.0.20250111';
     
     // Weather API Configuration
     // SETUP: Replace 'YOUR_API_KEY_HERE' with your OpenWeatherMap API key
@@ -1719,68 +1728,209 @@
     function getStaticMultiModalData(origin, destination) {
       // Estimate distances for common Tokyo routes
       const estimatedDistance = estimateDistance(origin, destination);
-      const walkingTime = Math.max(5, Math.ceil(estimatedDistance * 12)); // ~12 min per km
-      const transitTime = Math.max(10, Math.ceil(estimatedDistance * 8)); // ~8 min per km via transit
-      const taxiTime = Math.max(8, Math.ceil(estimatedDistance * 6)); // ~6 min per km via taxi
       
-      return [
-        {
+      // More realistic timing calculations
+      let walkingTime, transitTime, taxiTime;
+      
+      if (estimatedDistance >= 50) { // Inter-city (bullet train routes)
+        walkingTime = 999; // Not walkable
+        transitTime = Math.ceil(estimatedDistance / 5); // ~300 km/h average including stops
+        taxiTime = Math.ceil(estimatedDistance / 1.2); // ~70 km/h highway average
+      } else if (estimatedDistance >= 10) { // Long distance within city
+        walkingTime = Math.ceil(estimatedDistance * 12); // 5 km/h walking speed
+        transitTime = Math.max(15, Math.ceil(estimatedDistance * 3.5 + 10)); // Transit + waiting time
+        taxiTime = Math.max(15, Math.ceil(estimatedDistance * 2.5 + 5)); // Traffic + pickup time
+      } else { // Local neighborhood travel
+        walkingTime = Math.max(3, Math.ceil(estimatedDistance * 12)); // 5 km/h walking
+        transitTime = Math.max(8, Math.ceil(estimatedDistance * 4 + 8)); // Local trains + walking to stations
+        taxiTime = Math.max(5, Math.ceil(estimatedDistance * 4 + 3)); // City traffic
+      }
+      
+      const options = [];
+      
+      // Walking option (if reasonable distance)
+      if (walkingTime < 120) { // Less than 2 hours
+        options.push({
           mode: 'walking',
           icon: '🚶',
           duration: `${walkingTime} min`,
           distance: `${estimatedDistance.toFixed(1)} km`,
-          description: 'Walking route',
+          description: walkingTime <= 20 ? 'Pleasant walk' : walkingTime <= 45 ? 'Long walk' : 'Very long walk',
           isLive: false
-        },
-        {
-          mode: 'transit',
-          icon: '🚆',
-          duration: `${transitTime} min`,
-          distance: `${estimatedDistance.toFixed(1)} km`,
-          description: 'Local train/subway',
-          fare: `¥${Math.max(150, Math.ceil(estimatedDistance * 200))}`,
-          isLive: false
-        },
-        {
+        });
+      }
+      
+      // Transit option
+      const transitIcon = estimatedDistance >= 50 ? '🚄' : estimatedDistance >= 10 ? '🚆' : '🚇';
+      const transitDesc = estimatedDistance >= 50 ? 'Bullet train' : estimatedDistance >= 10 ? 'Express train' : 'Local train/subway';
+      const transitFare = estimatedDistance >= 50 ? 
+        Math.ceil(estimatedDistance * 25) : // Bullet train pricing
+        Math.max(150, Math.ceil(estimatedDistance * 180)); // Local transit
+      
+      options.push({
+        mode: 'transit',
+        icon: transitIcon,
+        duration: `${transitTime} min`,
+        distance: `${estimatedDistance.toFixed(1)} km`,
+        description: transitDesc,
+        fare: `¥${transitFare.toLocaleString()}`,
+        isLive: false
+      });
+      
+      // Taxi option (if reasonable for the distance)
+      if (estimatedDistance < 50) { // Don't suggest taxi for inter-city
+        const taxiCost = estimatedDistance >= 10 ? 
+          Math.ceil(estimatedDistance * 800) : // Long distance taxi
+          Math.max(500, Math.ceil(estimatedDistance * 600)); // Local taxi
+        
+        options.push({
           mode: 'driving',
           icon: '🚕',
           duration: `${taxiTime} min`,
           distance: `${estimatedDistance.toFixed(1)} km`,
-          description: 'Taxi/ride-sharing',
+          description: estimatedDistance >= 10 ? 'Long taxi ride' : 'Taxi/ride-sharing',
           estimatedCost: {
-            yen: `¥${Math.max(500, Math.ceil(estimatedDistance * 600)).toLocaleString()}`,
-            usd: `$${(Math.max(500, Math.ceil(estimatedDistance * 600)) * 0.007).toFixed(2)}`
+            yen: `¥${taxiCost.toLocaleString()}`,
+            usd: `$${(taxiCost * 0.007).toFixed(2)}`
           },
           isLive: false
-        }
-      ];
+        });
+      }
+      
+      return options;
     }
     
     function estimateDistance(origin, destination) {
-      // Simple distance estimation for Tokyo area
+      // Enhanced distance estimation for Tokyo neighborhoods and regions
       const distances = {
+        // Tokyo neighborhoods - precise distances
         'shibuya_to_harajuku': 1.2,
         'shibuya_to_meiji': 1.5,
         'harajuku_to_meiji': 0.3,
         'shibuya_to_ginza': 3.5,
+        'shibuya_to_shinjuku': 2.1,
+        'shibuya_to_asakusa': 8.5,
+        'shibuya_to_ueno': 7.2,
+        'shibuya_to_akihabara': 6.8,
+        'shibuya_to_tsukiji': 4.3,
+        'ginza_to_tsukiji': 1.8,
+        'ginza_to_asakusa': 5.2,
+        'ginza_to_tokyo_station': 1.2,
+        'harajuku_to_shinjuku': 1.8,
+        'harajuku_to_akihabara': 5.9,
+        'shinjuku_to_asakusa': 7.8,
+        'shinjuku_to_akihabara': 4.2,
+        'asakusa_to_ueno': 2.1,
+        'asakusa_to_akihabara': 3.5,
+        'ueno_to_akihabara': 1.8,
+        'tokyo_station_to_asakusa': 4.1,
+        'tokyo_station_to_ginza': 1.2,
+        'tokyo_station_to_shinjuku': 3.8,
+        
+        // Inter-city distances
         'tokyo_to_kyoto': 475,
         'kyoto_to_osaka': 55,
-        'osaka_to_itami': 15
+        'osaka_to_itami': 15,
+        'osaka_to_namba': 2.1,
+        'kyoto_to_namba': 57,
+        
+        // Kyoto neighborhoods
+        'kyoto_station_to_gion': 3.2,
+        'kyoto_station_to_fushimi': 8.5,
+        'kyoto_station_to_arashiyama': 12.1,
+        'gion_to_fushimi': 6.8,
+        'gion_to_arashiyama': 9.5,
+        'fushimi_to_arashiyama': 15.2,
+        
+        // Osaka neighborhoods  
+        'osaka_station_to_dotonbori': 2.8,
+        'osaka_station_to_namba': 2.1,
+        'namba_to_dotonbori': 0.4,
+        'osaka_station_to_shinsekai': 3.5,
+        'namba_to_shinsekai': 1.2
       };
       
-      const key = `${origin}_to_${destination}`.toLowerCase()
-        .replace(/[^a-z]/g, '_')
-        .replace(/_+/g, '_');
+      // Normalize location names for comparison
+      const normalizeLocation = (loc) => {
+        return loc.toLowerCase()
+          .replace(/[^a-z]/g, '_')
+          .replace(/_+/g, '_')
+          .replace(/^_|_$/g, '');
+      };
       
-      // Check for direct matches or partial matches
+      const normOrigin = normalizeLocation(origin);
+      const normDest = normalizeLocation(destination);
+      
+      // Direct route lookup
+      const directRoute = `${normOrigin}_to_${normDest}`;
+      const reverseRoute = `${normDest}_to_${normOrigin}`;
+      
+      if (distances[directRoute]) return distances[directRoute];
+      if (distances[reverseRoute]) return distances[reverseRoute];
+      
+      // Partial matching with neighborhoods
       for (const [route, dist] of Object.entries(distances)) {
-        if (key.includes(route) || route.includes(key.split('_').slice(0,2).join('_'))) {
+        const [routeOrigin, routeDest] = route.split('_to_');
+        
+        // Check if either origin or destination contains the route components
+        if ((normOrigin.includes(routeOrigin) || routeOrigin.includes(normOrigin)) &&
+            (normDest.includes(routeDest) || routeDest.includes(normDest))) {
+          return dist;
+        }
+        
+        // Check reverse
+        if ((normOrigin.includes(routeDest) || routeDest.includes(normOrigin)) &&
+            (normDest.includes(routeOrigin) || routeOrigin.includes(normDest))) {
           return dist;
         }
       }
       
-      // Default estimate for Tokyo area
+      // City-level estimates based on keywords
+      if (isIntercityRoute(origin, destination)) {
+        return 400; // Default for inter-city
+      }
+      
+      if (isIntraKyoto(origin, destination)) {
+        return 5.0; // Average Kyoto distance
+      }
+      
+      if (isIntraOsaka(origin, destination)) {
+        return 3.0; // Average Osaka distance
+      }
+      
+      // Default Tokyo area estimate
       return 2.5;
+    }
+    
+    function isIntercityRoute(origin, destination) {
+      const cities = ['tokyo', 'kyoto', 'osaka'];
+      const origCity = getCityFromLocation(origin);
+      const destCity = getCityFromLocation(destination);
+      return origCity !== destCity && cities.includes(origCity) && cities.includes(destCity);
+    }
+    
+    function isIntraKyoto(origin, destination) {
+      return getCityFromLocation(origin) === 'kyoto' && getCityFromLocation(destination) === 'kyoto';
+    }
+    
+    function isIntraOsaka(origin, destination) {
+      return getCityFromLocation(origin) === 'osaka' && getCityFromLocation(destination) === 'osaka';
+    }
+    
+    function getCityFromLocation(location) {
+      const loc = location.toLowerCase();
+      if (loc.includes('kyoto') || loc.includes('gion') || loc.includes('fushimi') || loc.includes('arashiyama')) {
+        return 'kyoto';
+      }
+      if (loc.includes('osaka') || loc.includes('namba') || loc.includes('dotonbori') || loc.includes('shinsekai')) {
+        return 'osaka';
+      }
+      if (loc.includes('tokyo') || loc.includes('shibuya') || loc.includes('shinjuku') || 
+          loc.includes('ginza') || loc.includes('harajuku') || loc.includes('asakusa') ||
+          loc.includes('ueno') || loc.includes('akihabara')) {
+        return 'tokyo';
+      }
+      return 'tokyo'; // Default to Tokyo
     }
     
     function createMultiModalDisplay(transitOptions, isDetailed = false) {
@@ -3571,15 +3721,78 @@
     function getLocationForTransit(location) {
       // Convert activity locations to transit-friendly addresses
       const locationMap = {
+        // Tokyo neighborhoods and stations
         'Shibuya': 'Shibuya Station, Tokyo, Japan',
         'Shibuya area': 'Shibuya Station, Tokyo, Japan',
+        'Shibuya/Ginza area': 'Ginza Station, Tokyo, Japan',
         'Meiji Shrine → Harajuku': 'Meiji-jingu-mae Station, Tokyo, Japan',
         'Harajuku': 'Harajuku Station, Tokyo, Japan',
-        'Shibuya/Ginza area': 'Ginza Station, Tokyo, Japan',
-        'Hyatt House Shibuya': 'Shibuya Station, Tokyo, Japan'
+        'Shinjuku': 'Shinjuku Station, Tokyo, Japan',
+        'Ginza': 'Ginza Station, Tokyo, Japan',
+        'Asakusa': 'Asakusa Station, Tokyo, Japan',
+        'Ueno': 'Ueno Station, Tokyo, Japan',
+        'Akihabara': 'Akihabara Station, Tokyo, Japan',
+        'Tokyo Station': 'Tokyo Station, Tokyo, Japan',
+        'Tsukiji': 'Tsukiji Market, Tokyo, Japan',
+        
+        // Hotels and specific venues
+        'Hyatt House Shibuya': 'Shibuya Station, Tokyo, Japan',
+        'Hyatt Place Kyoto': 'Kyoto Station, Kyoto, Japan',
+        'Caption by Hyatt Namba': 'Namba Station, Osaka, Japan',
+        
+        // Kyoto locations
+        'Kyoto Station': 'Kyoto Station, Kyoto, Japan',
+        'Gion District': 'Gion-Shijo Station, Kyoto, Japan',
+        'Fushimi': 'Fushimi-Inari Station, Kyoto, Japan',
+        'Arashiyama': 'Arashiyama Station, Kyoto, Japan',
+        
+        // Osaka locations
+        'Osaka Station': 'Osaka Station, Osaka, Japan',
+        'Namba': 'Namba Station, Osaka, Japan',
+        'Namba Station': 'Namba Station, Osaka, Japan',
+        'Dotonbori': 'Namba Station, Osaka, Japan',
+        'Dotonbori area': 'Namba Station, Osaka, Japan',
+        'Shinsekai': 'Shinsekai, Osaka, Japan',
+        
+        // Airports
+        'Haneda Airport': 'Haneda Airport, Tokyo, Japan',
+        'Itami Airport': 'Itami Airport, Osaka, Japan',
+        'Narita Airport': 'Narita Airport, Tokyo, Japan'
       };
       
-      return locationMap[location] || `${location}, Tokyo, Japan`;
+      // Direct mapping first
+      if (locationMap[location]) {
+        return locationMap[location];
+      }
+      
+      // Smart partial matching for neighborhoods
+      const loc = location.toLowerCase();
+      
+      // Tokyo neighborhoods
+      if (loc.includes('shibuya')) return 'Shibuya Station, Tokyo, Japan';
+      if (loc.includes('harajuku')) return 'Harajuku Station, Tokyo, Japan';
+      if (loc.includes('shinjuku')) return 'Shinjuku Station, Tokyo, Japan';
+      if (loc.includes('ginza')) return 'Ginza Station, Tokyo, Japan';
+      if (loc.includes('asakusa')) return 'Asakusa Station, Tokyo, Japan';
+      if (loc.includes('ueno')) return 'Ueno Station, Tokyo, Japan';
+      if (loc.includes('akihabara')) return 'Akihabara Station, Tokyo, Japan';
+      if (loc.includes('tokyo')) return 'Tokyo Station, Tokyo, Japan';
+      if (loc.includes('tsukiji')) return 'Tsukiji Market, Tokyo, Japan';
+      
+      // Kyoto neighborhoods
+      if (loc.includes('kyoto')) return 'Kyoto Station, Kyoto, Japan';
+      if (loc.includes('gion')) return 'Gion-Shijo Station, Kyoto, Japan';
+      if (loc.includes('fushimi')) return 'Fushimi-Inari Station, Kyoto, Japan';
+      if (loc.includes('arashiyama')) return 'Arashiyama Station, Kyoto, Japan';
+      
+      // Osaka neighborhoods
+      if (loc.includes('osaka')) return 'Osaka Station, Osaka, Japan';
+      if (loc.includes('namba')) return 'Namba Station, Osaka, Japan';
+      if (loc.includes('dotonbori')) return 'Namba Station, Osaka, Japan';
+      if (loc.includes('shinsekai')) return 'Shinsekai, Osaka, Japan';
+      
+      // Default fallback
+      return `${location}, Tokyo, Japan`;
     }
 
     async function createActivityCard(activity) {
@@ -3990,6 +4203,7 @@
       document.getElementById('today-view').classList.add('hidden');
       document.getElementById('overview-view').classList.add('hidden');
       document.getElementById('budget-view').classList.add('hidden');
+      document.getElementById('currency-view').classList.add('hidden');
       
       // Show selected view
       const targetView = document.getElementById(`${viewName}-view`);
@@ -4080,6 +4294,10 @@
       if (viewName === 'budget' && document.getElementById('budget-view').children.length === 0) {
         addDebugLog(`💰 Loading budget content`, 'info');
         loadBudgetContent();
+      }
+      if (viewName === 'currency' && document.getElementById('currency-view').children.length === 0) {
+        addDebugLog(`💱 Loading currency converter`, 'info');
+        loadCurrencyContent();
       }
       
       addDebugLog(`📱 Switched to ${viewName} view`, 'info');
@@ -4423,6 +4641,215 @@
           </div>
         </div>
       `;
+    }
+
+    // Load Currency Converter content  
+    function loadCurrencyContent() {
+      const currencyView = document.getElementById('currency-view');
+      currencyView.innerHTML = `
+        <div>
+          <h2 style="font-size: var(--title-text); font-weight: bold; color: #1f2937; margin-bottom: 16px;">
+            💱 Live Currency Converter
+          </h2>
+          
+          <!-- Exchange Rate Display -->
+          <div id="exchange-rate-display" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 1px solid #4ade80; border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
+            <div style="font-size: var(--base-text); color: #15803d; margin-bottom: 8px;">Current Exchange Rate</div>
+            <div id="current-rate" style="font-size: var(--title-text); font-weight: bold; color: #15803d;">
+              Loading...
+            </div>
+            <div id="rate-timestamp" style="font-size: var(--small-text); color: #16a34a; margin-top: 4px;">
+              Fetching latest rates...
+            </div>
+            <button onclick="refreshExchangeRate()" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: var(--small-text); margin-top: 8px; cursor: pointer;">
+              🔄 Refresh Rate
+            </button>
+          </div>
+          
+          <!-- Currency Converter -->
+          <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #1e40af; margin-bottom: 16px;">💰 Quick Converter</h3>
+            
+            <!-- USD to JPY -->
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: var(--base-text); color: #1e40af; display: block; margin-bottom: 8px;">US Dollars (USD)</label>
+              <input type="number" id="usd-input" placeholder="Enter USD amount" style="width: 100%; padding: 12px; border: 1px solid #93c5fd; border-radius: 8px; font-size: var(--base-text);" oninput="convertUSDtoJPY()">
+              <div id="usd-result" style="font-size: var(--base-text); color: #1e40af; margin-top: 8px; font-weight: 500;"></div>
+            </div>
+            
+            <!-- JPY to USD -->
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: var(--base-text); color: #1e40af; display: block; margin-bottom: 8px;">Japanese Yen (JPY)</label>
+              <input type="number" id="jpy-input" placeholder="Enter JPY amount" style="width: 100%; padding: 12px; border: 1px solid #93c5fd; border-radius: 8px; font-size: var(--base-text);" oninput="convertJPYtoUSD()">
+              <div id="jpy-result" style="font-size: var(--base-text); color: #1e40af; margin-top: 8px; font-weight: 500;"></div>
+            </div>
+          </div>
+          
+          <!-- Quick Reference Amounts -->
+          <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #92400e; margin-bottom: 16px;">🎯 Quick Reference</h3>
+            <div id="quick-amounts" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div onclick="setUSDAmount(10)" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #f59e0b;">
+                <div style="font-size: var(--base-text); font-weight: bold; color: #92400e;">$10</div>
+                <div id="ref-10" style="font-size: var(--small-text); color: #92400e;">≈ ¥---</div>
+              </div>
+              <div onclick="setUSDAmount(20)" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #f59e0b;">
+                <div style="font-size: var(--base-text); font-weight: bold; color: #92400e;">$20</div>
+                <div id="ref-20" style="font-size: var(--small-text); color: #92400e;">≈ ¥---</div>
+              </div>
+              <div onclick="setUSDAmount(50)" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #f59e0b;">
+                <div style="font-size: var(--base-text); font-weight: bold; color: #92400e;">$50</div>
+                <div id="ref-50" style="font-size: var(--small-text); color: #92400e;">≈ ¥---</div>
+              </div>
+              <div onclick="setUSDAmount(100)" style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #f59e0b;">
+                <div style="font-size: var(--base-text); font-weight: bold; color: #92400e;">$100</div>
+                <div id="ref-100" style="font-size: var(--small-text); color: #92400e;">≈ ¥---</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Travel Budget Helper -->
+          <div style="background: linear-gradient(135deg, #fed7d7, #fecaca); border: 1px solid #f87171; border-radius: 12px; padding: 16px;">
+            <h3 style="font-size: var(--large-text); font-weight: bold; color: #dc2626; margin-bottom: 12px;">🎌 Japan Travel Guide</h3>
+            <div style="font-size: var(--small-text); color: #dc2626; line-height: 1.6;">
+              <div style="margin-bottom: 8px;"><strong>💰 Cash is King:</strong> Many places only accept cash - have ¥10,000-20,000 on hand</div>
+              <div style="margin-bottom: 8px;"><strong>🏧 ATMs:</strong> 7-Eleven and Japan Post Bank ATMs accept foreign cards</div>
+              <div style="margin-bottom: 8px;"><strong>🍜 Food Guide:</strong> Convenience store meal ¥300-500, Restaurant meal ¥800-2,000</div>
+              <div style="margin-bottom: 8px;"><strong>🚇 Transport:</strong> Tokyo Metro day pass ¥800, Individual rides ¥150-300</div>
+              <div><strong>☕ Coffee:</strong> Vending machine ¥120, Starbucks ¥350-500</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Load initial exchange rate
+      fetchExchangeRate();
+    }
+
+    // Global variables for exchange rate
+    let currentExchangeRate = 143.50; // Default fallback rate
+    let lastRateUpdate = null;
+
+    // Fetch live exchange rate from API
+    async function fetchExchangeRate() {
+      try {
+        addDebugLog('💱 Fetching live exchange rate...', 'info');
+        
+        // Use exchangerate-api.com (free tier: 1500 requests/month)
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        
+        if (!response.ok) {
+          throw new Error('Exchange rate API unavailable');
+        }
+        
+        const data = await response.json();
+        currentExchangeRate = data.rates.JPY;
+        lastRateUpdate = new Date();
+        
+        updateExchangeRateDisplay();
+        updateQuickReference();
+        
+        addDebugLog(\`💱 Exchange rate updated: $1 = ¥\${currentExchangeRate.toFixed(2)}\`, 'success');
+        
+        // Cache the rate for 15 minutes
+        localStorage.setItem('japan-app-exchange-rate', JSON.stringify({
+          rate: currentExchangeRate,
+          timestamp: lastRateUpdate.getTime()
+        }));
+        
+      } catch (error) {
+        console.error('Failed to fetch exchange rate:', error);
+        addDebugLog('⚠️ Using cached/default exchange rate', 'error');
+        
+        // Try to use cached rate
+        const cached = localStorage.getItem('japan-app-exchange-rate');
+        if (cached) {
+          const parsedCache = JSON.parse(cached);
+          const cacheAge = Date.now() - parsedCache.timestamp;
+          
+          // Use cache if less than 24 hours old
+          if (cacheAge < 24 * 60 * 60 * 1000) {
+            currentExchangeRate = parsedCache.rate;
+            lastRateUpdate = new Date(parsedCache.timestamp);
+            addDebugLog('💱 Using cached exchange rate', 'info');
+          }
+        }
+        
+        updateExchangeRateDisplay();
+        updateQuickReference();
+      }
+    }
+
+    // Update the exchange rate display
+    function updateExchangeRateDisplay() {
+      const rateElement = document.getElementById('current-rate');
+      const timestampElement = document.getElementById('rate-timestamp');
+      
+      if (rateElement) {
+        rateElement.textContent = \`$1 USD = ¥\${currentExchangeRate.toFixed(2)} JPY\`;
+      }
+      
+      if (timestampElement && lastRateUpdate) {
+        timestampElement.textContent = \`Updated: \${lastRateUpdate.toLocaleTimeString()}\`;
+      }
+    }
+
+    // Update quick reference amounts
+    function updateQuickReference() {
+      [10, 20, 50, 100].forEach(amount => {
+        const element = document.getElementById(\`ref-\${amount}\`);
+        if (element) {
+          const jpyAmount = (amount * currentExchangeRate).toFixed(0);
+          element.textContent = \`≈ ¥\${jpyAmount}\`;
+        }
+      });
+    }
+
+    // Currency conversion functions
+    function convertUSDtoJPY() {
+      const usdInput = document.getElementById('usd-input');
+      const resultDiv = document.getElementById('usd-result');
+      
+      if (usdInput && resultDiv) {
+        const usdAmount = parseFloat(usdInput.value);
+        if (isNaN(usdAmount) || usdAmount <= 0) {
+          resultDiv.textContent = '';
+          return;
+        }
+        
+        const jpyAmount = (usdAmount * currentExchangeRate).toFixed(0);
+        resultDiv.textContent = \`= ¥\${jpyAmount} JPY\`;
+      }
+    }
+
+    function convertJPYtoUSD() {
+      const jpyInput = document.getElementById('jpy-input');
+      const resultDiv = document.getElementById('jpy-result');
+      
+      if (jpyInput && resultDiv) {
+        const jpyAmount = parseFloat(jpyInput.value);
+        if (isNaN(jpyAmount) || jpyAmount <= 0) {
+          resultDiv.textContent = '';
+          return;
+        }
+        
+        const usdAmount = (jpyAmount / currentExchangeRate).toFixed(2);
+        resultDiv.textContent = \`= $\${usdAmount} USD\`;
+      }
+    }
+
+    // Set USD amount from quick reference
+    function setUSDAmount(amount) {
+      const usdInput = document.getElementById('usd-input');
+      if (usdInput) {
+        usdInput.value = amount;
+        convertUSDtoJPY();
+      }
+    }
+
+    // Refresh exchange rate manually
+    function refreshExchangeRate() {
+      fetchExchangeRate();
     }
 
     // Add click handlers for debugging
