@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed:*)",
+      "Bash(git push:*)",
+      "Bash(gh:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(open:*)",
+      "Bash(cp:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(git commit:*)",
+      "Bash(git rm:*)",
+      "Bash(node:*)",
+      "Bash(rm:*)",
+      "Bash(curl:*)",
+      "Bash(git branch:*)"
+    ],
+    "deny": []
+  }
+}

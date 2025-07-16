@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>🇯🇵 Japan Travel App - Debug</title>
+  
+  <!-- Mobile optimizations -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Japan Travel">
+  <meta name="theme-color" content="#4f46e5">
+  
+  <style>
+    /* Inline CSS - no external dependencies */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f9fafb 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Loading screen styles */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .loading-logo {
+      font-size: 48px;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+    
+    .loading-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4f46e5;
+      margin-bottom: 10px;
+    }
+    
+    .loading-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+    
+    /* Loading bar */
+    .loading-bar-container {
+      width: 100%;
+      max-width: 300px;
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .loading-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      border-radius: 4px;
+      animation: loading 3s ease-in-out infinite;
+      transform-origin: left;
+    }
+    
+    .debug-log {
+      width: 100%;
+      max-width: 300px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 12px;
+      color: #374151;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .debug-item {
+      padding: 2px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .debug-item:last-child {
+      border-bottom: none;
+    }
+    
+    .success {
+      color: #059669;
+    }
+    
+    .error {
+      color: #dc2626;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* App styles */
+    .app-container {
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed, #4f46e5);
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .header-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .header-subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 16px;
+      padding-bottom: 140px; /* Space for both navigation bars */
+    }
+    
+    .day-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    
+    .city-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+    
+    .date-text {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    
+    .weather-warning {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .activity-card {
+      background: linear-gradient(135deg, #ddd6fe, #e0e7ff);
+      border: 1px solid #c4b5fd;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .activity-type {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 500;
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+    }
+    
+    .activity-time {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+    
+    .activity-cost {
+      background: rgba(255,255,255,0.7);
+      padding: 8px;
+      border-radius: 8px;
+      text-align: right;
+    }
+    
+    .cost-yen {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .cost-usd {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    
+    .activity-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .activity-location {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .activity-description {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    
+    .significance-box {
+      background: rgba(255,255,255,0.5);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .significance-title {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    /* Day Navigation */
+    .day-nav {
+      position: fixed;
+      bottom: 70px; /* Above bottom nav */
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .day-nav-button {
+      background: #f3f4f6;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+    }
+    
+    .day-nav-button:hover {
+      background: #e5e7eb;
+    }
+    
+    .day-nav-button:disabled {
+      background: #f9fafb;
+      color: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .day-nav-center {
+      flex: 1;
+      text-align: center;
+      padding: 0 16px;
+    }
+    
+    .day-nav-date {
+      font-weight: 600;
+      font-size: 14px;
+      color: #1f2937;
+      margin-bottom: 2px;
+    }
+    
+    .day-nav-day {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+    }
+    
+    .nav-button {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .nav-button.active {
+      color: #4f46e5;
+    }
+    
+    .nav-icon {
+      font-size: 18px;
+      margin-bottom: 4px;
+      display: block;
+    }
+    
+    /* Animations */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+    
+    @keyframes loading {
+      0% {
+        transform: scaleX(0);
+      }
+      50% {
+        transform: scaleX(0.7);
+      }
+      100% {
+        transform: scaleX(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading" class="loading-container">
+    <div class="loading-logo">🇯🇵</div>
+    <div class="loading-title">Japan Travel App</div>
+    <div class="loading-subtitle">Preparing your adventure...</div>
+    
+    <div class="loading-bar-container">
+      <div class="loading-bar"></div>
+    </div>
+    
+    <div id="debug-log" class="debug-log">
+      <div class="debug-item">🔄 Initializing app...</div>
+    </div>
+  </div>
+
+  <!-- Main App (initially hidden) -->
+  <div id="app" class="app-container hidden">
+    <!-- Header -->
+    <header class="header">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+        <span style="font-size: 24px;">🏔️</span>
+        <div>
+          <div class="header-title">Japan Adventure</div>
+          <div class="header-subtitle">Tokyo • Kyoto • Osaka</div>
+        </div>
+        <span style="font-size: 24px;">🌸</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+      <div>
+        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+          <span class="day-title">Arrival & Gentle Recovery</span>
+          <span class="city-badge">Tokyo</span>
+        </div>
+        <div class="date-text">Monday, July 14, 2025</div>
+        
+        <div class="weather-warning">
+          <span>⚠️</span>
+          <span>Hot & humid (29-32°C/84-90°F). Plan indoor activities 11am-4pm</span>
+        </div>
+        
+        <!-- Activity Cards -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
+                  <span style="font-size: 18px;">🚆</span>
+                </div>
+                <div>
+                  <div class="activity-type">transport</div>
+                  <div class="activity-time">🕐 4:30 AM - 7:30 AM</div>
+                </div>
+              </div>
+            </div>
+            <div class="activity-cost">
+              <div class="cost-yen">¥800</div>
+              <div class="cost-usd">$5.50</div>
+            </div>
+          </div>
+          <div class="activity-title">Airport to Hotel</div>
+          <div class="activity-location">📍 Haneda Airport → Shibuya</div>
+          <div class="activity-description">
+            Navigate immigration and customs at Haneda Airport, take Airport Express to Shibuya Station, check into Hyatt House Shibuya
+          </div>
+        </div>
+
+        <div class="activity-card">
+          <div class="activity-header">
+            <div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="background: rgba(255,255,255,0.7); padding: 8px; border-radius: 8px;">
+                  <span style="font-size: 18px;">🏛️</span>
+                </div>
+                <div>
+                  <div class="activity-type">cultural</div>
+                  <div class="activity-time">🕐 9:30 AM - 12:00 PM</div>
+                </div>
+              </div>
+            </div>
+            <div class="activity-cost">
+              <div class="cost-yen">Free</div>
+            </div>
+          </div>
+          <div class="activity-title">Shibuya Crossing Experience</div>
+          <div class="activity-location">📍 Shibuya</div>
+          <div class="activity-description">
+            Iconic Tokyo orientation without overwhelming jetlag
+          </div>
+          <div class="significance-box">
+            <div class="significance-title">Why This Matters:</div>
+            <div style="font-size: 14px;">World's busiest pedestrian crossing - iconic Tokyo moment</div>
+          </div>
+        </div>
+        
+        <!-- Daily Cost Summary -->
+        <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid #93c5fd; border-radius: 12px; padding: 16px; margin-top: 24px;">
+          <div style="font-weight: bold; font-size: 18px; color: #1e40af; margin-bottom: 12px;">Daily Cost Summary</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">¥3,200</div>
+              <div style="font-size: 14px; color: #3b82f6;">Japanese Yen</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 24px; font-weight: bold; color: #2563eb;">$22.40</div>
+              <div style="font-size: 14px; color: #3b82f6;">US Dollars</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Day Navigation -->
+    <div class="day-nav">
+      <button class="day-nav-button" onclick="previousDay()" id="prev-day">
+        ←
+      </button>
+      <div class="day-nav-center">
+        <div class="day-nav-date" id="current-date">Monday, July 14</div>
+        <div class="day-nav-day" id="current-day">Day 1 of 11</div>
+      </div>
+      <button class="day-nav-button" onclick="nextDay()" id="next-day">
+        →
+      </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-button active">
+        <span class="nav-icon">📅</span>
+        Today
+      </button>
+      <button class="nav-button">
+        <span class="nav-icon">📍</span>
+        Overview
+      </button>
+      <button class="nav-button">
+        <span class="nav-icon">💰</span>
+        Budget
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Debug logging function
+    function addDebugLog(message, type = 'info') {
+      const debugLog = document.getElementById('debug-log');
+      const item = document.createElement('div');
+      item.className = 'debug-item';
+      if (type === 'success') item.classList.add('success');
+      if (type === 'error') item.classList.add('error');
+      
+      const timestamp = new Date().toLocaleTimeString();
+      item.innerHTML = `[${timestamp}] ${message}`;
+      debugLog.appendChild(item);
+      debugLog.scrollTop = debugLog.scrollHeight;
+    }
+
+    // Simulate loading steps with delays
+    function simulateLoading() {
+      addDebugLog('✅ CSS loaded successfully', 'success');
+      
+      setTimeout(() => {
+        addDebugLog('🔄 Checking device compatibility...');
+        
+        setTimeout(() => {
+          addDebugLog('✅ Device compatible', 'success');
+          addDebugLog('🔄 Loading itinerary data...');
+          
+          setTimeout(() => {
+            addDebugLog('✅ Itinerary data loaded', 'success');
+            addDebugLog('🔄 Preparing interface...');
+            
+            setTimeout(() => {
+              addDebugLog('✅ Interface ready', 'success');
+              addDebugLog('🚀 Launching app...');
+              
+              setTimeout(() => {
+                // Hide loading screen and show app
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+              }, 500);
+            }, 300);
+          }, 400);
+        }, 300);
+      }, 500);
+    }
+
+    // Start loading simulation when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      addDebugLog('🔄 DOM loaded', 'success');
+      simulateLoading();
+    });
+
+    // Fallback in case DOMContentLoaded doesn't fire
+    setTimeout(() => {
+      if (!document.getElementById('app').classList.contains('hidden')) return;
+      addDebugLog('⚠️ Fallback loading triggered', 'error');
+      simulateLoading();
+    }, 2000);
+
+    // Trip data
+    const tripDays = [
+      { date: 'Monday, July 14', title: 'Arrival & Gentle Recovery', city: 'Tokyo' },
+      { date: 'Tuesday, July 15', title: 'Traditional Tokyo & Summer Festival', city: 'Tokyo' },
+      { date: 'Wednesday, July 16', title: 'Modern Tokyo Culture', city: 'Tokyo' },
+      { date: 'Thursday, July 17', title: 'Tokyo Deep Dive', city: 'Tokyo' },
+      { date: 'Friday, July 18', title: 'Final Tokyo Exploration', city: 'Tokyo' },
+      { date: 'Saturday, July 19', title: 'Travel to Kyoto', city: 'Kyoto' },
+      { date: 'Sunday, July 20', title: 'Kyoto Temples & Gardens', city: 'Kyoto' },
+      { date: 'Monday, July 21', title: 'Kyoto Culture & Festivals', city: 'Kyoto' },
+      { date: 'Tuesday, July 22', title: 'Kyoto Hidden Gems', city: 'Kyoto' },
+      { date: 'Wednesday, July 23', title: 'Travel to Osaka', city: 'Osaka' },
+      { date: 'Thursday, July 24', title: 'Osaka & Departure', city: 'Osaka' }
+    ];
+
+    let currentDayIndex = 0;
+
+    // Day navigation functions
+    function updateDayDisplay() {
+      const currentDay = tripDays[currentDayIndex];
+      document.getElementById('current-date').textContent = currentDay.date;
+      document.getElementById('current-day').textContent = `Day ${currentDayIndex + 1} of ${tripDays.length}`;
+      
+      // Update navigation buttons
+      document.getElementById('prev-day').disabled = currentDayIndex === 0;
+      document.getElementById('next-day').disabled = currentDayIndex === tripDays.length - 1;
+      
+      // Update main content (for now just log it)
+      addDebugLog(`📅 Switched to ${currentDay.title} in ${currentDay.city}`, 'info');
+    }
+
+    function previousDay() {
+      if (currentDayIndex > 0) {
+        currentDayIndex--;
+        updateDayDisplay();
+      }
+    }
+
+    function nextDay() {
+      if (currentDayIndex < tripDays.length - 1) {
+        currentDayIndex++;
+        updateDayDisplay();
+      }
+    }
+
+    // Add click handlers for debugging
+    document.addEventListener('click', function(e) {
+      addDebugLog(`👆 Clicked: ${e.target.tagName}`, 'info');
+    });
+  </script>
+</body>
+</html>
