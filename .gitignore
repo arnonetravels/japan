@@ -15,6 +15,9 @@ dist/
 .env.test.local
 .env.production.local
 
+# Local configuration files
+config.local.js
+
 # IDE files
 .vscode/
 .idea/
