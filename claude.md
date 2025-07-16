@@ -192,6 +192,7 @@ We enjoy the following types of attractions:
 - **Moderate pricing**: Good value, not necessarily cheapest or most expensive
 - **Unique specialties**: What makes this place special vs competitors
 - **Realistic expectations**: Wait times, ordering process, atmosphere
+- **Verified addresses**: Every restaurant must have a specific, accurate address added to the LOCATION_DATABASE for map integration
 
 ### **Transport Details**
 - **Exact station names**: No ambiguity about where to go
